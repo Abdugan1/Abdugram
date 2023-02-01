@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>fonts/Montserrat-Regular.ttf</file>
+    </qresource>
+</RCC>

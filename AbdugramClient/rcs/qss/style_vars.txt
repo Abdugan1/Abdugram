@@ -1,0 +1,5 @@
+@backgroundColor     = #181818;
+@decorationColor     = #50A7EA;
+@headerColor         = #FFFFFF;
+@mainLabelColor      = #FFFFFF;
+@secondaryLabelColor = #828282;

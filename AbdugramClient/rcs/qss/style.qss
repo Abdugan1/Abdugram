@@ -1,0 +1,55 @@
+/* Works for all */
+* {
+    /* Font */
+    font-size: 12pt;
+}
+
+/* ========Page======== */
+StackedWidget {
+    background-color: @backgroundColor;
+}
+
+/* ========Button======== */
+Button {
+    /* Background */
+    background-color: @decorationColor;
+
+    /* Border */
+    border-radius: 5px;
+
+    /* Size */
+    padding: 10px;
+
+    /* Text color */
+    color: #FFFFFF;
+}
+
+Button:hover {
+    /* Background */
+    background-color: #61afec
+}
+
+/* LineEdit */
+LineEdit {
+    background-color: @backgroundColor;
+    color: @mainLabelColor;
+    qproperty-lineColor: @decorationColor;
+    border: none;
+}
+
+/* LineEdit placeholder color */
+LineEdit[text=\"\"] {
+    color: @secondaryLabelColor;
+}
+
+/* MainLabel */
+MainLabel {
+    /* Text color */
+    color: @mainLabelColor;
+}
+
+/* SecondaryLabel */
+SecondaryLabel {
+    /* Text color */
+    color: @secondaryLabelColor;
+}
