@@ -3,7 +3,10 @@
 
 #include <QWidget>
 
+class HeaderLabel;
+class SecondaryLabel;
 class LineEdit;
+class Button;
 
 class RegistrationPage : public QWidget
 {
@@ -17,6 +20,9 @@ private:
     void setupUi();
 
 private:
+    HeaderLabel    *tellUsAboutLabel_ = nullptr;
+    SecondaryLabel *pageInfo_         = nullptr;
+
     LineEdit *firstNameEdit_       = nullptr;
     LineEdit *lastNameEdit_        = nullptr;
     LineEdit *usernameEdit_        = nullptr;
@@ -25,6 +31,8 @@ private:
     LineEdit *passwordEdit_        = nullptr;
     LineEdit *confirmPasswordEdit_ = nullptr;
 
+    Button *nextButton_ = nullptr;
+    Button *backButton_ = nullptr;
 };
 
 #endif // REGISTRATIONPAGE_H

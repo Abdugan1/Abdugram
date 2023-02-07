@@ -3,6 +3,10 @@
 
 #include <QTcpServer>
 
+#include "threadpool.h"
+
+class TcpSession;
+
 class Server : public QTcpServer
 {
     Q_OBJECT
@@ -13,6 +17,7 @@ public:
 signals:
     void started();
     void stopped();
+    void aboutToStop();
 
 public slots:
     void start();
@@ -22,6 +27,10 @@ protected:
     void incomingConnection(qintptr handle) override;
 
 private:
+    TcpSession *createSession();
+
+private:
+    ThreadPool threadPool_;
 };
 
 #endif // SERVER_H

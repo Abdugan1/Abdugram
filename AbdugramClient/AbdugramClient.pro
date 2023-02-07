@@ -20,6 +20,7 @@ LIBS += -L$$OUT_PWD/../Logger/logger/lib -llogger
 SOURCES += \
     src/main.cpp \
     src/ui/button.cpp \
+    src/ui/headerlabel.cpp \
     src/ui/hellopage.cpp \
     src/ui/lineedit.cpp \
     src/ui/mainlabel.cpp \
@@ -31,6 +32,7 @@ SOURCES += \
 
 HEADERS += \
     src/ui/button.h \
+    src/ui/headerlabel.h \
     src/ui/hellopage.h \
     src/ui/lineedit.h \
     src/ui/mainlabel.h \

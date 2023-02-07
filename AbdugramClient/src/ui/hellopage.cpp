@@ -27,6 +27,8 @@ HelloPage::HelloPage(QWidget *parent)
 void HelloPage::setupUi()
 {
     appNameLabel_ = new MainLabel{tr("Abdugram Desktop")};
+    appNameLabel_->setAlignment(Qt::AlignCenter);
+
     welcomeLabel_ = new SecondaryLabel{tr("Welcome to the official Abdugram Desktop app.\n"
                                           "It's fast and secure.")};
     welcomeLabel_->setAlignment(Qt::AlignCenter);
@@ -35,10 +37,12 @@ void HelloPage::setupUi()
 
     QVBoxLayout *vLayout = new QVBoxLayout;
     vLayout->addSpacerItem(createVSpacer());
-    vLayout->addWidget(appNameLabel_, 0, Qt::AlignCenter);
-    vLayout->addWidget(welcomeLabel_, 0, Qt::AlignCenter);
-    vLayout->addWidget(startButton_,  0, Qt::AlignCenter);
+    vLayout->addWidget(appNameLabel_);
+    vLayout->addWidget(welcomeLabel_);
+    vLayout->addWidget(startButton_);
     vLayout->addSpacerItem(createVSpacer());
+
+    vLayout->setAlignment(Qt::AlignCenter);
 
     this->setLayout(vLayout);
 }

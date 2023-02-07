@@ -18,7 +18,7 @@ Button {
     border-radius: 5px;
 
     /* Size */
-    padding: 10px;
+    padding: 7px;
 
     /* Text color */
     color: #FFFFFF;
@@ -26,7 +26,7 @@ Button {
 
 Button:hover {
     /* Background */
-    background-color: #61afec
+    background-color: #b05e97
 }
 
 /* LineEdit */
@@ -52,4 +52,11 @@ MainLabel {
 SecondaryLabel {
     /* Text color */
     color: @secondaryLabelColor;
+}
+
+/* HeaderLabel */
+HeaderLabel {
+    color: @headerLabelColor;
+    font-size: 14pt;
+    font-style: bold;
 }

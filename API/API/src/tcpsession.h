@@ -3,14 +3,27 @@
 
 #include <QTcpSocket>
 
+#include "messages/abdumessage.h"
+
 class TcpSession : public QTcpSocket
 {
     Q_OBJECT
 public:
     explicit TcpSession(QObject *parent = nullptr);
 
+signals:
+    void received(const AbduMessagePtr &message);
+
 public slots:
-    bool open(quintptr descriptor);
+    bool openSession(quintptr descriptor);
+    void closeSession();
+    void send(const AbduMessagePtr &message);
+
+private slots:
+    void readAvailData();
+
+private:
+    void init();
 };
 
 #endif // TCPSESSION_H
