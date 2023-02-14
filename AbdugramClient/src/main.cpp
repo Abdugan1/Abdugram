@@ -4,7 +4,6 @@
 #include <QRegularExpression>
 #include <QDebug>
 
-#include <api_client/test.h>
 #include <api_sql_client/database.h>
 
 #include <logger/logger.h>

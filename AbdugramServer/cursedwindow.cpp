@@ -2,17 +2,17 @@
 
 #include <cassert>
 
-CursedWindow::CursedWindow(int h, int w, int y, int x)
+CursedWindow::CursedWindow(int x, int y, int w, int h)
 {
-    init(h, w, y, x, nullptr, WindowType::Window);
+    init(x, y, w, h, nullptr, WindowType::Window);
 }
 
 CursedWindow::CursedWindow()
 {
-    init(LINES, COLS, 0, 0, nullptr, WindowType::Window);
+    init(0, 0, COLS, LINES, nullptr, WindowType::Window);
 }
 
-CursedWindow::CursedWindow(int h, int w, int y, int x,
+CursedWindow::CursedWindow(int x, int y, int w, int h,
                            WindowPtr parent,
                            WindowType winType)
 {
@@ -20,12 +20,22 @@ CursedWindow::CursedWindow(int h, int w, int y, int x,
         assert((winType == WindowType::SubWindow)
                || (winType == WindowType::DerWindow));
     }
-    init(h, w, y, x, parent, winType);
+    init(x, y, w, h, parent, winType);
 }
 
 void CursedWindow::refresh()
 {
     wrefresh(window_);
+}
+
+void CursedWindow::clear()
+{
+    werase(window_);
+}
+
+void CursedWindow::print(int x, int y, const std::string &str)
+{
+    mvwprintw(window_, y, x, str.c_str());
 }
 
 WINDOW *CursedWindow::pwindow()
@@ -58,7 +68,7 @@ int CursedWindow::height() const
     return h_;
 }
 
-void CursedWindow::init(int h, int w, int y, int x,
+void CursedWindow::init(int x, int y, int w, int h,
                         WindowPtr parent,
                         WindowType winType)
 {

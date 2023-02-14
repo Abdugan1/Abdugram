@@ -7,6 +7,7 @@ class HeaderLabel;
 class SecondaryLabel;
 class LineEdit;
 class Button;
+class ImageButton;
 
 class RegistrationPage : public QWidget
 {
@@ -15,6 +16,7 @@ public:
     explicit RegistrationPage(QWidget *parent = nullptr);
 
 signals:
+    void backButtonClicked();
 
 private:
     void setupUi();
@@ -31,8 +33,8 @@ private:
     LineEdit *passwordEdit_        = nullptr;
     LineEdit *confirmPasswordEdit_ = nullptr;
 
-    Button *nextButton_ = nullptr;
-    Button *backButton_ = nullptr;
+    Button      *nextButton_ = nullptr;
+    ImageButton *backButton_ = nullptr;
 };
 
 #endif // REGISTRATIONPAGE_H

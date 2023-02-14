@@ -12,6 +12,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(helloPage_, &HelloPage::startMessagingClicked,
             this, [this]() {stackedWidget_->toIndex(1);});
+
+    connect(registrationPage_, &RegistrationPage::backButtonClicked,
+            this, [this]() {stackedWidget_->toIndex(0);});
 }
 
 void MainWindow::setupUi()

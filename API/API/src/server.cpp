@@ -43,6 +43,14 @@ void Server::stop()
     qInfo() << "Server stopeed";
 }
 
+void Server::toggle()
+{
+    if (isListening())
+        stop();
+    else
+        start();
+}
+
 void Server::incomingConnection(qintptr socketDescriptor)
 {
     TcpSession *session = createSession();

@@ -58,11 +58,13 @@ private:
     double rippleWidth_   = 0.0;
     double opacity_       = 0.0;
 
-    QColor color_ = Qt::white;
-    QPoint startPos_ = QPoint{};
-
     double endRippleWidth_ = 0.0;
     double endOpacity_     = 0.0;
+
+    int borderRadius_ = 0;
+
+    QColor color_ = Qt::white;
+    QPoint startPos_ = QPoint{};
 
     bool hasRipple_ = false;
 

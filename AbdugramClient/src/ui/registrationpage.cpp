@@ -3,6 +3,7 @@
 #include "headerlabel.h"
 #include "secondarylabel.h"
 #include "button.h"
+#include "imagebutton.h"
 
 #include <QBoxLayout>
 #include <QGridLayout>
@@ -11,6 +12,9 @@ RegistrationPage::RegistrationPage(QWidget *parent)
     : QWidget{parent}
 {
     setupUi();
+
+    connect(backButton_, &ImageButton::clicked,
+            this,        &RegistrationPage::backButtonClicked);
 }
 
 void RegistrationPage::setupUi()
@@ -68,7 +72,7 @@ void RegistrationPage::setupUi()
     group->setFixedWidth(600);
 
     // Back button
-    backButton_ = new Button{tr("Back")};
+    backButton_ = new ImageButton{QPixmap{":/images/BackButton.png"}};
 
     //
     QHBoxLayout *topLayout = new QHBoxLayout;

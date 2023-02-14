@@ -22,6 +22,7 @@ signals:
 public slots:
     void start();
     void stop();
+    void toggle();
 
 protected:
     void incomingConnection(qintptr handle) override;

@@ -2,6 +2,8 @@
 #include "titledwindow.h"
 #include "cursedwindow.h"
 
+#include "api_server/consts.h"
+
 #include <QCoreApplication>
 
 inline const int Enter = 10;
@@ -31,9 +33,10 @@ MainMenuPage::MainMenuPage()
     post_menu(menu_);
 
     //
-    statusWindow_ = WindowPtr{new CursedWindow{5, 5, 5, 5,
+    statusWindow_ = WindowPtr{new CursedWindow{workingWindow()->width() - 20, 0, 20, 5,
             workingWindow(), WindowType::DerWindow}};
     statusWindow_->box();
+    printServerStatus();
 }
 
 void MainMenuPage::parseInput(int input)
@@ -54,10 +57,33 @@ void MainMenuPage::parseInput(int input)
 void MainMenuPage::doCurrentItemAction()
 {
     ITEM *currentItem = current_item(menu_);
-    mvwprintw(pworkingWindowRaw(), 4, 4, std::to_string(currentItem->index).c_str());
     switch (currentItem->index) {
+    case 0:
+        choiceParse_(this, "toggle_server");
+        break;
+    case 1:
+        choiceParse_(this, "show_logs");
+        break;
     case 2:
         choiceParse_(this, "quit");
         break;
     }
+}
+
+void MainMenuPage::printServerStatus()
+{
+    std::string serverStatus  = "Status: "
+            + std::string(serverRunning_ ? "running" : "stopped");
+    std::string serverAddress = "Address: ";
+    std::string serverPort    = "Port: ";
+
+    statusWindow_->print(1, 1, serverStatus);
+    statusWindow_->print(1, 2, serverAddress);
+    statusWindow_->print(1, 3, serverPort);
+}
+
+void MainMenuPage::setServerRunning(bool newServerRunning)
+{
+    serverRunning_ = newServerRunning;
+    printServerStatus();
 }

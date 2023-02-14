@@ -9,13 +9,14 @@ StackedWidget {
     background-color: @backgroundColor;
 }
 
-/* ========Button======== */
+/* Button */
 Button {
     /* Background */
     background-color: @decorationColor;
 
     /* Border */
     border-radius: 5px;
+    border-width: 0px;
 
     /* Size */
     padding: 7px;
@@ -27,6 +28,20 @@ Button {
 Button:hover {
     /* Background */
     background-color: #b05e97
+}
+
+/* ImageButton */
+ImageButton {
+    /* Background */
+    background-color: transparent;
+
+    /* Size */
+    icon-size: 18px;
+    width: 32px;
+    height: 32px;
+
+    /* Border */
+    border-radius: 16px;
 }
 
 /* LineEdit */

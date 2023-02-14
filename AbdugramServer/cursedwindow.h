@@ -18,14 +18,20 @@ class CursedWindow
 {
 public:
     //! Constructs sized window
-    explicit CursedWindow(int h, int w, int y, int x);
+    explicit CursedWindow(int x, int y, int w, int h);
     //! Constructs full sized window
     explicit CursedWindow();
     //! Constructs sized window by WindowType
-    explicit CursedWindow(int h, int w, int y, int x, WindowPtr parent, WindowType winType);
+    explicit CursedWindow(int x, int y, int w, int h, WindowPtr parent, WindowType winType);
 
     //! Refreshes 'WINDOW'
     void refresh();
+
+    //! Clear 'WINDOW'
+    void clear();
+
+    //! Prints to 'WINDOW'
+    void print(int x, int y, const std::string &str);
 
     //! Returns raw cursed window type
     WINDOW *pwindow();
@@ -39,7 +45,7 @@ public:
     int height() const;
 
 private:
-    void init(int h, int w, int y, int x, WindowPtr parent, WindowType winType);
+    void init(int x, int y, int w, int h, WindowPtr parent, WindowType winType);
 
 private:
     WINDOW *window_ = nullptr;

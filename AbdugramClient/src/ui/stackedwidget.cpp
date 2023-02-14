@@ -78,7 +78,7 @@ void StackedWidget::setEasingCurve(const QEasingCurve &newEasingCurve)
 
 void StackedWidget::setupToSlideWidget()
 {
-    toSlideWidget_->setGeometry(currentWidget_->geometry());
+    toSlideWidget_->resize(currentWidget_->size());
     toSlideWidget_->show();
     toSlideWidget_->raise();
 }
@@ -88,9 +88,9 @@ void StackedWidget::slideForward()
     QPoint currentBegin = currentWidget_->pos();
     QPoint currentEnd   = QPoint{currentBegin.x() - size().width(), currentBegin.y()};
     QPoint toSlideBegin = QPoint{currentBegin.x() + size().width(), currentBegin.y()};
-    QPoint tSlideoEnd   = currentWidget_->pos();
+    QPoint toSlideEnd   = currentWidget_->pos();
 
-    startAnimation(currentBegin, currentEnd, toSlideBegin, tSlideoEnd);
+    startAnimation(currentBegin, currentEnd, toSlideBegin, toSlideEnd);
 }
 
 int StackedWidget::slideDuration() const

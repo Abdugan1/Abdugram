@@ -22,6 +22,7 @@ SOURCES += \
     src/ui/button.cpp \
     src/ui/headerlabel.cpp \
     src/ui/hellopage.cpp \
+    src/ui/imagebutton.cpp \
     src/ui/lineedit.cpp \
     src/ui/mainlabel.cpp \
     src/ui/mainwindow.cpp \
@@ -34,6 +35,7 @@ HEADERS += \
     src/ui/button.h \
     src/ui/headerlabel.h \
     src/ui/hellopage.h \
+    src/ui/imagebutton.h \
     src/ui/lineedit.h \
     src/ui/mainlabel.h \
     src/ui/mainwindow.h \

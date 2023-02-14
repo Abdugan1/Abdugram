@@ -3,17 +3,17 @@
 
 #include <cstring>
 
-TitledWindow::TitledWindow(int h, int w, int y, int x,
+TitledWindow::TitledWindow(int x, int y, int w, int h,
                            WindowPtr parent,
                            WindowType winType,
                            const std::string &title)
 {
-    init(h, w, y, x, parent, winType, title);
+    init(x, y, w, h, parent, winType, title);
 }
 
 TitledWindow::TitledWindow(const std::string &title)
 {
-    init(LINES, COLS, 0, 0, nullptr, WindowType::Window, title);
+    init(0, 0, COLS, LINES, nullptr, WindowType::Window, title);
 }
 
 void TitledWindow::refresh()
@@ -29,12 +29,24 @@ void TitledWindow::parseInput(int choice)
     (void)choice;
 }
 
-WindowPtr TitledWindow::workingWindow()
+const WindowPtr &TitledWindow::workingWindow() const
 {
     return workingWindow_;
 }
 
-WindowPtr TitledWindow::window()
+
+const WindowPtr &TitledWindow::window() const
+{
+    return outerFrame_;
+}
+
+WindowPtr &TitledWindow::rworkingWindow()
+{
+    return workingWindow_;
+}
+
+
+WindowPtr &TitledWindow::rwindow()
 {
     return outerFrame_;
 }
@@ -49,13 +61,13 @@ WINDOW *TitledWindow::pwindowRaw()
     return outerFrame_->pwindow();
 }
 
-void TitledWindow::init(int h, int w, int y, int x,
+void TitledWindow::init(int x, int y, int w, int h,
                         WindowPtr parent,
                         WindowType winType,
                         const std::string &title)
 {
     title_ = title;
-    outerFrame_ = std::make_shared<CursedWindow>(h, w, y, x, parent, winType);
+    outerFrame_ = WindowPtr{new CursedWindow{x, y, w, h, parent, winType}};
 
     constructInnerWindow();
     constructWorkingWindow();
@@ -66,26 +78,24 @@ void TitledWindow::init(int h, int w, int y, int x,
 
 void TitledWindow::constructInnerWindow()
 {
-    int h = outerFrame_->height() - 2;
-    int w = outerFrame_->width();
-    int y = 2;
     int x = 0;
+    int y = 2;
+    int w = outerFrame_->width();
+    int h = outerFrame_->height() - 2;
 
-    innerFrame_ = std::make_shared<CursedWindow>(h, w, y, x,
-                                                 outerFrame_,
-                                                 WindowType::DerWindow);
+    innerFrame_ = WindowPtr{new CursedWindow{x, y, w, h, outerFrame_,
+                                            WindowType::DerWindow}};
 }
 
 void TitledWindow::constructWorkingWindow()
 {
-    int h = innerFrame_->height() - 2;
-    int w = innerFrame_->width()  - 2;
-    int y = 1;
     int x = 1;
+    int y = 1;
+    int w = innerFrame_->width()  - 2;
+    int h = innerFrame_->height() - 2;
 
-    workingWindow_ = std::make_shared<CursedWindow>(h, w, y, x,
-                                                    innerFrame_,
-                                                    WindowType::DerWindow);
+    workingWindow_ = WindowPtr{new CursedWindow{x, y, w, h, innerFrame_,
+                                                WindowType::DerWindow}};
 }
 
 void TitledWindow::printFrame()
@@ -98,9 +108,9 @@ void TitledWindow::printFrame()
 void TitledWindow::printTitle()
 {
     std::string title = "==" + title_ + "==";
-    int y = 1;
     int x = (innerFrame_->width() - title.size()) / 2;
-    mvwprintw(outerFrame_->pwindow(), y, x, title.c_str());
+    int y = 1;
+    outerFrame_->print(x, y, title);
 }
 
 void TitledWindow::setChoiceParse(std::function<void (TitledWindow *,

@@ -1,5 +1,6 @@
 #include "serverwindow.h"
 #include "mainmenupage.h"
+#include "logsviewpage.h"
 
 #include <QCoreApplication>
 #include <QDebug>
@@ -23,6 +24,11 @@ void ServerWindow::run()
     QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
 }
 
+void ServerWindow::setMainMenuServerStatus(bool serverRunning)
+{
+    mainMenu_->setServerRunning(serverRunning);
+}
+
 void ServerWindow::init()
 {
     initscr();
@@ -33,6 +39,11 @@ void ServerWindow::init()
 
     mainMenu_ = Pointer<MainMenuPage>(new MainMenuPage());
     mainMenu_->setChoiceParse([this](TitledWindow *window, const std::string &value) {
+        resultFunction(window, value);
+    });
+
+    logsView_ = Pointer<LogsViewPage>(new LogsViewPage{"server.log"});
+    logsView_->setChoiceParse([this](TitledWindow *window, const std::string &value) {
         resultFunction(window, value);
     });
 
@@ -55,6 +66,8 @@ void ServerWindow::resultFunction(TitledWindow *window, const std::any &value)
 {
     if (window == mainMenu_.get()) {
         parseMainMenuResults(value);
+    } else if (window == logsView_.get()) {
+        parseLogsViewResults(value);
     }
 }
 
@@ -63,5 +76,20 @@ void ServerWindow::parseMainMenuResults(const std::any &value)
     std::string result = std::any_cast<std::string>(value);
     if (result == "quit") {
         alive_ = false;
+        return;
     }
+
+    if (result == "toggle_server") {
+        qDebug() << "Toggle requested";
+        emit toggleServerRequested();
+    } else if (result == "show_logs") {
+        currentPage_ = logsView_;
+    }
+}
+
+void ServerWindow::parseLogsViewResults(const std::any &value)
+{
+    std::string result = std::any_cast<std::string>(value);
+    if (result == "quit")
+        currentPage_ = mainMenu_;
 }

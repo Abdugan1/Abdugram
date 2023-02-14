@@ -26,6 +26,7 @@ LIBS += -L$$OUT_PWD/../Logger/logger/lib -llogger
 
 SOURCES += \
         cursedwindow.cpp \
+        logsviewpage.cpp \
         main.cpp \
         mainmenupage.cpp \
         serverwindow.cpp \
@@ -33,6 +34,7 @@ SOURCES += \
 
 HEADERS += \
     cursedwindow.h \
+    logsviewpage.h \
     mainmenupage.h \
     serverwindow.h \
     titledwindow.h

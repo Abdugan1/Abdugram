@@ -1,11 +1,14 @@
 #include "rippleanimation.h"
 
+#include <QApplication>
 #include <QPropertyAnimation>
 #include <QMouseEvent>
 #include <QWidget>
 #include <QtMath>
 #include <QPainter>
 #include <QPaintEvent>
+#include <QPainterPath>
+#include <QRegularExpression>
 #include <QDebug>
 
 inline double getDiagonal(const QRectF &rect)
@@ -36,6 +39,14 @@ RippleAnimation::RippleAnimation(QWidget *parent)
     connect(disappearOpacityAnim_, &QPropertyAnimation::finished, this, [this]() {
         setHasRipple(false);
     });
+
+    QString styleSheet = qApp->styleSheet();
+    QRegularExpression  borderRadiusRegExp(QString("%1\\s*\\{[^\\}]*border-radius\\s*:\\s*(\\d+)px\\s*;")
+                                           .arg(widget_->metaObject()->className()));
+    QRegularExpressionMatch match = borderRadiusRegExp.match(styleSheet);
+
+    if (match.hasMatch())
+        borderRadius_ = match.captured(1).toInt();
 }
 
 void RippleAnimation::start()
@@ -167,6 +178,13 @@ bool RippleAnimation::eventFilter(QObject *watched, QEvent *event)
 void RippleAnimation::drawRipple() const
 {
     QPainter painter{widget_};
+
+    // button is rounded. So set clipping
+    QPainterPath path;
+    path.addRoundedRect(widget_->rect(), borderRadius_, borderRadius_);
+
+    painter.setClipPath(path);
+
     painter.setOpacity(opacity());
     painter.translate(startPos());
     painter.setPen(Qt::NoPen);

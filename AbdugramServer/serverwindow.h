@@ -1,15 +1,17 @@
 #ifndef SERVERWINDOW_H
 #define SERVERWINDOW_H
 
-#include <QRunnable>
+#include <QObject>
 #include <memory>
 #include <any>
 
 class TitledWindow;
 class MainMenuPage;
+class LogsViewPage;
 
-class ServerWindow : public QRunnable
+class ServerWindow : public QObject
 {
+    Q_OBJECT
 private:
     template <typename T>
     using Pointer = std::shared_ptr<T>;
@@ -18,7 +20,13 @@ public:
     explicit ServerWindow();
     ~ServerWindow();
 
-    void run() override;
+signals:
+    void toggleServerRequested();
+
+public slots:
+    void run();
+
+    void setMainMenuServerStatus(bool serverRunning);
 
 private:
     void init();
@@ -29,16 +37,18 @@ private:
     // Parse results from windows
     void resultFunction(TitledWindow *window, const std::any &value);
 
-    // MainMenu
+    //
     void parseMainMenuResults(const std::any &value);
+    void parseLogsViewResults(const std::any &value);
 
 
 private:
     bool alive_ = true;
 
-    Pointer<MainMenuPage> mainMenu_;
-
     Pointer<TitledWindow> currentPage_;
+
+    Pointer<MainMenuPage> mainMenu_;
+    Pointer<LogsViewPage> logsView_;
 };
 
 #endif // SERVERWINDOW_H

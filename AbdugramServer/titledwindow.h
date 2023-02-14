@@ -14,7 +14,7 @@ typedef struct _win_st WINDOW;
 class TitledWindow
 {
 public:
-    explicit TitledWindow(int h, int w, int y, int x,
+    explicit TitledWindow(int x, int y, int w, int h,
                           WindowPtr parent,
                           WindowType winType,
                           const std::string &title);
@@ -25,8 +25,11 @@ public:
 
     virtual void parseInput(int input);
 
-    WindowPtr workingWindow();
-    WindowPtr window();
+    const WindowPtr &workingWindow() const;
+    const WindowPtr &window() const;
+
+    WindowPtr &rworkingWindow();
+    WindowPtr &rwindow();
 
     WINDOW *pworkingWindowRaw();
     WINDOW *pwindowRaw();
