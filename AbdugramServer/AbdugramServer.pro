@@ -29,6 +29,7 @@ SOURCES += \
         logsviewpage.cpp \
         main.cpp \
         mainmenupage.cpp \
+        serverlogger.cpp \
         serverwindow.cpp \
         titledwindow.cpp
 
@@ -36,6 +37,7 @@ HEADERS += \
     cursedwindow.h \
     logsviewpage.h \
     mainmenupage.h \
+    serverlogger.h \
     serverwindow.h \
     titledwindow.h
 

@@ -5,6 +5,8 @@
 #include <memory>
 #include <any>
 
+#include <logger/logfile.h>
+
 class TitledWindow;
 class MainMenuPage;
 class LogsViewPage;
@@ -17,7 +19,7 @@ private:
     using Pointer = std::shared_ptr<T>;
 
 public:
-    explicit ServerWindow();
+    explicit ServerWindow(LogFilePtr &serverLogsFile);
     ~ServerWindow();
 
 signals:
@@ -27,9 +29,10 @@ public slots:
     void run();
 
     void setMainMenuServerStatus(bool serverRunning);
+    void updateLogsView();
 
 private:
-    void init();
+    void init(LogFilePtr &serverLogsFile);
 
     void printCurrentPage();
     void getAndParseInput();

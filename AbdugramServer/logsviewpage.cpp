@@ -2,9 +2,9 @@
 
 #include <QDebug>
 
-LogsViewPage::LogsViewPage(const std::string &fileName)
+LogsViewPage::LogsViewPage(LogFilePtr &logFile)
     : TitledWindow{"Logs View"}
-    , fileName_{fileName}
+    , logFile_{logFile}
 {
     updateBuffer();
     currentMaxLen_ = getCurrentMaxLen();
@@ -86,26 +86,28 @@ void LogsViewPage::updateView()
 
 void LogsViewPage::updateBuffer()
 {
-    file_.open(fileName_);
-
-    if (!file_.is_open()) {
-        qCritical() << "Could not open" << fileName_.c_str();
-        return;
-    }
+    qDebug() << "Updating buffer!";
+    QMutexLocker lock{&logFile_->mutex()};
+    logFile_->moveToBegin();
 
     lines_.clear();
     lines_.reserve(512);
     std::string str;
-    while (std::getline(file_, str)) {
+    while (!logFile_->atEnd()) {
+        str = logFile_->readLine().toStdString();
+        qDebug() << "str:" << str.c_str();
         lines_.push_back(str);
     }
     lines_.shrink_to_fit();
 
-    file_.close();
+    updateView();
 }
 
 int LogsViewPage::getCurrentMaxLen()
 {
+    if (lines_.empty())
+        return 0;
+
     int viewTop    = vPos_;
     int viewBottom = std::min(vPos_ + workingWindow()->height(), int(lines_.size()));
 

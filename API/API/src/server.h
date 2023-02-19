@@ -19,6 +19,8 @@ signals:
     void stopped();
     void aboutToStop();
 
+    void logCreated(const QString &log);
+
 public slots:
     void start();
     void stop();

@@ -3,13 +3,15 @@
 
 #include "titledwindow.h"
 
+#include <logger/logfile.h>
+
 #include <vector>
 #include <fstream>
 
 class LogsViewPage : public TitledWindow
 {
 public:
-    explicit LogsViewPage(const std::string &fileName);
+    explicit LogsViewPage(LogFilePtr &logFile);
 
     void parseInput(int input) override;
 
@@ -25,8 +27,7 @@ private:
     int hPos_ = 0;
     int currentMaxLen_ = 0;
 
-    std::ifstream file_;
-    std::string fileName_;
+    LogFilePtr logFile_;
 };
 
 #endif // LOGSVIEWPAGE_H

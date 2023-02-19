@@ -5,9 +5,9 @@
 #include <QCoreApplication>
 #include <QDebug>
 
-ServerWindow::ServerWindow()
+ServerWindow::ServerWindow(LogFilePtr &serverLogsFile)
 {
-    init();
+    init(serverLogsFile);
 }
 ServerWindow::~ServerWindow()
 {
@@ -29,7 +29,12 @@ void ServerWindow::setMainMenuServerStatus(bool serverRunning)
     mainMenu_->setServerRunning(serverRunning);
 }
 
-void ServerWindow::init()
+void ServerWindow::updateLogsView()
+{
+    logsView_->updateBuffer();
+}
+
+void ServerWindow::init(LogFilePtr &serverLogsFile)
 {
     initscr();
     cbreak();
@@ -42,7 +47,7 @@ void ServerWindow::init()
         resultFunction(window, value);
     });
 
-    logsView_ = Pointer<LogsViewPage>(new LogsViewPage{"server.log"});
+    logsView_ = Pointer<LogsViewPage>(new LogsViewPage{serverLogsFile});
     logsView_->setChoiceParse([this](TitledWindow *window, const std::string &value) {
         resultFunction(window, value);
     });

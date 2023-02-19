@@ -1,24 +1,29 @@
 #include <QCoreApplication>
 #include <QThreadPool>
+#include <QFileSystemWatcher>
 #include <QDebug>
 
 #include "serverwindow.h"
+#include "serverlogger.h"
 
 #include <api_server/server.h>
 #include <api_sql_server/database.h>
-#include <logger/logger.h>
 
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
     Logger::init();
 
+    LogFilePtr serverLogFile{new LogFile{"server.log"}};
+
+    ServerLogger::instance().setLogFile(serverLogFile);
+
     qInfo() << "\n\nApp started";
 
     Database::connectToDatabase();
 
     QThread windowThread;
-    ServerWindow serverWindow;
+    ServerWindow serverWindow(serverLogFile);
     serverWindow.moveToThread(&windowThread);
     QObject::connect(&windowThread, &QThread::started,
                      &serverWindow, &ServerWindow::run);
@@ -46,6 +51,18 @@ int main(int argc, char *argv[])
 
     QObject::connect(&server, &Server::stopped, [&serverWindow]() {
         serverWindow.setMainMenuServerStatus(false);
+    });
+
+    //
+    QFileSystemWatcher serverLogWatcher;
+    serverLogWatcher.addPath(serverLogFile->filePath());
+
+    QObject::connect(&serverLogWatcher, &QFileSystemWatcher::fileChanged, [&](){
+        serverWindow.updateLogsView();
+    });
+
+    QObject::connect(&server, &Server::logCreated, [](const QString &log) {
+        ServerLogger::instance().writeLog(log);
     });
 
     windowThread.start();

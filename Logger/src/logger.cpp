@@ -4,9 +4,9 @@
 #include <QTextStream>
 #include <QDateTime>
 
-bool  Logger::isInit_   = false;
-bool  Logger::echoMode_ = false;
-QFile Logger::logFile_  = QFile();
+bool    Logger::isInit_          = false;
+bool    Logger::echoMode_        = false;
+LogFile Logger::defaultLogFile_  = LogFile{};
 
 QHash<QtMsgType, QString> Logger::contextNames_ = {
     {QtMsgType::QtDebugMsg,    "DBG"},
@@ -16,22 +16,26 @@ QHash<QtMsgType, QString> Logger::contextNames_ = {
     {QtMsgType::QtFatalMsg,    "FTL"}
 };
 
+Logger::~Logger()
+{
+
+}
+
+void Logger::setLogFile(LogFilePtr &logFile)
+{
+    logFile_ = logFile;
+}
+
 void Logger::init(const QString &logFileName)
 {
     if (isInit_)
         return;
 
-    logFile_.setFileName(logFileName);
-    logFile_.open(QFile::Append | QFile::Text);
+    defaultLogFile_.setFileName(logFileName);
 
     qInstallMessageHandler(Logger::messageOutput);
 
     isInit_ = true;
-}
-
-void Logger::clean()
-{
-    logFile_.close();
 }
 
 void Logger::messageOutput(QtMsgType type,
@@ -52,8 +56,7 @@ void Logger::messageOutput(QtMsgType type,
             .arg(message);
 
 
-    logFile_.write(log.toLocal8Bit());
-    logFile_.flush();
+    defaultLogFile_.write(log.toLocal8Bit());
 
     if (echoMode_)
         QTextStream(stdout) << log;

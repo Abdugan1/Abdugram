@@ -22,12 +22,14 @@ void Server::start()
         return;
 
     if (!listen(QHostAddress::Any, consts::server::Port)) {
-        qCritical() << "Couldn't start server!" << errorString();
+        QString log = "Couldn't start server! " + errorString();
+        qCritical() << log;
+        emit logCreated(log);
         return;
     }
 
     emit started();
-    qInfo() << "Server started";
+    emit logCreated("Server started");
 }
 
 void Server::stop()
@@ -40,7 +42,7 @@ void Server::stop()
     close();
 
     emit stopped();
-    qInfo() << "Server stopeed";
+    emit logCreated("Server stopeed");
 }
 
 void Server::toggle()
@@ -60,7 +62,8 @@ void Server::incomingConnection(qintptr socketDescriptor)
 
     connect(session, &TcpSession::disconnected, session, &TcpSession::deleteLater);
 
-    qInfo() << "New session created:" << session->peerAddress();
+    QString log = "New session created: " + session->peerAddress().toString();
+    emit logCreated(log);
 }
 
 TcpSession *Server::createSession()
