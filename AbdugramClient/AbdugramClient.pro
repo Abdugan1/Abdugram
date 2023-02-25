@@ -1,4 +1,4 @@
-QT += core gui widgets sql
+QT += core gui widgets sql network
 
 CONFIG += c++17
 
@@ -19,6 +19,7 @@ LIBS += -L$$OUT_PWD/../Logger/logger/lib -llogger
 
 SOURCES += \
     src/main.cpp \
+    src/sectimer.cpp \
     src/ui/button.cpp \
     src/ui/headerlabel.cpp \
     src/ui/hellopage.cpp \
@@ -26,12 +27,14 @@ SOURCES += \
     src/ui/lineedit.cpp \
     src/ui/mainlabel.cpp \
     src/ui/mainwindow.cpp \
+    src/ui/problemwidget.cpp \
     src/ui/registrationpage.cpp \
     src/ui/rippleanimation.cpp \
     src/ui/secondarylabel.cpp \
     src/ui/stackedwidget.cpp
 
 HEADERS += \
+    src/sectimer.h \
     src/ui/button.h \
     src/ui/headerlabel.h \
     src/ui/hellopage.h \
@@ -39,6 +42,7 @@ HEADERS += \
     src/ui/lineedit.h \
     src/ui/mainlabel.h \
     src/ui/mainwindow.h \
+    src/ui/problemwidget.h \
     src/ui/registrationpage.h \
     src/ui/rippleanimation.h \
     src/ui/secondarylabel.h \

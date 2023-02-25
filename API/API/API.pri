@@ -49,3 +49,4 @@ contains(DEFINES, API_SERVER_LIBRARY) {
 }
 
 copyFiles($$PWD/src/*.h, $$OUT_PWD/$$TARGET/include/$$TARGET)
+copyDir($$PWD/src/messages, $$OUT_PWD/$$TARGET/include/$$TARGET)

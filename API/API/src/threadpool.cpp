@@ -1,12 +1,13 @@
 #include "threadpool.h"
 
 #include <cmath>
+#include <QDebug>
 
-ThreadPool::ThreadPool(int numberOfThreads, QObject *parent)
+ThreadPool::ThreadPool(QObject *parent, int numberOfThreads)
     : QObject{parent}
-    , threads_{numberOfThreads}
-    , threadLoads_{numberOfThreads}
 {
+    threads_.resize(numberOfThreads);
+    threadLoads_.resize(numberOfThreads);
     for (int i = 0; i < numberOfThreads; ++i) {
         QThread *thread = new QThread{this};
         thread->start();

@@ -33,7 +33,7 @@ private:
     TcpSession *createSession();
 
 private:
-    ThreadPool threadPool_;
+    ThreadPool *threadPool_ = nullptr;
 };
 
 #endif // SERVER_H

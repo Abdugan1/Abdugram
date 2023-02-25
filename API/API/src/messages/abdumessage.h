@@ -2,7 +2,7 @@
 #define ABDUMESSAGE_H
 
 #include <QString>
-#include "datastream.h"
+#include "../datastream.h"
 #include <QSharedDataPointer>
 
 class AbduMessage;

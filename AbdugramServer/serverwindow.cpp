@@ -85,7 +85,6 @@ void ServerWindow::parseMainMenuResults(const std::any &value)
     }
 
     if (result == "toggle_server") {
-        qDebug() << "Toggle requested";
         emit toggleServerRequested();
     } else if (result == "show_logs") {
         currentPage_ = logsView_;

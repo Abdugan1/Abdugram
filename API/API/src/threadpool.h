@@ -9,7 +9,7 @@ class ThreadPool : public QObject
 {
     Q_OBJECT
 public:
-    explicit ThreadPool(int numberOfThreads = QThread::idealThreadCount(), QObject *parent = nullptr);
+    explicit ThreadPool(QObject *parent = nullptr, int numberOfThreads = QThread::idealThreadCount());
     ~ThreadPool();
 
 signals:

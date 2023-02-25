@@ -7,8 +7,8 @@
 
 Server::Server(QObject *parent)
     : QTcpServer{parent}
+    , threadPool_{new ThreadPool}
 {
-
 }
 
 Server::~Server()
@@ -42,7 +42,7 @@ void Server::stop()
     close();
 
     emit stopped();
-    emit logCreated("Server stopeed");
+    emit logCreated("Server stopped");
 }
 
 void Server::toggle()
@@ -56,11 +56,14 @@ void Server::toggle()
 void Server::incomingConnection(qintptr socketDescriptor)
 {
     TcpSession *session = createSession();
-    if (!session->openSession(socketDescriptor)) {
-        session->deleteLater();
-    }
 
-    connect(session, &TcpSession::disconnected, session, &TcpSession::deleteLater);
+    bool opened;
+    QMetaObject::invokeMethod(session, "openSession", Qt::BlockingQueuedConnection, Q_RETURN_ARG(bool, opened), Q_ARG(quintptr, socketDescriptor));
+
+    if (!opened) {
+        session->deleteLater();
+        return;
+    }
 
     QString log = "New session created: " + session->peerAddress().toString();
     emit logCreated(log);
@@ -71,10 +74,10 @@ TcpSession *Server::createSession()
     TcpSession *session = new TcpSession;
 
     // cleaning
-    connect(this,    &Server::aboutToStop,      session, &TcpSession::deleteLater);
+    connect(this,    &Server::aboutToStop,      session, &TcpSession::closeSession);
     connect(session, &TcpSession::disconnected, session, &TcpSession::deleteLater);
 
-    threadPool_.moveObjectToLeastLoadedThread(session);
+    threadPool_->moveObjectToLeastLoadedThread(session);
 
     return session;
 }

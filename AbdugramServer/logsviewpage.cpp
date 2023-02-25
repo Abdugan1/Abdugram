@@ -86,7 +86,6 @@ void LogsViewPage::updateView()
 
 void LogsViewPage::updateBuffer()
 {
-    qDebug() << "Updating buffer!";
     QMutexLocker lock{&logFile_->mutex()};
     logFile_->moveToBegin();
 
@@ -95,7 +94,6 @@ void LogsViewPage::updateBuffer()
     std::string str;
     while (!logFile_->atEnd()) {
         str = logFile_->readLine().toStdString();
-        qDebug() << "str:" << str.c_str();
         lines_.push_back(str);
     }
     lines_.shrink_to_fit();
