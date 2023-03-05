@@ -14,8 +14,10 @@ public:
     QString password() const;
     void setPassword(const QString &newPassword);
 
-    void fromData(const QByteArray &data) override;
     QByteArray toData() const override;
+
+private:
+    void gainDataFromPayload(DataStream *stream) override;
 
 private:
     QString username_;

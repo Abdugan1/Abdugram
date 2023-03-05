@@ -3,6 +3,8 @@
 
 #include <QWidget>
 
+#include <api_client/messages/abdumessage.h>
+
 class HeaderLabel;
 class SecondaryLabel;
 class LineEdit;
@@ -17,6 +19,12 @@ public:
 
 signals:
     void backButtonClicked();
+    void toLoginPageClicked();
+
+    void registerRequested(const AbduMessagePtr &registerMessage);
+
+private slots:
+    void sendRegisterMessage();
 
 private:
     void setupUi();
@@ -35,6 +43,8 @@ private:
 
     Button      *nextButton_ = nullptr;
     ImageButton *backButton_ = nullptr;
+
+    SecondaryLabel *toLoginPageLabel_ = nullptr;
 };
 
 #endif // REGISTRATIONPAGE_H

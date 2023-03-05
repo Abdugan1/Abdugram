@@ -19,6 +19,8 @@ public:
     QEasingCurve easingCurve() const;
     void setEasingCurve(const QEasingCurve &newEasingCurve);
 
+    QWidget *previousWidget();
+
 private:
     void setupToSlideWidget();
 
@@ -32,8 +34,9 @@ private:
     int          slideDuration_ = 200;
     QEasingCurve easingCurve_   = QEasingCurve::OutQuad;
 
-    QWidget *currentWidget_ = nullptr;
-    QWidget *toSlideWidget_ = nullptr;
+    QWidget *previousWidget_ = nullptr;
+    QWidget *currentWidget_  = nullptr;
+    QWidget *toSlideWidget_  = nullptr;
 };
 
 #endif // STACKEDWIDGET_H

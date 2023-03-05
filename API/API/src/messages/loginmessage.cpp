@@ -26,18 +26,16 @@ void LoginMessage::setPassword(const QString &newPassword)
     password_ = newPassword;
 }
 
-void LoginMessage::fromData(const QByteArray &data)
-{
-    AbduMessage::fromData(data);
-    DataStream stream(data);
-    stream >> username_ >> password_;
-}
-
 QByteArray LoginMessage::toData() const
 {
     QByteArray data = AbduMessage::toData();
     DataStream stream(&data, QIODevice::Append);
     stream << username_ << password_;
     return data;
+}
+
+void LoginMessage::gainDataFromPayload(DataStream *stream)
+{
+    *stream >> username_ >> password_;
 }
 

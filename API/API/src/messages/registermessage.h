@@ -8,7 +8,6 @@ class RegisterMessage : public AbduMessage
 public:
     explicit RegisterMessage();
 
-    void fromData(const QByteArray &data) override;
     QByteArray toData() const override;
 
     QString firstName() const;
@@ -30,13 +29,15 @@ public:
     void setEmail(const QString &newEmail);
 
 private:
+    void gainDataFromPayload(DataStream *stream) override;
+
+private:
     QString firstName_;
     QString lastName_;
     QString username_;
     QString password_;
     QString phone_;
     QString email_;
-
 };
 
 #endif // REGISTERMESSAGE_H

@@ -4,6 +4,8 @@
 #include <QRegularExpression>
 #include <QDebug>
 
+#include <api_client/messages/abdumessage.h>
+
 #include <api_sql_client/database.h>
 
 #include <logger/logger.h>
@@ -41,6 +43,8 @@ void setupStyleSheet(QString rawStyleSheet)
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+
+    qRegisterMetaType<AbduMessagePtr>("AbduMessagePtr");
 
     // Setup logger
     Logger::init();

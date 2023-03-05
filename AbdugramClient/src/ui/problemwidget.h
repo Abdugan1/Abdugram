@@ -11,20 +11,23 @@ class ProblemWidget : public QWidget
     Q_OBJECT
 public:
     explicit ProblemWidget(QWidget *parent = nullptr);
-    explicit ProblemWidget(const QString &text, QWidget *parent = nullptr);
 
-    void setText(const QString &text);
-    void setSizeByTemplateText(const QString &text);
+    void setTextToConnecting();
+    void setRemainingTime(int remainingSeconds);
+
+signals:
+    void reconnectNowClicked();
 
 protected:
     void paintEvent(QPaintEvent *event) override;
 
 private:
-    void init(const QString &text);
+    void init();
 
 private:
     QLabel *busyIndicator_ = nullptr;
     SecondaryLabel *text_  = nullptr;
+    SecondaryLabel *reconnectLink_ = nullptr;
 
 };
 

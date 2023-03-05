@@ -41,6 +41,7 @@ void TcpSession::send(const AbduMessagePtr &message)
 
 void TcpSession::readAvailData()
 {
+    qDebug() << "Data is available";
     DataStream stream{this};
     while (true) {
         stream.startTransaction();
@@ -48,6 +49,8 @@ void TcpSession::readAvailData()
         stream >> data;
         if (!stream.commitTransaction())
             return; // The message may come in chuncks, so wait for more
+
+        qDebug() << "Data transaction was succesfully";
 
         auto abduMessage = AbduMessageFactory::fromData(data);
 

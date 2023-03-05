@@ -69,6 +69,11 @@ SecondaryLabel {
     color: @secondaryLabelColor;
 }
 
+SecondaryLabel#small-font {
+    /* Text color */
+    font-size: 11pt;
+}
+
 /* HeaderLabel */
 HeaderLabel {
     color: @headerLabelColor;

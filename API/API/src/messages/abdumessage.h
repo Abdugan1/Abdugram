@@ -7,6 +7,8 @@
 
 class AbduMessage;
 using AbduMessagePtr = QSharedDataPointer<AbduMessage>;
+template<typename T>
+using AnyMessagePtr = QSharedDataPointer<T>;
 
 class AbduMessage : public QSharedData
 {
@@ -32,14 +34,22 @@ public:
 
     //! Sets data info to class
     //! Base class implementation just skips type
-    virtual void fromData(const QByteArray &data);
+    void fromData(const QByteArray &data);
 
     //! Constructs QByteArray from class
     //! Base class implementation writes type to it
     virtual QByteArray toData() const;
 
+    //! Returns occupied bytes count for header
+    int headerSize() const;
+
+private:
+    virtual void gainDataFromPayload(DataStream *stream);
+
 private:
     Type type_;
 };
+
+Q_DECLARE_METATYPE(AbduMessagePtr)
 
 #endif // ABDUMESSAGE_H

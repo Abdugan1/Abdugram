@@ -11,9 +11,16 @@ SecTimer::SecTimer(QObject *parent)
 
     connect(timer_, &QTimer::timeout, this, [this]() {
         emit timeout1Sec(duration_ - (++elapsed_));
-        if (elapsed_ == duration_)
-            stop();
+        if (elapsed_ == duration_) {
+            reset();
+            emit fullElapsed();
+        }
     });
+}
+
+int SecTimer::duration() const
+{
+    return duration_;
 }
 
 void SecTimer::setDuration(int duration)
@@ -30,7 +37,12 @@ void SecTimer::start()
 
 void SecTimer::stop()
 {
+    reset();
+    emit stopped();
+}
+
+void SecTimer::reset()
+{
     elapsed_ = 0;
     timer_->stop();
-    emit stopped();
 }

@@ -5,6 +5,8 @@
 #include "button.h"
 #include "imagebutton.h"
 
+#include <api_client/messages/registermessage.h>
+
 #include <QBoxLayout>
 #include <QGridLayout>
 
@@ -13,8 +15,27 @@ RegistrationPage::RegistrationPage(QWidget *parent)
 {
     setupUi();
 
+    connect(nextButton_, &Button::clicked,
+            this,        &RegistrationPage::sendRegisterMessage);
+
     connect(backButton_, &ImageButton::clicked,
             this,        &RegistrationPage::backButtonClicked);
+
+    connect(toLoginPageLabel_, &QLabel::linkActivated,
+            this,              &RegistrationPage::toLoginPageClicked);
+}
+
+void RegistrationPage::sendRegisterMessage()
+{
+    AnyMessagePtr<RegisterMessage> registerMessage{new RegisterMessage};
+    registerMessage->setFirstName(firstNameEdit_->text());
+    registerMessage->setLastName(lastNameEdit_->text());
+    registerMessage->setUsername(usernameEdit_->text());
+    registerMessage->setEmail(emailEdit_->text());
+    registerMessage->setPhone(phoneNumberEdit_->text());
+    registerMessage->setPassword(passwordEdit_->text());
+
+    emit registerRequested(static_cast<AbduMessagePtr>(registerMessage));
 }
 
 void RegistrationPage::setupUi()
@@ -58,11 +79,21 @@ void RegistrationPage::setupUi()
     //
     nextButton_ = new Button{tr("Next")};
 
+    //
+    toLoginPageLabel_ = new SecondaryLabel{tr("Already have an account? "
+                                              "<a href=\"to_login\""
+                                              "style = \""
+                                              "color: #A4508B;"
+                                              "text-decoration: underlying;"
+                                              "\""
+                                              ">Login</a>")};
+
     // Group
     QVBoxLayout *groupLayout = new QVBoxLayout;
     groupLayout->addLayout(labelsLayout);
     groupLayout->addLayout(gLayout);
     groupLayout->addWidget(nextButton_);
+    groupLayout->addWidget(toLoginPageLabel_);
 
     groupLayout->setAlignment(Qt::AlignCenter);
     groupLayout->setSpacing(15);

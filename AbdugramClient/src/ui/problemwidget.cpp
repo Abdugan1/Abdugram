@@ -6,29 +6,37 @@
 #include <QPainter>
 #include <QGraphicsDropShadowEffect>
 
+const QString Connecting = QObject::tr("Connecting...");
+const QString ReconnectInText = QObject::tr("Reconnecting in %1 s...");
+const QString TryNowLink = QObject::tr("<a href=\"reconnect\" "
+                                       "style=\""
+                                       "color: #A4508B;"
+                                       "text-decoration: underline;"
+                                       "\""
+                                       ">"
+                                       "Try now"
+                                       "</a>");
+
 ProblemWidget::ProblemWidget(QWidget *parent)
     : QWidget{parent}
 {
-    init("");
+    init();
 }
 
-ProblemWidget::ProblemWidget(const QString &text, QWidget *parent)
-    : QWidget{parent}
+void ProblemWidget::setTextToConnecting()
 {
-    init(text);
+    reconnectLink_->setVisible(false);
+    text_->setFixedWidth(text_->fontMetrics().horizontalAdvance(Connecting));
+    text_->setText(Connecting);
+    setFixedSize(layout()->sizeHint());
 }
 
-void ProblemWidget::setText(const QString &text)
+void ProblemWidget::setRemainingTime(int remainingSeconds)
 {
-    text_->setText(text);
-}
-
-void ProblemWidget::setSizeByTemplateText(const QString &text)
-{
-    QString oldText = text_->text();
-    text_->setText(text);
-    resize(layout()->sizeHint());
-    text_->setText(oldText);
+    reconnectLink_->setVisible(true);
+    text_->setFixedWidth(text_->fontMetrics().horizontalAdvance(ReconnectInText.arg("XX")));
+    text_->setText(ReconnectInText.arg(QString::number(remainingSeconds)));
+    setFixedSize(layout()->sizeHint());
 }
 
 void ProblemWidget::paintEvent(QPaintEvent *event)
@@ -41,7 +49,7 @@ void ProblemWidget::paintEvent(QPaintEvent *event)
     QWidget::paintEvent(event);
 }
 
-void ProblemWidget::init(const QString &text)
+void ProblemWidget::init()
 {
     busyIndicator_ = new QLabel;
     busyIndicator_->resize(30, 18);
@@ -51,12 +59,17 @@ void ProblemWidget::init(const QString &text)
     busyIndicator_->setMovie(gif);
     gif->start();
 
-    text_ = new SecondaryLabel{text};
+    text_ = new SecondaryLabel;
     text_->setObjectName("small-font");
+
+    reconnectLink_ = new SecondaryLabel{TryNowLink};
+    reconnectLink_->setObjectName("small-font");
+    connect(reconnectLink_, &QLabel::linkActivated, this, &ProblemWidget::reconnectNowClicked);
 
     QHBoxLayout *hLayout = new QHBoxLayout;
     hLayout->addWidget(busyIndicator_);
     hLayout->addWidget(text_);
+    hLayout->addWidget(reconnectLink_);
     int vm = 3;
     int hm = 15;
     hLayout->setContentsMargins(hm, vm, hm, vm);
@@ -71,4 +84,6 @@ void ProblemWidget::init(const QString &text)
     shadow->setOffset(0, 0);
 
     setGraphicsEffect(shadow);
+
+    setTextToConnecting();
 }

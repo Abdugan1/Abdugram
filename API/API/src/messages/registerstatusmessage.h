@@ -8,14 +8,17 @@ class RegisterStatusMessage : public AbduMessage
 public:
     explicit RegisterStatusMessage();
 
-    void fromData(const QByteArray &data) override;
     QByteArray toData() const override;
 
     bool success() const;
     void setSuccess(bool newSuccess);
 
 private:
+    void gainDataFromPayload(DataStream *stream) override;
+
+private:
     bool success_ = false;
+
 };
 
 #endif // REGISTERSTATUSMESSAGE_H

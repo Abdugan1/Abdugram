@@ -11,6 +11,7 @@ class SecTimer : public QObject
 public:
     explicit SecTimer(QObject *parent = nullptr);
 
+    int duration() const;
     void setDuration(int duration);
 
     void start();
@@ -19,7 +20,11 @@ public:
 signals:
     void started();
     void stopped();
+    void fullElapsed();
     void timeout1Sec(int remaining);
+
+private:
+    void reset();
 
 private:
     QTimer *timer_ = nullptr;

@@ -1,21 +1,11 @@
 #include "registermessage.h"
 
+#include <QDebug>
+
 RegisterMessage::RegisterMessage()
     : AbduMessage{Type::Register}
 {
 
-}
-
-void RegisterMessage::fromData(const QByteArray &data)
-{
-    AbduMessage::fromData(data);
-    DataStream stream(data);
-    stream >> firstName_
-           >> lastName_
-           >> username_
-           >> password_
-           >> phone_
-           >> email_;
 }
 
 QByteArray RegisterMessage::toData() const
@@ -90,4 +80,14 @@ QString RegisterMessage::email() const
 void RegisterMessage::setEmail(const QString &newEmail)
 {
     email_ = newEmail;
+}
+
+void RegisterMessage::gainDataFromPayload(DataStream *stream)
+{
+    *stream >> firstName_
+            >> lastName_
+            >> username_
+            >> password_
+            >> phone_
+            >> email_;
 }

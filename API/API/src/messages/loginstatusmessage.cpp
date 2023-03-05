@@ -6,13 +6,6 @@ LoginStatusMessage::LoginStatusMessage()
 
 }
 
-void LoginStatusMessage::fromData(const QByteArray &data)
-{
-    AbduMessage::fromData(data);
-    DataStream stream(data);
-    stream >> success_;
-}
-
 QByteArray LoginStatusMessage::toData() const
 {
     QByteArray data = AbduMessage::toData();
@@ -29,4 +22,9 @@ bool LoginStatusMessage::success() const
 void LoginStatusMessage::setSuccess(bool newSuccess)
 {
     success_ = newSuccess;
+}
+
+void LoginStatusMessage::gainDataFromPayload(DataStream *stream)
+{
+    *stream >> success_;
 }

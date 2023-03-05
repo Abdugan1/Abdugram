@@ -6,13 +6,6 @@ RegisterStatusMessage::RegisterStatusMessage()
 
 }
 
-void RegisterStatusMessage::fromData(const QByteArray &data)
-{
-    AbduMessage::fromData(data);
-    DataStream stream(data);
-    stream >> success_;
-}
-
 QByteArray RegisterStatusMessage::toData() const
 {
     QByteArray data = AbduMessage::toData();
@@ -29,4 +22,9 @@ bool RegisterStatusMessage::success() const
 void RegisterStatusMessage::setSuccess(bool newSuccess)
 {
     success_ = newSuccess;
+}
+
+void RegisterStatusMessage::gainDataFromPayload(DataStream *stream)
+{
+    *stream >> success_;
 }

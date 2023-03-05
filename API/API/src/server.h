@@ -3,6 +3,8 @@
 
 #include <QTcpServer>
 
+#include "messages/abdumessage.h"
+
 #include "threadpool.h"
 
 class TcpSession;
@@ -25,6 +27,9 @@ public slots:
     void start();
     void stop();
     void toggle();
+
+private slots:
+    void processMessage(const AbduMessagePtr &message);
 
 protected:
     void incomingConnection(qintptr handle) override;

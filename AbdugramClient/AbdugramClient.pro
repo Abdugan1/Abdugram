@@ -25,6 +25,7 @@ SOURCES += \
     src/ui/hellopage.cpp \
     src/ui/imagebutton.cpp \
     src/ui/lineedit.cpp \
+    src/ui/loginpage.cpp \
     src/ui/mainlabel.cpp \
     src/ui/mainwindow.cpp \
     src/ui/problemwidget.cpp \
@@ -40,6 +41,7 @@ HEADERS += \
     src/ui/hellopage.h \
     src/ui/imagebutton.h \
     src/ui/lineedit.h \
+    src/ui/loginpage.h \
     src/ui/mainlabel.h \
     src/ui/mainwindow.h \
     src/ui/problemwidget.h \

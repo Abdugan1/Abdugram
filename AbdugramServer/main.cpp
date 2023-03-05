@@ -7,12 +7,16 @@
 #include "serverlogger.h"
 
 #include <api_server/server.h>
+#include <api_server/messages/abdumessage.h>
+
 #include <api_sql_server/database.h>
 
 int main(int argc, char *argv[])
 {
     QCoreApplication app(argc, argv);
     Logger::init();
+
+    qRegisterMetaType<AbduMessagePtr>("AbduMessagePtr");
 
     LogFilePtr serverLogFile{new LogFile{"server.log"}};
 

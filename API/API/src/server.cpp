@@ -2,6 +2,8 @@
 #include "consts.h"
 #include "tcpsession.h"
 
+#include <messages/registermessage.h>
+
 #include <QHostAddress>
 #include <QDebug>
 
@@ -53,6 +55,18 @@ void Server::toggle()
         start();
 }
 
+void Server::processMessage(const AbduMessagePtr &message)
+{
+    if (auto registerMessage = dynamic_cast<const RegisterMessage*>(message.data())) {
+        qDebug() << "Success conversion";
+        qDebug() << "firstname" << registerMessage->firstName();
+        qDebug() << "lastname" << registerMessage->lastName();
+    } else {
+        qDebug() << "Failed to converse";
+    }
+    emit logCreated(QString::fromUtf8(message->toData()));
+}
+
 void Server::incomingConnection(qintptr socketDescriptor)
 {
     TcpSession *session = createSession();
@@ -72,12 +86,14 @@ void Server::incomingConnection(qintptr socketDescriptor)
 TcpSession *Server::createSession()
 {
     TcpSession *session = new TcpSession;
+    threadPool_->moveObjectToLeastLoadedThread(session);
+
+    qDebug() << "rec con:" << connect(session, &TcpSession::received, this, &Server::processMessage);
 
     // cleaning
     connect(this,    &Server::aboutToStop,      session, &TcpSession::closeSession);
     connect(session, &TcpSession::disconnected, session, &TcpSession::deleteLater);
 
-    threadPool_->moveObjectToLeastLoadedThread(session);
 
     return session;
 }

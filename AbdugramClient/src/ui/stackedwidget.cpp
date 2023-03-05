@@ -17,6 +17,7 @@ void StackedWidget::toWidget(QWidget *widget)
 void StackedWidget::toIndex(int index)
 {
     currentWidget_ = widget(currentIndex());
+    previousWidget_ = currentWidget_;
     toSlideWidget_ = widget(index);
 
     setupToSlideWidget();
@@ -26,6 +27,8 @@ void StackedWidget::toIndex(int index)
     } else {
         slideBackward();
     }
+
+    currentWidget_ = toSlideWidget_;
 }
 
 void StackedWidget::startAnimation(const QPoint &currentBegin, const QPoint &currentEnd,
@@ -54,6 +57,11 @@ void StackedWidget::startAnimation(const QPoint &currentBegin, const QPoint &cur
     });
 
     animations->start(QAbstractAnimation::DeleteWhenStopped);
+}
+
+QWidget *StackedWidget::previousWidget()
+{
+    return previousWidget_;
 }
 
 void StackedWidget::slideBackward()
