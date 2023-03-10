@@ -6,10 +6,10 @@
 #include "serverwindow.h"
 #include "serverlogger.h"
 
-#include <api_server/server.h>
-#include <api_server/messages/abdumessage.h>
+#include <net_server/server.h>
+#include <net_common/messages/abdumessage.h>
 
-#include <api_sql_server/database.h>
+#include <sql_server/databaseserver.h>
 
 int main(int argc, char *argv[])
 {
@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
 
     qInfo() << "\n\nApp started";
 
-    Database::connectToDatabase();
+    DatabaseServer::instance()->connectToDatabase();
 
     QThread windowThread;
     ServerWindow serverWindow(serverLogFile);

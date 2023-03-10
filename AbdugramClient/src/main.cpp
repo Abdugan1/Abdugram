@@ -4,9 +4,9 @@
 #include <QRegularExpression>
 #include <QDebug>
 
-#include <api_client/messages/abdumessage.h>
+#include <net_common/messages/abdumessage.h>
 
-#include <api_sql_client/database.h>
+#include <sql_client/databaseclient.h>
 
 #include <logger/logger.h>
 
@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
     QFontDatabase db;
     app.setFont(QFont{"Montserrat", 12, QFont::Medium});
 
-    Database::connectToDatabase();
+    DatabaseClient::instance()->connectToDatabase();
 
     MainWindow mainWindow;
     mainWindow.show();

@@ -1,29 +1,30 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
-    API_Client \
-    API_SQL_Client \
-    API_Server \
-    API_SQL_Server \
     AbdugramClient \
     AbdugramServer \
-    Logger
+    Logger \
+    NetCommon \
+    NetServer \
+    SqlClient \
+    SqlCommon \
+    SqlServer
 
-API_Client.file     = API/API_Client/API_Client.pro
-API_SQL_Client.file = API_SQL/API_SQL_Client/API_SQL_Client.pro
-API_Server.file     = API/API_Server/API_Server.pro
-API_SQL_Server.file = API_SQL/API_SQL_Server/API_SQL_Server.pro
 AbdugramClient.file = AbdugramClient/AbdugramClient.pro
 AbdugramServer.file = AbdugramServer/AbdugramServer.pro
+SqlClient.file      = SqlClient/SqlClient.pro
+SqlCommon.file      = SqlCommon/SqlCommon.pro
+SqlServer.file      = SqlServer/SqlServer.pro
+NetCommon.file      = NetCommon/NetCommon.pro
+NetServer.file      = NetServer/NetServer.pro
 
-AbdugramClient.depends = API_Client
-AbdugramClient.depends = API_SQL_Client
+AbdugramClient.depends += NetCommon
+AbdugramClient.depends += SqlClient
 
-AbdugramServer.depends = API_Server
-AbdugramServer.depends = API_SQL_Server
+AbdugramServer.depends += NetServer
+AbdugramServer.depends += SqlServer
 
-API_SQL_Client.depends = API_Client
-API_SQL_Server.depends = API_Server
+NetServer.depends += NetCommon
 
 OTHER_FILES += \
     Functions.pri \

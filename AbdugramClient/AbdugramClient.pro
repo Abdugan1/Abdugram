@@ -5,13 +5,16 @@ CONFIG += c++17
 include($$PWD/../AppDirsConfig.pri)
 include($$PWD/../Functions.pri)
 
-# api_client library
-INCLUDEPATH += $$OUT_PWD/../API/API_Client/api_client/include
-LIBS += -L$$OUT_PWD/../API/API_Client/api_client/lib -lapi_client
+# net library
+INCLUDEPATH += $$PWD/../NetCommon/include
+LIBS += -L$$OUT_PWD/../NetCommon/net_common/lib -lnet_common
 
-# api_sql_client library
-INCLUDEPATH += $$OUT_PWD/../API_SQL/API_SQL_Client/api_sql_client/include
-LIBS += -L$$OUT_PWD/../API_SQL/API_SQL_Client/api_sql_client/lib -lapi_sql_client
+# sql library
+INCLUDEPATH += $$PWD/../SqlClient/include
+LIBS += -L$$OUT_PWD/../SqlClient/sql_client/lib -lsql_client
+
+INCLUDEPATH += $$PWD/../SqlCommon/include
+LIBS += -L$$OUT_PWD/../SqlCommon/sql_common/lib -lsql_common
 
 # logger library
 INCLUDEPATH += $$OUT_PWD/../Logger/logger/include
@@ -60,7 +63,7 @@ OTHER_FILES += \
 
 
 # Copy *.sql files to build_dir/sql directory
-LIB_SQL_FILES = $$OUT_PWD/../API_SQL/API_SQL_Client/api_sql_client/sql/*
+LIB_SQL_FILES = $$OUT_PWD/../SqlClient/sql_client/sql/*
 APP_SQL_DIR   = $$DESTDIR/.sql/
 
 copyDir($$LIB_SQL_FILES, $$APP_SQL_DIR)

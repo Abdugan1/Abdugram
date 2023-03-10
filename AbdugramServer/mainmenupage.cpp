@@ -2,7 +2,7 @@
 #include "titledwindow.h"
 #include "cursedwindow.h"
 
-#include "api_server/consts.h"
+#include "net_common/consts.h"
 
 #include <QCoreApplication>
 

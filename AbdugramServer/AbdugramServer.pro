@@ -12,13 +12,19 @@ include($$PWD/../Functions.pri)
 # ncurses libraries
 LIBS += -lmenu -lncurses
 
-# api_server library
-INCLUDEPATH += $$OUT_PWD/../API/API_Server/api_server/include
-LIBS += -L$$OUT_PWD/../API/API_Server/api_server/lib -lapi_server
+# net library
+INCLUDEPATH += $$PWD/../NetCommon/include
+LIBS += -L$$OUT_PWD/../NetCommon/net_common/lib -lnet_common
 
-# api_sql_server library
-INCLUDEPATH += $$OUT_PWD/../API_SQL/API_SQL_Server/api_sql_server/include
-LIBS += -L$$OUT_PWD/../API_SQL/API_SQL_Server/api_sql_server/lib -lapi_sql_server
+INCLUDEPATH += $$PWD/../NetServer/include
+LIBS += -L$$OUT_PWD/../NetServer/net_server/lib -lnet_server
+
+# sql library
+INCLUDEPATH += $$PWD/../SqlServer/include
+LIBS += -L$$OUT_PWD/../SqlServer/sql_server/lib -lsql_server
+
+INCLUDEPATH += $$PWD/../SqlCommon/include
+LIBS += -L$$OUT_PWD/../SqlCommon/sql_common/lib -lsql_common
 
 # logger library
 INCLUDEPATH += $$OUT_PWD/../Logger/logger/include
@@ -42,7 +48,7 @@ HEADERS += \
     titledwindow.h
 
 # Copy *.sql files to build_dir/sql directory
-LIB_SQL_FILES = $$OUT_PWD/../API_SQL/API_SQL_Server/api_sql_server/sql/*
+LIB_SQL_FILES = $$OUT_PWD/../SqlServer/sql_server/sql/*
 APP_SQL_DIR   = $$DESTDIR/.sql/
 
 copyDir($$LIB_SQL_FILES, $$APP_SQL_DIR)

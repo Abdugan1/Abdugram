@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 
-#include <api_client/messages/abdumessage.h>
+#include <net_common/messages/abdumessage.h>
 
 class StackedWidget;
 class HelloPage;

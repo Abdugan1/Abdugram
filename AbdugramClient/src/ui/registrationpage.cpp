@@ -5,7 +5,7 @@
 #include "button.h"
 #include "imagebutton.h"
 
-#include <api_client/messages/registermessage.h>
+#include <net_common/messages/registermessage.h>
 
 #include <QBoxLayout>
 #include <QGridLayout>

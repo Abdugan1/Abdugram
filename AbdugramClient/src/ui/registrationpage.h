@@ -3,7 +3,7 @@
 
 #include <QWidget>
 
-#include <api_client/messages/abdumessage.h>
+#include <net_common/messages/abdumessage.h>
 
 class HeaderLabel;
 class SecondaryLabel;

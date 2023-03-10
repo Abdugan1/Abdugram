@@ -6,8 +6,8 @@
 #include "problemwidget.h"
 #include "../sectimer.h"
 
-#include <api_client/tcpsession.h>
-#include <api_client/consts.h>
+#include <net_common/tcpsession.h>
+#include <net_common/consts.h>
 #include <QLabel>
 #include <QMovie>
 #include <QTimer>
