@@ -30,6 +30,8 @@ private slots:
     void connectToServer();
     void onConnectionError();
 
+    void onMessageReceived(const AbduMessagePtr &message);
+
 private:
     void setupUi();
 

@@ -10,7 +10,7 @@
 TcpSession::TcpSession(QObject *parent)
     : QTcpSocket{parent}
 {
-
+    init();
 }
 
 bool TcpSession::openSession(quintptr descriptor)
@@ -18,8 +18,6 @@ bool TcpSession::openSession(quintptr descriptor)
     if (!setSocketDescriptor(descriptor)) {
         return false;
     }
-
-    init();
 
     return true;
 }
@@ -37,6 +35,7 @@ void TcpSession::send(const AbduMessagePtr &message)
 
     DataStream socketStream{this};
     socketStream << message->toData();
+    flush();
 }
 
 void TcpSession::readAvailData()

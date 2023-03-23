@@ -28,6 +28,8 @@ public:
     QString email() const;
     void setEmail(const QString &newEmail);
 
+    void accept(MessageVisitor *visitor) const override;
+
 private:
     void gainDataFromPayload(DataStream *stream) override;
 

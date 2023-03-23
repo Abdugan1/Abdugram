@@ -6,6 +6,8 @@
 #include "problemwidget.h"
 #include "../sectimer.h"
 
+#include "net/clientmessagevisitor.h"
+
 #include <net_common/tcpsession.h>
 #include <net_common/consts.h>
 #include <QLabel>
@@ -45,6 +47,12 @@ void MainWindow::onConnectionError()
         reconnectSoonTimer_->start();
     }
     connectionProblem_->setVisible(true);
+}
+
+void MainWindow::onMessageReceived(const AbduMessagePtr &message)
+{
+    ClientMessageVisitor visitor;
+    message->accept(&visitor);
 }
 
 void MainWindow::setupUi()
@@ -105,6 +113,8 @@ void MainWindow::connectTcpLogic()
 
     connect(tcpSession_, &TcpSession::errorOccurred, this, &MainWindow::onConnectionError);
 
+    connect(tcpSession_, &TcpSession::received, this, &MainWindow::onMessageReceived);
+
     reconnectSoonTimer_ = new SecTimer{this};
     reconnectSoonTimer_->setDuration(16);
 
@@ -116,7 +126,11 @@ void MainWindow::connectTcpLogic()
 
     connect(connectionProblem_, &ProblemWidget::reconnectNowClicked, this, &MainWindow::connectToServer);
 
-    connect(registrationPage_, &RegistrationPage::registerRequested, [this](const AbduMessagePtr &registerMessage) {
+    connect(registrationPage_, &RegistrationPage::registerRequested, this, [this](const AbduMessagePtr &registerMessage) {
         tcpSession_->send(registerMessage);
+    });
+
+    connect(loginPage_, &LoginPage::loginRequested, this, [this](const AbduMessagePtr &loginMessage) {
+        tcpSession_->send(loginMessage);
     });
 }

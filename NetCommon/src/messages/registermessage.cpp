@@ -1,4 +1,5 @@
 #include "messages/registermessage.h"
+#include "messages/messagevisitor.h"
 
 #include <QDebug>
 
@@ -80,6 +81,11 @@ QString RegisterMessage::email() const
 void RegisterMessage::setEmail(const QString &newEmail)
 {
     email_ = newEmail;
+}
+
+void RegisterMessage::accept(MessageVisitor *visitor) const
+{
+    visitor->visit(*this);
 }
 
 void RegisterMessage::gainDataFromPayload(DataStream *stream)

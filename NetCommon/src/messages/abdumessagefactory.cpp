@@ -12,6 +12,7 @@ AbduMessagePtr AbduMessageFactory::fromData(const QByteArray &data)
     int type;
     DataStream stream(data);
     stream >> type;
+
     switch (static_cast<AbduMessage::Type>(type)) {
     case AbduMessage::Type::Login:
         abduMessage = new LoginMessage;
@@ -25,12 +26,9 @@ AbduMessagePtr AbduMessageFactory::fromData(const QByteArray &data)
     case AbduMessage::Type::RegisterStaus:
         abduMessage = new RegisterStatusMessage;
         break;
-    default:
-        abduMessage = AbduMessagePtr{};
-        break;
     }
 
-    if (abduMessage)
+    if (abduMessage != nullptr)
         abduMessage->fromData(data);
 
     return abduMessage;

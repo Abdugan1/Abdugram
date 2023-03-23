@@ -17,11 +17,15 @@ INCLUDEPATH += $$PWD/../SqlCommon/include
 LIBS += -L$$OUT_PWD/../SqlCommon/sql_common/lib -lsql_common
 
 # logger library
-INCLUDEPATH += $$OUT_PWD/../Logger/logger/include
+INCLUDEPATH += $$PWD/../Logger/include
 LIBS += -L$$OUT_PWD/../Logger/logger/lib -llogger
+
+# self
+INCLUDEPATH += $$PWD/src/
 
 SOURCES += \
     src/main.cpp \
+    src/net/clientmessagevisitor.cpp \
     src/sectimer.cpp \
     src/ui/button.cpp \
     src/ui/headerlabel.cpp \
@@ -38,6 +42,7 @@ SOURCES += \
     src/ui/stackedwidget.cpp
 
 HEADERS += \
+    src/net/clientmessagevisitor.h \
     src/sectimer.h \
     src/ui/button.h \
     src/ui/headerlabel.h \

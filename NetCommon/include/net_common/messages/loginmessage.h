@@ -16,13 +16,14 @@ public:
 
     QByteArray toData() const override;
 
+    void accept(MessageVisitor *visitor) const override;
+
 private:
     void gainDataFromPayload(DataStream *stream) override;
 
 private:
     QString username_;
     QString password_;
-
 };
 
 #endif // LOGINMESSAGE_H

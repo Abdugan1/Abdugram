@@ -1,4 +1,5 @@
 #include "messages/loginstatusmessage.h"
+#include "messages/messagevisitor.h"
 
 LoginStatusMessage::LoginStatusMessage()
     : AbduMessage{Type::LoginStatus}
@@ -22,6 +23,11 @@ bool LoginStatusMessage::success() const
 void LoginStatusMessage::setSuccess(bool newSuccess)
 {
     success_ = newSuccess;
+}
+
+void LoginStatusMessage::accept(MessageVisitor *visitor) const
+{
+    visitor->visit(*this);
 }
 
 void LoginStatusMessage::gainDataFromPayload(DataStream *stream)

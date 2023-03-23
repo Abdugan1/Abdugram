@@ -1,5 +1,7 @@
 #include "messages/loginmessage.h"
 
+#include "messages/messagevisitor.h"
+
 LoginMessage::LoginMessage()
     : AbduMessage{Type::Login}
 {
@@ -32,6 +34,11 @@ QByteArray LoginMessage::toData() const
     DataStream stream(&data, QIODevice::Append);
     stream << username_ << password_;
     return data;
+}
+
+void LoginMessage::accept(MessageVisitor *visitor) const
+{
+    visitor->visit(*this);
 }
 
 void LoginMessage::gainDataFromPayload(DataStream *stream)

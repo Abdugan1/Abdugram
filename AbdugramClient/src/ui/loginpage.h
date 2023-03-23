@@ -9,6 +9,8 @@ class LineEdit;
 class Button;
 class ImageButton;
 
+#include <net_common/messages/abdumessage.h>
+
 class LoginPage : public QWidget
 {
     Q_OBJECT
@@ -18,6 +20,11 @@ public:
 signals:
     void backButtonClicked();
     void toRegisterPageClicked();
+
+    void loginRequested(const AbduMessagePtr &registerMessage);
+
+private slots:
+    void sendLoginMessage();
 
 private:
     void setupUi();

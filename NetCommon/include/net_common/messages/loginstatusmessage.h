@@ -13,12 +13,13 @@ public:
     bool success() const;
     void setSuccess(bool newSuccess);
 
+    void accept(MessageVisitor *visitor) const override;
+
 private:
     void gainDataFromPayload(DataStream *stream) override;
 
 private:
     bool success_ = false;
-
 };
 
 #endif // LOGINSTATUSMESSAGE_H

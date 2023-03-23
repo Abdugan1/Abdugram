@@ -2,6 +2,7 @@
 
 #include <QDir>
 #include <QDirIterator>
+#include <QSqlQuery>
 #include <QSqlError>
 #include <QDebug>
 
@@ -33,7 +34,9 @@ void DatabaseServer::connectToDatabase()
 
 void DatabaseServer::createTables()
 {
-    const QString rootPath("./.sql");
-    executeAllSqlFilesInRootDir(rootPath, "create.sql");
-    executeAllSqlFilesInRootDir(rootPath, "constraints.sql");
+    QString fileName("./.sql/create/create.sql");
+    QSqlQuery createQuery{readFullFile(fileName)};
+    if (!createQuery.exec()) {
+        qFatal(qPrintable("Couldn't create tables!" + createQuery.lastError().text()));
+    }
 }

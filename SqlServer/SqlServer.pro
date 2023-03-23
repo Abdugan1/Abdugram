@@ -9,15 +9,21 @@ TARGET = sql_server
 include($$PWD/../LibDirsConfig.pri)
 include($$PWD/../Functions.pri)
 
+# data structures
+INCLUDEPATH += $$PWD/../DataStructures/include
+LIBS += -L$$OUT_PWD/../DataStructures/data_structures/lib -ldata_structures
+
 INCLUDEPATH += include/sql_server
 INCLUDEPATH += ../SqlCommon/include
 
 SOURCES += \
+    include/sql_server/userstable.cpp \
     src/databaseserver.cpp
 
 HEADERS += \
     include/sql_server/SqlServer_global.h \
-    include/sql_server/databaseserver.h
+    include/sql_server/databaseserver.h \
+    include/sql_server/userstable.h
 
 DISTFILES += \
     sql/user_contacts/constraints.sql \

@@ -42,7 +42,14 @@ int AbduMessage::headerSize() const
     return 4;
 }
 
+void AbduMessage::accept(MessageVisitor *visitor) const
+{
+    Q_UNUSED(visitor);
+    qWarning() << "Accepting in base class AbduMessage!";
+}
+
 void AbduMessage::gainDataFromPayload(DataStream *stream)
 {
-
+    Q_UNUSED(stream);
+    qWarning() << "Gaining payload from base class AbduMessage!";
 }

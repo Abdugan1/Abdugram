@@ -16,15 +16,13 @@ protected:
 
     virtual void createTables() = 0;
 
-    static void executeAllSqlFilesInRootDir(const QString &rootPath, const QString &sqlFileName);
-    static QString findAndGetSqlQuery(const QString &dirName, const QString &sqlFileName);
-    static QString getSqlQueryStr(const QString &sqlFileName);
-
 private:
     static QSqlError executeQuery(const QString &queryStr);
 
 private:
     static QSqlDatabase db_;
 };
+
+extern QString readFullFile(const QString &fileName);
 
 #endif // DATABASE_H

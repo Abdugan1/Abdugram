@@ -12,6 +12,8 @@ using AbduMessagePtr = QSharedDataPointer<AbduMessage>;
 template<typename T>
 using AnyMessagePtr = QSharedDataPointer<T>;
 
+class MessageVisitor;
+
 class NETCOMMON_EXPORT AbduMessage : public QSharedData
 {
 public:
@@ -44,6 +46,8 @@ public:
 
     //! Returns occupied bytes count for header
     int headerSize() const;
+
+    virtual void accept(MessageVisitor *visitor) const;
 
 private:
     virtual void gainDataFromPayload(DataStream *stream);

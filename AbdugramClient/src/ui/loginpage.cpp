@@ -7,13 +7,27 @@
 
 #include <QBoxLayout>
 
+#include <net_common/messages/loginmessage.h>
+
 LoginPage::LoginPage(QWidget *parent)
     : QWidget{parent}
 {
     setupUi();
 
+    connect(nextButton_, &Button::clicked, this, &LoginPage::sendLoginMessage);
+
     connect(backButton_, &ImageButton::clicked, this, &LoginPage::backButtonClicked);
+
     connect(toRegisterPage_, &QLabel::linkActivated, this, &LoginPage::toRegisterPageClicked);
+}
+
+void LoginPage::sendLoginMessage()
+{
+    AnyMessagePtr<LoginMessage> loginMessage{new LoginMessage};
+    loginMessage->setUsername(usernameEdit_->text());
+    loginMessage->setPassword(passwordEdit_->text());
+
+    emit loginRequested(static_cast<AbduMessagePtr>(loginMessage));
 }
 
 void LoginPage::setupUi()
