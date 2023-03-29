@@ -26,6 +26,8 @@ signals:
 private slots:
     void sendLoginMessage();
 
+    void onLineEditsChanged();
+
 private:
     void setupUi();
 

@@ -152,6 +152,8 @@ bool RippleAnimation::eventFilter(QObject *watched, QEvent *event)
     QWidget *widget = qobject_cast<QWidget *>(watched);
     if (!widget && widget != widget_)
         return false;
+    if (!widget->isEnabled())
+        return false;
 
     // Start ripple animation on left button press
     if (event->type() == QEvent::MouseButtonPress) {

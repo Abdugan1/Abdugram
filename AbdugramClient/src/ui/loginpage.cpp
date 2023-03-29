@@ -19,6 +19,11 @@ LoginPage::LoginPage(QWidget *parent)
     connect(backButton_, &ImageButton::clicked, this, &LoginPage::backButtonClicked);
 
     connect(toRegisterPage_, &QLabel::linkActivated, this, &LoginPage::toRegisterPageClicked);
+
+    // line edits
+    connect(usernameEdit_, &LineEdit::textChanged, this, &LoginPage::onLineEditsChanged);
+
+    connect(passwordEdit_, &LineEdit::textChanged, this, &LoginPage::onLineEditsChanged);
 }
 
 void LoginPage::sendLoginMessage()
@@ -28,6 +33,12 @@ void LoginPage::sendLoginMessage()
     loginMessage->setPassword(passwordEdit_->text());
 
     emit loginRequested(static_cast<AbduMessagePtr>(loginMessage));
+}
+
+void LoginPage::onLineEditsChanged()
+{
+    nextButton_->setEnabled(!usernameEdit_->text().isEmpty()
+                            && !passwordEdit_->text().isEmpty());
 }
 
 void LoginPage::setupUi()
@@ -42,6 +53,7 @@ void LoginPage::setupUi()
 
     //
     nextButton_ = new Button{tr("Next")};
+    nextButton_->setEnabled(false);
 
     //
     toRegisterPage_ = new SecondaryLabel{tr("Do not have an account yet? "

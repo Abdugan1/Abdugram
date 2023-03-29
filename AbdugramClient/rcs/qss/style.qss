@@ -25,6 +25,10 @@ Button {
     color: #FFFFFF;
 }
 
+Button::!enabled {
+    background-color: gray;
+}
+
 Button:hover {
     /* Background */
     background-color: #b05e97
@@ -55,6 +59,11 @@ LineEdit {
 /* LineEdit placeholder color */
 LineEdit[text=\"\"] {
     color: @secondaryLabelColor;
+}
+
+/* ToolTip */
+QFrame#toolTipFrame {
+    background-color: @backgroundColor;
 }
 
 /* MainLabel */

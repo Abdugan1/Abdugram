@@ -10,6 +10,8 @@ class SecondaryLabel;
 class LineEdit;
 class Button;
 class ImageButton;
+class PhoneLineEdit;
+class PasswordLineEdit;
 
 class RegistrationPage : public QWidget
 {
@@ -26,6 +28,8 @@ signals:
 private slots:
     void sendRegisterMessage();
 
+    void onLineEditsChanged();
+
 private:
     void setupUi();
 
@@ -33,13 +37,13 @@ private:
     HeaderLabel    *tellUsAboutLabel_ = nullptr;
     SecondaryLabel *pageInfo_         = nullptr;
 
-    LineEdit *firstNameEdit_       = nullptr;
-    LineEdit *lastNameEdit_        = nullptr;
-    LineEdit *usernameEdit_        = nullptr;
-    LineEdit *emailEdit_           = nullptr;
-    LineEdit *phoneNumberEdit_     = nullptr;
-    LineEdit *passwordEdit_        = nullptr;
-    LineEdit *confirmPasswordEdit_ = nullptr;
+    LineEdit         *firstNameEdit_       = nullptr;
+    LineEdit         *lastNameEdit_        = nullptr;
+    LineEdit         *usernameEdit_        = nullptr;
+    LineEdit         *emailEdit_           = nullptr;
+    PhoneLineEdit    *phoneNumberEdit_     = nullptr;
+    PasswordLineEdit *passwordEdit_        = nullptr;
+    LineEdit         *confirmPasswordEdit_ = nullptr;
 
     Button      *nextButton_ = nullptr;
     ImageButton *backButton_ = nullptr;

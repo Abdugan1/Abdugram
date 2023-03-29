@@ -19,6 +19,13 @@ signals:
 protected:
     void paintEvent(QPaintEvent *event) override;
 
+    void focusInEvent(QFocusEvent *event) override;
+    void focusOutEvent(QFocusEvent *event) override;
+
+private:
+    void showValidInputState();
+    void showInvalidInputState();
+
 private:
     QColor lineColor_ = Qt::black;
 };

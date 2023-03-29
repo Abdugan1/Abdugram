@@ -35,7 +35,10 @@ SOURCES += \
     src/ui/loginpage.cpp \
     src/ui/mainlabel.cpp \
     src/ui/mainwindow.cpp \
+    src/ui/passwordlineedit.cpp \
+    src/ui/phonelineedit.cpp \
     src/ui/problemwidget.cpp \
+    src/ui/regexes.cpp \
     src/ui/registrationpage.cpp \
     src/ui/rippleanimation.cpp \
     src/ui/secondarylabel.cpp \
@@ -52,7 +55,10 @@ HEADERS += \
     src/ui/loginpage.h \
     src/ui/mainlabel.h \
     src/ui/mainwindow.h \
+    src/ui/passwordlineedit.h \
+    src/ui/phonelineedit.h \
     src/ui/problemwidget.h \
+    src/ui/regexes.h \
     src/ui/registrationpage.h \
     src/ui/rippleanimation.h \
     src/ui/secondarylabel.h \
