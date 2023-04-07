@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>images/BackButton.png</file>
         <file>images/busy.gif</file>
+        <file>images/avatar.png</file>
     </qresource>
 </RCC>

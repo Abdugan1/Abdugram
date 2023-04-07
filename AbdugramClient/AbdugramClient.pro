@@ -35,6 +35,14 @@ SOURCES += \
     src/ui/loginpage.cpp \
     src/ui/mainlabel.cpp \
     src/ui/mainwindow.cpp \
+    src/ui/mv/chatitem.cpp \
+    src/ui/mv/chatlistdelegate.cpp \
+    src/ui/mv/chatlistmodel.cpp \
+    src/ui/mv/chatlistview.cpp \
+    src/ui/mv/messageitem.cpp \
+    src/ui/mv/messagelistdelegate.cpp \
+    src/ui/mv/messagelistmodel.cpp \
+    src/ui/mv/messagelistview.cpp \
     src/ui/passwordlineedit.cpp \
     src/ui/phonelineedit.cpp \
     src/ui/problemwidget.cpp \
@@ -55,6 +63,14 @@ HEADERS += \
     src/ui/loginpage.h \
     src/ui/mainlabel.h \
     src/ui/mainwindow.h \
+    src/ui/mv/chatitem.h \
+    src/ui/mv/chatlistdelegate.h \
+    src/ui/mv/chatlistmodel.h \
+    src/ui/mv/chatlistview.h \
+    src/ui/mv/messageitem.h \
+    src/ui/mv/messagelistdelegate.h \
+    src/ui/mv/messagelistmodel.h \
+    src/ui/mv/messagelistview.h \
     src/ui/passwordlineedit.h \
     src/ui/phonelineedit.h \
     src/ui/problemwidget.h \

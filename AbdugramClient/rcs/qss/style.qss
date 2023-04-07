@@ -4,9 +4,31 @@
     font-size: 12pt;
 }
 
-/* ========Page======== */
+/* ========StackedWidget======== */
 StackedWidget {
     background-color: @backgroundColor;
+}
+
+/* ChatListView */
+ChatListView {
+    background-color: @backgroundColor;
+
+    /* For ChatListModel */
+    qproperty-chatNameColor: @mainLabelColor;
+    qproperty-lastMessageColor: @secondaryLabelColor;
+    qproperty-messageDateColor: @secondaryLabelColor;
+    qproperty-highlightColor: @decorationColor;
+}
+
+/* MessageListView */
+MessageListView {
+    background-color: @backgroundColor;
+    font-size: 11pt;
+
+    /* For MessageListDelegate */
+    qproperty-backgroundColor: @decorationColor;
+    qproperty-textColor: @mainLabelColor;
+    qproperty-timeColor: @mainLabelColor;
 }
 
 /* Button */
