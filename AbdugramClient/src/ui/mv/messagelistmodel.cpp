@@ -21,10 +21,10 @@ MessageListModel::MessageListModel(QObject *parent)
     nurzhan3.setText("Nurzhan3:\nLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua");
     nurzhan3.setDateTime(QDateTime{QDate{2002, 05, 17}, QTime{9, 42}});
 
-    messageItems_.append(nurzhan1);
-    messageItems_.append(nurzhan2);
-    messageItems_.append(me1);
-    messageItems_.append(nurzhan3);
+//    messageItems_.append(nurzhan1);
+//    messageItems_.append(nurzhan2);
+//    messageItems_.append(me1);
+//    messageItems_.append(nurzhan3);
 }
 
 int MessageListModel::rowCount(const QModelIndex &) const
@@ -45,4 +45,9 @@ QVariant MessageListModel::data(const QModelIndex &index, int role) const
     }
 
     return QVariant{};
+}
+
+bool MessageListModel::isEmpty() const
+{
+    return messageItems_.isEmpty();
 }

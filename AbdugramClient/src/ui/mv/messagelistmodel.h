@@ -20,6 +20,8 @@ public:
     int rowCount(const QModelIndex &parent) const override;
     QVariant data(const QModelIndex &index, int role) const override;
 
+    bool isEmpty() const;
+
 private:
     using MessageItems = QList<MessageItem>;
     MessageItems messageItems_;

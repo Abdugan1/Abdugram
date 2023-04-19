@@ -5,4 +5,6 @@
 
 extern QString readFullFile(const QString &fileName);
 
+//extern const
+
 #endif // FUNCTIONS_H

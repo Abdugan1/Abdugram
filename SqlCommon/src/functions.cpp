@@ -15,3 +15,5 @@ QString readFullFile(const QString &fileName)
 
     return content;
 }
+
+const Qt::DateFormat DateTimeFormat = Qt::ISODate;

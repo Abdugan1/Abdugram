@@ -29,6 +29,12 @@ signals:
     void textColorChanged();
     void timeColorChanged();
 
+protected:
+    void paintEvent(QPaintEvent *event) override;
+
+private:
+    void drawSomething();
+
 private:
     MessageListModel    *model_ = nullptr;
     MessageListDelegate *delegate_ = nullptr;

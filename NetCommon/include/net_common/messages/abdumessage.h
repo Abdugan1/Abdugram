@@ -24,6 +24,7 @@ public:
         ClientSide = 0,
         Login      = ClientSide + 1,
         Register,
+        SyncChatsRequest,
 
         ServerSide = 1000000,
         LoginStatus = ServerSide + 1,

@@ -16,7 +16,7 @@ UsersTable::UsersTable()
 
 bool UsersTable::isUsernameExists(const QString &username)
 {
-    QString query = readFullFile("./.sql/users/count_of_username.sql");
+    const QString query = readFullFile("./.sql/users/count_of_username.sql");
 
     QSqlQuery usernameCountQuery;
     usernameCountQuery.prepare(query.trimmed());
@@ -37,7 +37,7 @@ bool UsersTable::isUsernameExists(const QString &username)
 
 void UsersTable::addUser(const User &user, const QString &password)
 {
-    QString query = readFullFile("./.sql/users/add_user.sql");
+    const QString query = readFullFile("./.sql/users/add_user.sql");
 
     QSqlQuery addUserQuery;
     addUserQuery.prepare(query);
@@ -55,7 +55,7 @@ void UsersTable::addUser(const User &user, const QString &password)
 
 bool UsersTable::isUserExists(const QString &username, const QString &password)
 {
-    QString query = readFullFile("./.sql/users/is_user_exists.sql");
+    const QString query = readFullFile("./.sql/users/is_user_exists.sql");
 
     QSqlQuery isUserExistsQuery;
     isUserExistsQuery.prepare(query);

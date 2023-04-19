@@ -7,6 +7,7 @@
 #include <net_common/messages/registerstatusmessage.h>
 #include <net_common/messages/loginmessage.h>
 #include <net_common/messages/loginstatusmessage.h>
+#include <net_common/messages/syncusersrequest.h>
 
 #include <sql_server/userstable.h>
 
@@ -61,4 +62,10 @@ void ServerMessageVisitor::visit(const RegisterStatusMessage &message)
 void ServerMessageVisitor::visit(const LoginStatusMessage &message)
 {
     Q_UNUSED(message);
+}
+
+void ServerMessageVisitor::visit(const SyncUsersRequest &message)
+{
+    const QString   username   = message.username();
+    const QDateTime lastUpdate = message.lastUpdate();
 }

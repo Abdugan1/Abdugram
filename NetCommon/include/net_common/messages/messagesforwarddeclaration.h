@@ -6,5 +6,6 @@ class RegisterMessage;
 class LoginMessage;
 class LoginStatusMessage;
 class RegisterStatusMessage;
+class SyncChatsRequest;
 
 #endif // MESSAGESFORWARDDECLARATION_H

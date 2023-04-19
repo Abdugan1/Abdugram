@@ -2,6 +2,7 @@
 #define USERSTABLE_H
 
 #include <QString>
+#include <QDateTime>
 
 class User;
 
@@ -15,6 +16,8 @@ public:
     static void addUser(const User &user, const QString &password);
 
     static bool isUserExists(const QString &username, const QString &password);
+
+//    static QList
 };
 
 #endif // USERSTABLE_H

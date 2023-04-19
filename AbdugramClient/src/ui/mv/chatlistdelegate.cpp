@@ -8,7 +8,7 @@ using Roles = ChatListModel::Roles;
 
 const QMargins ChatListDelegate::AvatarMargins_      = QMargins{5, 10, -1, 10};
 const QSize    ChatListDelegate::AvatarSize_         = QSize{45, 45};
-const QMargins ChatListDelegate::ChatNameMargins_    = QMargins{5, 8, -1, -1};
+const QMargins ChatListDelegate::ChatNameMargins_    = QMargins{10, 8, -1, -1};
 const QMargins ChatListDelegate::MessageDateMargins_ = QMargins{-1, 8, 5, -1};
 
 const int ChatListDelegate::SeparatorThin_ = 1;
