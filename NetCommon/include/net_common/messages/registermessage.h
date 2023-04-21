@@ -8,8 +8,6 @@ class NETCOMMON_EXPORT RegisterMessage : public AbduMessage
 public:
     explicit RegisterMessage();
 
-    QByteArray toData() const override;
-
     QString firstName() const;
     void setFirstName(const QString &newFirstName);
 
@@ -30,8 +28,9 @@ public:
 
     void accept(MessageVisitor *visitor) const override;
 
-private:
-    void gainDataFromPayload(DataStream *stream) override;
+protected:
+    void getBodyData(DataStream *stream) override;
+    void writeBodyData(DataStream *stream) const override;
 
 private:
     QString firstName_;
@@ -40,6 +39,7 @@ private:
     QString password_;
     QString phone_;
     QString email_;
+
 };
 
 #endif // REGISTERMESSAGE_H

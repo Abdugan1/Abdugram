@@ -20,11 +20,10 @@ AbduMessage::Type AbduMessage::type() const
 
 void AbduMessage::fromData(const QByteArray &data)
 {
-    int type;
     DataStream stream(data);
-    stream >> type;
 
-    gainDataFromPayload(&stream);
+    getHeaderData(&stream);
+    getBodyData(&stream);
 }
 
 QByteArray AbduMessage::toData() const
@@ -32,7 +31,8 @@ QByteArray AbduMessage::toData() const
     QByteArray data;
     DataStream stream(&data, QIODevice::WriteOnly);
 
-    stream << type();
+    writeHeaderData(&stream);
+    writeBodyData(&stream);
 
     return data;
 }
@@ -48,8 +48,25 @@ void AbduMessage::accept(MessageVisitor *visitor) const
     qWarning() << "Accepting in base class AbduMessage!";
 }
 
-void AbduMessage::gainDataFromPayload(DataStream *stream)
+void AbduMessage::getBodyData(DataStream *stream)
 {
     Q_UNUSED(stream);
-    qWarning() << "Gaining payload from base class AbduMessage!";
+    qWarning() << "Gaining from body from base class AbduMessage!";
+}
+
+void AbduMessage::writeBodyData(DataStream *stream) const
+{
+    Q_UNUSED(stream);
+    qWarning() << "Writing to bodyfrom base class AbduMessage!";
+}
+
+void AbduMessage::getHeaderData(DataStream *stream)
+{
+    int type;
+    *stream >> type; // For now unnecessary but required
+}
+
+void AbduMessage::writeHeaderData(DataStream *stream) const
+{
+    *stream << type();
 }

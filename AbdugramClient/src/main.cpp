@@ -67,14 +67,14 @@ int main(int argc, char *argv[])
 
     DatabaseClient::instance()->connectToDatabase();
 
-//    MainWindow mainWindow;
-//    mainWindow.show();
+    MainWindow mainWindow;
+    mainWindow.show();
 
-    ChatListView chatListView;
-    chatListView.show();
+//    ChatListView chatListView;
+//    chatListView.show();
 
-    MessageListView messageListView;
-    messageListView.show();
+//    MessageListView messageListView;
+//    messageListView.show();
 
     return app.exec();
 }

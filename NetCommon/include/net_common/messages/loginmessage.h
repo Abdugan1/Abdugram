@@ -14,16 +14,16 @@ public:
     QString password() const;
     void setPassword(const QString &newPassword);
 
-    QByteArray toData() const override;
-
     void accept(MessageVisitor *visitor) const override;
 
-private:
-    void gainDataFromPayload(DataStream *stream) override;
+protected:
+    void getBodyData(DataStream *stream) override;
+    void writeBodyData(DataStream *stream) const override;
 
 private:
     QString username_;
     QString password_;
+
 };
 
 #endif // LOGINMESSAGE_H

@@ -7,13 +7,6 @@ RegisterStatusMessage::RegisterStatusMessage()
 
 }
 
-QByteArray RegisterStatusMessage::toData() const
-{
-    QByteArray data = AbduMessage::toData();
-    DataStream stream(&data, QIODevice::Append);
-    stream << success_;
-    return data;
-}
 
 bool RegisterStatusMessage::success() const
 {
@@ -30,7 +23,12 @@ void RegisterStatusMessage::accept(MessageVisitor *visitor) const
     visitor->visit(*this);
 }
 
-void RegisterStatusMessage::gainDataFromPayload(DataStream *stream)
+void RegisterStatusMessage::getBodyData(DataStream *stream)
 {
     *stream >> success_;
+}
+
+void RegisterStatusMessage::writeBodyData(DataStream *stream) const
+{
+    *stream << success_;
 }

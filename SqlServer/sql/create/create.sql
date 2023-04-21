@@ -16,20 +16,20 @@ CREATE TABLE IF NOT EXISTS users (
     CONSTRAINT uc_users_username UNIQUE (username)
 );
 
-CREATE TABLE IF NOT EXISTS conversations (
+CREATE TABLE IF NOT EXISTS chats (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(40) NOT NULL,
     created_by_user_id INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP,
-    CONSTRAINT fk_conversations_created_by_user_id FOREIGN KEY (created_by_user_id) REFERENCES users(id)
+    CONSTRAINT fk_chats_created_by_user_id FOREIGN KEY (created_by_user_id) REFERENCES users(id)
 );
 
 CREATE TABLE IF NOT EXISTS messages (
     id INT AUTO_INCREMENT PRIMARY KEY,
     sender_id INT NOT NULL,
-    conversation_id INT NOT NULL,
+    chat_id INT NOT NULL,
     reply_to_id INT,
     text VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -37,18 +37,18 @@ CREATE TABLE IF NOT EXISTS messages (
     is_deleted BOOLEAN DEFAULT 0,
     deleted_for_user_id INT,
     CONSTRAINT fk_messages_sender_id FOREIGN KEY (sender_id) REFERENCES users(id),
-    CONSTRAINT fk_messages_conversation_id FOREIGN KEY (conversation_id) REFERENCES conversations(id),
+    CONSTRAINT fk_messages_chat_id FOREIGN KEY (chat_id) REFERENCES chats(id),
     CONSTRAINT fk_messages_reply_to_id FOREIGN KEY (reply_to_id) REFERENCES messages(id),
     CONSTRAINT fk_messages_deleted_for_user_id FOREIGN KEY (deleted_for_user_id) REFERENCES users(id)
 );
 
 CREATE TABLE IF NOT EXISTS participants (
     user_id INT NOT NULL,
-    conversation_id INT NOT NULL,
+    chat_id INT NOT NULL,
     is_admin BOOLEAN DEFAULT 0,
-    CONSTRAINT pk_participants PRIMARY KEY (user_id, conversation_id),
+    CONSTRAINT pk_participants PRIMARY KEY (user_id, chat_id),
     CONSTRAINT fk_participants_user_id FOREIGN KEY (user_id) REFERENCES users(id),
-    CONSTRAINT fk_participants_conversation_id FOREIGN KEY (conversation_id) REFERENCES conversations(id)
+    CONSTRAINT fk_participants_chat_id FOREIGN KEY (chat_id) REFERENCES chats(id)
 );
 
 CREATE TABLE IF NOT EXISTS message_reads (

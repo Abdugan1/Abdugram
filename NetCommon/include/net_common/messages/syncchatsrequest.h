@@ -1,7 +1,7 @@
 #ifndef SYNCCHATSREQUEST_H
 #define SYNCCHATSREQUEST_H
 
-#include "messages/abdumessage.h"
+#include "abdumessage.h"
 
 class SyncChatsRequest : public AbduMessage
 {
@@ -14,11 +14,11 @@ public:
     QString lastUpdate() const;
     void setLastUpdate(const QString &newLastUpdate);
 
-    QByteArray toData() const override;
     void accept(MessageVisitor *visitor) const override;
 
-private:
-    void gainDataFromPayload(DataStream *stream) override;
+protected:
+    void getBodyData(DataStream *stream) override;
+    void writeBodyData(DataStream *stream) const override;
 
 private:
     QString fromUsername_;

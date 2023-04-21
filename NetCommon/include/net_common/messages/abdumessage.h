@@ -43,15 +43,20 @@ public:
 
     //! Constructs QByteArray from class
     //! Base class implementation writes type to it
-    virtual QByteArray toData() const;
+    QByteArray toData() const;
 
     //! Returns occupied bytes count for header
     int headerSize() const;
 
     virtual void accept(MessageVisitor *visitor) const;
 
+protected:
+    virtual void getBodyData(DataStream *stream);
+    virtual void writeBodyData(DataStream *stream) const;
+
 private:
-    virtual void gainDataFromPayload(DataStream *stream);
+    void getHeaderData(DataStream *stream);
+    void writeHeaderData(DataStream *stream) const;
 
 private:
     Type type_;

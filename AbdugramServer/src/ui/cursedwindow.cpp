@@ -1,6 +1,7 @@
 #include "cursedwindow.h"
 
 #include <cassert>
+#include <string>
 
 CursedWindow::CursedWindow(int x, int y, int w, int h)
 {

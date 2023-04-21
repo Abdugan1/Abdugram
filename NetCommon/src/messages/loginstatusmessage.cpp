@@ -7,14 +7,6 @@ LoginStatusMessage::LoginStatusMessage()
 
 }
 
-QByteArray LoginStatusMessage::toData() const
-{
-    QByteArray data = AbduMessage::toData();
-    DataStream stream(&data, QIODevice::Append);
-    stream << success_;
-    return data;
-}
-
 bool LoginStatusMessage::success() const
 {
     return success_;
@@ -30,7 +22,12 @@ void LoginStatusMessage::accept(MessageVisitor *visitor) const
     visitor->visit(*this);
 }
 
-void LoginStatusMessage::gainDataFromPayload(DataStream *stream)
+void LoginStatusMessage::getBodyData(DataStream *stream)
 {
     *stream >> success_;
+}
+
+void LoginStatusMessage::writeBodyData(DataStream *stream) const
+{
+    *stream << success_;
 }

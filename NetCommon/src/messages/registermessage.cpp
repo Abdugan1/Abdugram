@@ -9,20 +9,6 @@ RegisterMessage::RegisterMessage()
 
 }
 
-QByteArray RegisterMessage::toData() const
-{
-    QByteArray data = AbduMessage::toData();
-    DataStream stream(&data, QIODevice::Append);
-    stream << firstName_
-           << lastName_
-           << username_
-           << password_
-           << phone_
-           << email_;
-
-    return data;
-}
-
 QString RegisterMessage::firstName() const
 {
     return firstName_;
@@ -88,7 +74,7 @@ void RegisterMessage::accept(MessageVisitor *visitor) const
     visitor->visit(*this);
 }
 
-void RegisterMessage::gainDataFromPayload(DataStream *stream)
+void RegisterMessage::getBodyData(DataStream *stream)
 {
     *stream >> firstName_
             >> lastName_
@@ -96,4 +82,14 @@ void RegisterMessage::gainDataFromPayload(DataStream *stream)
             >> password_
             >> phone_
             >> email_;
+}
+
+void RegisterMessage::writeBodyData(DataStream *stream) const
+{
+    *stream << firstName_
+            << lastName_
+            << username_
+            << password_
+            << phone_
+            << email_;
 }

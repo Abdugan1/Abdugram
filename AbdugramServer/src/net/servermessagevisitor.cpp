@@ -1,4 +1,5 @@
 #include "servermessagevisitor.h"
+#include "net_common/messages/syncchatsrequest.h"
 #include "server.h"
 
 #include <net_common/tcpsession.h>
@@ -7,7 +8,7 @@
 #include <net_common/messages/registerstatusmessage.h>
 #include <net_common/messages/loginmessage.h>
 #include <net_common/messages/loginstatusmessage.h>
-#include <net_common/messages/syncusersrequest.h>
+
 
 #include <sql_server/userstable.h>
 
@@ -64,8 +65,8 @@ void ServerMessageVisitor::visit(const LoginStatusMessage &message)
     Q_UNUSED(message);
 }
 
-void ServerMessageVisitor::visit(const SyncUsersRequest &message)
+void ServerMessageVisitor::visit(const SyncChatsRequest &message)
 {
-    const QString   username   = message.username();
-    const QDateTime lastUpdate = message.lastUpdate();
+//    const QString   username   = message.username();
+//    const QDateTime lastUpdate = message.lastUpdate();
 }

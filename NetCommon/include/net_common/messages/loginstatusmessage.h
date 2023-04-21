@@ -8,18 +8,18 @@ class NETCOMMON_EXPORT LoginStatusMessage : public AbduMessage
 public:
     explicit LoginStatusMessage();
 
-    QByteArray toData() const override;
-
     bool success() const;
     void setSuccess(bool newSuccess);
 
     void accept(MessageVisitor *visitor) const override;
 
-private:
-    void gainDataFromPayload(DataStream *stream) override;
+protected:
+    void getBodyData(DataStream *stream) override;
+    void writeBodyData(DataStream *stream) const override;
 
 private:
     bool success_ = false;
+
 };
 
 #endif // LOGINSTATUSMESSAGE_H

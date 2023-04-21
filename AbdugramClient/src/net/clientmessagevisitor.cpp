@@ -24,3 +24,8 @@ void ClientMessageVisitor::visit(const LoginStatusMessage &message)
 {
     qDebug() << "Success login?" << message.success();
 }
+
+void ClientMessageVisitor::visit(const SyncChatsRequest &message)
+{
+
+}

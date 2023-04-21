@@ -15,7 +15,7 @@ public:
     virtual void visit(const LoginMessage           &message) = 0;
     virtual void visit(const RegisterStatusMessage  &message) = 0;
     virtual void visit(const LoginStatusMessage     &message) = 0;
-    virtual void visit(const SyncUsersRequest       &message) = 0;
+    virtual void visit(const SyncChatsRequest       &message) = 0;
 };
 
 #endif // MESSAGEVISITOR_H

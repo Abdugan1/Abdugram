@@ -15,7 +15,7 @@ public:
     void visit(const LoginMessage           &message) override;
     void visit(const RegisterStatusMessage  &message) override;
     void visit(const LoginStatusMessage     &message) override;
-    void visit(const SyncUsersRequest &message) override;
+    void visit(const SyncChatsRequest       &message) override;
 
 private:
     Server      *server_ = nullptr;

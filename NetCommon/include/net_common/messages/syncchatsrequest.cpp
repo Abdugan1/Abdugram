@@ -28,20 +28,17 @@ void SyncChatsRequest::setLastUpdate(const QString &newLastUpdate)
     lastUpdate_ = newLastUpdate;
 }
 
-QByteArray SyncChatsRequest::toData() const
-{
-    QByteArray data = AbduMessage::toData();
-    DataStream stream(&data, QIODevice::Append);
-    stream << fromUsername_ << lastUpdate_;
-    return data;
-}
-
 void SyncChatsRequest::accept(MessageVisitor *visitor) const
 {
     visitor->visit(*this);
 }
 
-void SyncChatsRequest::gainDataFromPayload(DataStream *stream)
+void SyncChatsRequest::getBodyData(DataStream *stream)
 {
     *stream >> fromUsername_ >> lastUpdate_;
+}
+
+void SyncChatsRequest::writeBodyData(DataStream *stream) const
+{
+    *stream << fromUsername_ << lastUpdate_;
 }
