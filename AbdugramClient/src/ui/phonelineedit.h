@@ -1,11 +1,11 @@
 #ifndef PHONELINEEDIT_H
 #define PHONELINEEDIT_H
 
-#include "lineedit.h"
+#include "fieldlineedit.h"
 
 class MainLabel;
 
-class PhoneLineEdit : public LineEdit
+class PhoneLineEdit : public FieldLineEdit
 {
 public:
     explicit PhoneLineEdit();

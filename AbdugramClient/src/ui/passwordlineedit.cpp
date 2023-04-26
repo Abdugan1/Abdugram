@@ -8,14 +8,14 @@
 
 
 PasswordLineEdit::PasswordLineEdit(const QString &placeholder, QWidget *parent)
-    : LineEdit{placeholder, parent}
+    : FieldLineEdit{placeholder, parent}
     , toolTip_{ToolTip{}}
 {
 }
 
 void PasswordLineEdit::focusInEvent(QFocusEvent *event)
 {
-    LineEdit::focusInEvent(event);
+    FieldLineEdit::focusInEvent(event);
     toolTip_.move(mapToGlobal(rect().bottomLeft()));
     toolTip_.show();
     toolTip_.resize(width(), toolTip_.height());
@@ -23,7 +23,7 @@ void PasswordLineEdit::focusInEvent(QFocusEvent *event)
 
 void PasswordLineEdit::focusOutEvent(QFocusEvent *event)
 {
-    LineEdit::focusOutEvent(event);
+    FieldLineEdit::focusOutEvent(event);
     toolTip_.hide();
 }
 

@@ -5,7 +5,7 @@
 
 class HeaderLabel;
 class SecondaryLabel;
-class LineEdit;
+class FieldLineEdit;
 class Button;
 class ImageButton;
 
@@ -33,8 +33,8 @@ private:
 
 private:
     HeaderLabel *header_ = nullptr;
-    LineEdit *usernameEdit_ = nullptr;
-    LineEdit *passwordEdit_ = nullptr;
+    FieldLineEdit *usernameEdit_ = nullptr;
+    FieldLineEdit *passwordEdit_ = nullptr;
     Button   *nextButton_   = nullptr;
     SecondaryLabel *toRegisterPage_ = nullptr;
 

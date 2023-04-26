@@ -13,7 +13,7 @@ inline bool isKeyDigit(int key)
 }
 
 PhoneLineEdit::PhoneLineEdit()
-    : LineEdit{"─── ─── ── ──"}
+    : FieldLineEdit{"─── ─── ── ──"}
     , phoneCode_{new MainLabel{"+7"}}
 {
     QHBoxLayout *hLayout = new QHBoxLayout;
@@ -53,8 +53,8 @@ void PhoneLineEdit::keyPressEvent(QKeyEvent *event)
     if (isKeyDigit(event->key()) && text().length() >= 13) {
         return;
     }
-
-    LineEdit::keyPressEvent(event);
+    
+    FieldLineEdit::keyPressEvent(event);
 
     const QString textWithoutSpace = text().remove(" ");
     QString resultText = textWithoutSpace;

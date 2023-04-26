@@ -22,16 +22,11 @@ bool UsersTable::isUsernameExists(const QString &username)
     usernameCountQuery.prepare(query.trimmed());
     usernameCountQuery.bindValue(":username", username);
 
-    if (!usernameCountQuery.exec()) {
+    if (!usernameCountQuery.exec() || !usernameCountQuery.first()) {
         qCritical() << "Couldn't execute query:" << usernameCountQuery.executedQuery()
                     << "error:" << usernameCountQuery.lastError().text();
         return true; // true, because if false, the UsersTable::addUser will caalled. So should return something else???
     }
-    if (!usernameCountQuery.next()) {
-        qCritical() << "Couldn't get value of query" << usernameCountQuery.lastError().text();
-        return true; // true, because if false, the UsersTable::addUser will caalled. So should return something else???
-    }
-
     return usernameCountQuery.value(0).toBool();
 }
 
@@ -62,13 +57,9 @@ bool UsersTable::isUserExists(const QString &username, const QString &password)
     isUserExistsQuery.bindValue(":username", username);
     isUserExistsQuery.bindValue(":password", password);
 
-    if (!isUserExistsQuery.exec()) {
+    if (!isUserExistsQuery.exec() || !isUserExistsQuery.first()) {
         qCritical() << "Couldn't execute query:" << isUserExistsQuery.executedQuery()
                     << "error:" << isUserExistsQuery.lastError().text();
-        return false; // Should return something else???
-    }
-    if (!isUserExistsQuery.next()) {
-        qCritical() << "Couldn't get value of query" << isUserExistsQuery.lastError().text();
         return false; // Should return something else???
     }
 

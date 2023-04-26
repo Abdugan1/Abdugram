@@ -18,12 +18,12 @@ void SyncChatsRequest::setFromUsername(const QString &newFromUsername)
     fromUsername_ = newFromUsername;
 }
 
-QString SyncChatsRequest::lastUpdate() const
+QDateTime SyncChatsRequest::lastUpdate() const
 {
     return lastUpdate_;
 }
 
-void SyncChatsRequest::setLastUpdate(const QString &newLastUpdate)
+void SyncChatsRequest::setLastUpdate(const QDateTime &newLastUpdate)
 {
     lastUpdate_ = newLastUpdate;
 }

@@ -67,6 +67,7 @@ void ServerMessageVisitor::visit(const LoginStatusMessage &message)
 
 void ServerMessageVisitor::visit(const SyncChatsRequest &message)
 {
-//    const QString   username   = message.username();
-//    const QDateTime lastUpdate = message.lastUpdate();
+    const QString   username   = message.fromUsername();
+    const QDateTime lastUpdate = message.lastUpdate();
+
 }

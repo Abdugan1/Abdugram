@@ -7,7 +7,7 @@
 
 class HeaderLabel;
 class SecondaryLabel;
-class LineEdit;
+class FieldLineEdit;
 class Button;
 class ImageButton;
 class PhoneLineEdit;
@@ -36,14 +36,14 @@ private:
 private:
     HeaderLabel    *tellUsAboutLabel_ = nullptr;
     SecondaryLabel *pageInfo_         = nullptr;
-
-    LineEdit         *firstNameEdit_       = nullptr;
-    LineEdit         *lastNameEdit_        = nullptr;
-    LineEdit         *usernameEdit_        = nullptr;
-    LineEdit         *emailEdit_           = nullptr;
+    
+    FieldLineEdit         *firstNameEdit_       = nullptr;
+    FieldLineEdit         *lastNameEdit_        = nullptr;
+    FieldLineEdit         *usernameEdit_        = nullptr;
+    FieldLineEdit         *emailEdit_           = nullptr;
     PhoneLineEdit    *phoneNumberEdit_     = nullptr;
     PasswordLineEdit *passwordEdit_        = nullptr;
-    LineEdit         *confirmPasswordEdit_ = nullptr;
+    FieldLineEdit         *confirmPasswordEdit_ = nullptr;
 
     Button      *nextButton_ = nullptr;
     ImageButton *backButton_ = nullptr;

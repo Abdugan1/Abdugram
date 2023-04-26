@@ -1,5 +1,5 @@
 #include "registrationpage.h"
-#include "lineedit.h"
+#include "fieldlineedit.h"
 #include "headerlabel.h"
 #include "secondarylabel.h"
 #include "button.h"
@@ -30,25 +30,25 @@ RegistrationPage::RegistrationPage(QWidget *parent)
             this,              &RegistrationPage::toLoginPageClicked);
 
     // line edits
-    connect(firstNameEdit_,       &LineEdit::textChanged,
+    connect(firstNameEdit_,       &FieldLineEdit::textChanged,
             this,                 &RegistrationPage::onLineEditsChanged);
 
-    connect(lastNameEdit_,        &LineEdit::textChanged,
+    connect(lastNameEdit_,        &FieldLineEdit::textChanged,
             this,                 &RegistrationPage::onLineEditsChanged);
 
-    connect(usernameEdit_,        &LineEdit::textChanged,
+    connect(usernameEdit_,        &FieldLineEdit::textChanged,
             this,                 &RegistrationPage::onLineEditsChanged);
 
-    connect(emailEdit_,           &LineEdit::textChanged,
+    connect(emailEdit_,           &FieldLineEdit::textChanged,
             this,                 &RegistrationPage::onLineEditsChanged);
 
-    connect(phoneNumberEdit_,     &LineEdit::textChanged,
+    connect(phoneNumberEdit_,     &FieldLineEdit::textChanged,
             this,                 &RegistrationPage::onLineEditsChanged);
 
-    connect(passwordEdit_,        &LineEdit::textChanged,
+    connect(passwordEdit_,        &FieldLineEdit::textChanged,
             this,                 &RegistrationPage::onLineEditsChanged);
 
-    connect(confirmPasswordEdit_, &LineEdit::textChanged,
+    connect(confirmPasswordEdit_, &FieldLineEdit::textChanged,
             this,                 &RegistrationPage::onLineEditsChanged);
 }
 
@@ -94,16 +94,16 @@ void RegistrationPage::setupUi()
     labelsLayout->setSpacing(6);
 
     // Line edits configuration
-    firstNameEdit_ = new LineEdit{tr("First Name")};
+    firstNameEdit_ = new FieldLineEdit{tr("First Name")};
     firstNameEdit_->setValidator(new QRegularExpressionValidator{ui::regex::NameRegex});
 
-    lastNameEdit_ = new LineEdit{tr("Last Name")};
+    lastNameEdit_ = new FieldLineEdit{tr("Last Name")};
     lastNameEdit_->setValidator(new QRegularExpressionValidator{ui::regex::NameRegex});
 
-    usernameEdit_ = new LineEdit{tr("Username")};
+    usernameEdit_ = new FieldLineEdit{tr("Username")};
     usernameEdit_->setValidator(new QRegularExpressionValidator{ui::regex::UsernameRegex});
 
-    emailEdit_ = new LineEdit{tr("Email")};
+    emailEdit_ = new FieldLineEdit{tr("Email")};
     emailEdit_->setValidator(new QRegularExpressionValidator{ui::regex::EmailRegex});
 
     phoneNumberEdit_ = new PhoneLineEdit;
@@ -111,7 +111,7 @@ void RegistrationPage::setupUi()
     passwordEdit_ = new PasswordLineEdit{tr("Password")};
     passwordEdit_->setValidator(new QRegularExpressionValidator{ui::regex::PasswordRegex});
 
-    confirmPasswordEdit_ = new LineEdit{tr("Confirm Password")};
+    confirmPasswordEdit_ = new FieldLineEdit{tr("Confirm Password")};
 
     QGridLayout *gLayout = new QGridLayout;
     gLayout->setHorizontalSpacing(50);
@@ -153,7 +153,7 @@ void RegistrationPage::setupUi()
     group->setFixedWidth(600);
 
     // Back button
-    backButton_ = new ImageButton{QPixmap{":/images/BackButton.png"}};
+    backButton_ = new ImageButton{QPixmap{":/images/back_button.png"}};
 
     //
     QHBoxLayout *topLayout = new QHBoxLayout;

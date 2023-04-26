@@ -6,28 +6,27 @@
 class LineEdit : public QLineEdit
 {
     Q_OBJECT
-    Q_PROPERTY(QColor lineColor READ lineColor WRITE setLineColor NOTIFY lineColorChanged)
+    Q_PROPERTY(QColor textColor READ textColor WRITE setTextColor NOTIFY textColorChanged)
+    Q_PROPERTY(QColor placeholderColor READ placeholderColor WRITE setPlaceholderColor NOTIFY placeholderColorChanged)
 public:
-    explicit LineEdit(const QString &placeholder, QWidget *parent = nullptr);
+    explicit LineEdit(QWidget *parent = nullptr);
 
-    QColor lineColor() const;
-    void setLineColor(const QColor &newLineColor);
+    QColor textColor() const;
+    void setTextColor(const QColor &newTextColor);
+
+    QColor placeholderColor() const;
+    void setPlaceholderColor(const QColor &newPlaceholderColor);
 
 signals:
-    void lineColorChanged();
+    void textColorChanged();
+    void placeholderColorChanged();
 
-protected:
-    void paintEvent(QPaintEvent *event) override;
-
-    void focusInEvent(QFocusEvent *event) override;
-    void focusOutEvent(QFocusEvent *event) override;
+private slots:
+    void setAppropriateColor();
 
 private:
-    void showValidInputState();
-    void showInvalidInputState();
-
-private:
-    QColor lineColor_ = Qt::black;
+    QColor textColor_ = Qt::black;
+    QColor placeholderColor_ = Qt::gray;
 };
 
 #endif // LINEEDIT_H

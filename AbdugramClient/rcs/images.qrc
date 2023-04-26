@@ -1,7 +1,8 @@
 <RCC>
     <qresource prefix="/">
-        <file>images/BackButton.png</file>
         <file>images/busy.gif</file>
         <file>images/avatar.png</file>
+        <file>images/back_button.png</file>
+        <file>images/drawer_button.png</file>
     </qresource>
 </RCC>

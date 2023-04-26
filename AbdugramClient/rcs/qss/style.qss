@@ -31,6 +31,26 @@ MessageListView {
     qproperty-timeColor: @mainLabelColor;
 }
 
+/* MainPage */
+MainPage::handle {
+    background-color: black;
+}
+
+/* SearchLineEdit */
+SearchLineEdit {
+    border-width: 0px;
+    background-color: @helperColor;
+    outline-color: red;
+
+    qproperty-textColor: @mainLabelColor;
+    qproperty-placeholderColor: @secondaryLabelColor;
+}
+
+/* MainPage */
+MainPage {
+    background-color: @backgroundColor;
+}
+
 /* Button */
 Button {
     /* Background */
@@ -70,17 +90,14 @@ ImageButton {
     border-radius: 16px;
 }
 
-/* LineEdit */
-LineEdit {
+/* FieldLineEdit */
+FieldLineEdit {
     background-color: @backgroundColor;
-    color: @mainLabelColor;
-    qproperty-lineColor: @decorationColor;
     border: none;
-}
 
-/* LineEdit placeholder color */
-LineEdit[text=\"\"] {
-    color: @secondaryLabelColor;
+    qproperty-textColor: @mainLabelColor;
+    qproperty-placeholderColor: red;
+    qproperty-lineColor: @decorationColor;
 }
 
 /* ToolTip */

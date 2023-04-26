@@ -4,3 +4,4 @@
 @mainLabelColor      = #FFFFFF;
 @secondaryLabelColor = #828282;
 @headerLabelColor    = #FFFFFF;
+@helperColor         = #554450;

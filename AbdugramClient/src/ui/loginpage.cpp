@@ -1,7 +1,7 @@
 #include "loginpage.h"
 #include "headerlabel.h"
 #include "secondarylabel.h"
-#include "lineedit.h"
+#include "fieldlineedit.h"
 #include "button.h"
 #include "imagebutton.h"
 
@@ -21,9 +21,9 @@ LoginPage::LoginPage(QWidget *parent)
     connect(toRegisterPage_, &QLabel::linkActivated, this, &LoginPage::toRegisterPageClicked);
 
     // line edits
-    connect(usernameEdit_, &LineEdit::textChanged, this, &LoginPage::onLineEditsChanged);
-
-    connect(passwordEdit_, &LineEdit::textChanged, this, &LoginPage::onLineEditsChanged);
+    connect(usernameEdit_, &FieldLineEdit::textChanged, this, &LoginPage::onLineEditsChanged);
+    
+    connect(passwordEdit_, &FieldLineEdit::textChanged, this, &LoginPage::onLineEditsChanged);
 }
 
 void LoginPage::sendLoginMessage()
@@ -48,8 +48,8 @@ void LoginPage::setupUi()
     header_->setAlignment(Qt::AlignCenter);
 
     //
-    usernameEdit_ = new LineEdit{tr("Username")};
-    passwordEdit_ = new LineEdit{tr("Password")};
+    usernameEdit_ = new FieldLineEdit{tr("Username")};
+    passwordEdit_ = new FieldLineEdit{tr("Password")};
 
     //
     nextButton_ = new Button{tr("Next")};
@@ -79,7 +79,7 @@ void LoginPage::setupUi()
     group->setLayout(groupLayout);
     group->setFixedWidth(600);
 
-    backButton_ = new ImageButton{QPixmap{":/images/BackButton.png"}};
+    backButton_ = new ImageButton{QPixmap{":/images/back_button.png"}};
 
     //
     QHBoxLayout *topLayout = new QHBoxLayout;

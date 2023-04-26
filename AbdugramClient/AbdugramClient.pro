@@ -28,12 +28,14 @@ SOURCES += \
     src/net/clientmessagevisitor.cpp \
     src/sectimer.cpp \
     src/ui/button.cpp \
+    src/ui/fieldlineedit.cpp \
     src/ui/headerlabel.cpp \
     src/ui/hellopage.cpp \
     src/ui/imagebutton.cpp \
     src/ui/lineedit.cpp \
     src/ui/loginpage.cpp \
     src/ui/mainlabel.cpp \
+    src/ui/mainpage.cpp \
     src/ui/mainwindow.cpp \
     src/ui/mv/chatitem.cpp \
     src/ui/mv/chatlistdelegate.cpp \
@@ -49,19 +51,23 @@ SOURCES += \
     src/ui/regexes.cpp \
     src/ui/registrationpage.cpp \
     src/ui/rippleanimation.cpp \
+    src/ui/searchlineedit.cpp \
     src/ui/secondarylabel.cpp \
+    src/ui/sidepanel.cpp \
     src/ui/stackedwidget.cpp
 
 HEADERS += \
     src/net/clientmessagevisitor.h \
     src/sectimer.h \
     src/ui/button.h \
+    src/ui/fieldlineedit.h \
     src/ui/headerlabel.h \
     src/ui/hellopage.h \
     src/ui/imagebutton.h \
     src/ui/lineedit.h \
     src/ui/loginpage.h \
     src/ui/mainlabel.h \
+    src/ui/mainpage.h \
     src/ui/mainwindow.h \
     src/ui/mv/chatitem.h \
     src/ui/mv/chatlistdelegate.h \
@@ -77,7 +83,9 @@ HEADERS += \
     src/ui/regexes.h \
     src/ui/registrationpage.h \
     src/ui/rippleanimation.h \
+    src/ui/searchlineedit.h \
     src/ui/secondarylabel.h \
+    src/ui/sidepanel.h \
     src/ui/stackedwidget.h
 
 RESOURCES += \

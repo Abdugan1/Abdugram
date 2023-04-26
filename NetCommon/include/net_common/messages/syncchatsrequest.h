@@ -2,6 +2,7 @@
 #define SYNCCHATSREQUEST_H
 
 #include "abdumessage.h"
+#include <QDateTime>
 
 class SyncChatsRequest : public AbduMessage
 {
@@ -11,8 +12,8 @@ public:
     QString fromUsername() const;
     void setFromUsername(const QString &newFromUsername);
 
-    QString lastUpdate() const;
-    void setLastUpdate(const QString &newLastUpdate);
+    QDateTime lastUpdate() const;
+    void setLastUpdate(const QDateTime &newLastUpdate);
 
     void accept(MessageVisitor *visitor) const override;
 
@@ -21,8 +22,8 @@ protected:
     void writeBodyData(DataStream *stream) const override;
 
 private:
-    QString fromUsername_;
-    QString lastUpdate_;
+    QString   fromUsername_;
+    QDateTime lastUpdate_;
 
 };
 

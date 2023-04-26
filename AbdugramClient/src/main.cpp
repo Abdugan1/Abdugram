@@ -11,8 +11,7 @@
 #include <logger/logger.h>
 
 #include "ui/mainwindow.h"
-#include "ui/mv/chatlistview.h"
-#include "ui/mv/messagelistview.h"
+#include "ui/mainpage.h"
 
 void setupStyleSheet(QString rawStyleSheet)
 {
@@ -67,8 +66,12 @@ int main(int argc, char *argv[])
 
     DatabaseClient::instance()->connectToDatabase();
 
-    MainWindow mainWindow;
-    mainWindow.show();
+//    MainWindow mainWindow;
+//    mainWindow.show();
+
+    MainPage mainPage;
+    mainPage.resize(800, 600);
+    mainPage.show();
 
 //    ChatListView chatListView;
 //    chatListView.show();

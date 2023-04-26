@@ -1,7 +1,7 @@
 #ifndef PASSWORDLINEEDIT_H
 #define PASSWORDLINEEDIT_H
 
-#include "lineedit.h"
+#include "fieldlineedit.h"
 
 class SecondaryLabel;
 
@@ -17,7 +17,7 @@ private:
     SecondaryLabel *passwordRules_ = nullptr;
 };
 
-class PasswordLineEdit : public LineEdit
+class PasswordLineEdit : public FieldLineEdit
 {
     Q_OBJECT
 public:

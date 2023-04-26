@@ -17,11 +17,13 @@ INCLUDEPATH += include/sql_server
 INCLUDEPATH += ../SqlCommon/include
 
 SOURCES += \
-    include/sql_server/userstable.cpp \
+    src/userstable.cpp \
+    src/chatstable.cpp \
     src/databaseserver.cpp
 
 HEADERS += \
     include/sql_server/SqlServer_global.h \
+    include/sql_server/chatstable.h \
     include/sql_server/databaseserver.h \
     include/sql_server/userstable.h
 

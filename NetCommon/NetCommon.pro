@@ -28,7 +28,6 @@ HEADERS += \
     include/net_common/tcpsession.h \
 
 SOURCES += \
-    include/net_common/messages/syncchatsrequest.cpp \
     src/consts.cpp \
     src/datastream.cpp \
     src/fields.cpp \
@@ -38,6 +37,7 @@ SOURCES += \
     src/messages/loginstatusmessage.cpp \
     src/messages/registermessage.cpp \
     src/messages/registerstatusmessage.cpp \
+    src/messages/syncchatsrequest.cpp \
     src/tcpsession.cpp
 
 
