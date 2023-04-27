@@ -28,6 +28,9 @@ private slots:
 
     void onLineEditsChanged();
 
+protected:
+    void showEvent(QShowEvent *event) override;
+
 private:
     void setupUi();
 

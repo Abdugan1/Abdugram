@@ -2,12 +2,27 @@
 
 #include <QSqlQuery>
 #include <QSqlError>
+#include <QSqlRecord>
 #include <QVariant>
 #include <QDebug>
 
 #include <sql_common/functions.h>
 
 #include <data_structures/user.h>
+
+User getUserFromQueryResult(const QSqlRecord &record)
+{
+    User user;
+
+    user.setId(record.value("id").toInt());
+    user.setUsername(record.value("username").toString());
+    user.setFirstName(record.value("first_name").toString());
+    user.setLastName(record.value("last_name").toString());
+    user.setEmail(record.value("email").toString());
+    user.setPhone(record.value("phone").toString());
+
+    return user;
+}
 
 UsersTable::UsersTable()
 {
@@ -64,4 +79,25 @@ bool UsersTable::isUserExists(const QString &username, const QString &password)
     }
 
     return isUserExistsQuery.value(0).toBool();
+}
+
+QList<User> UsersTable::getUsers(const QString &likeSearch)
+{
+    const QString query = readFullFile("./.sql/users/search.sql");
+
+    QSqlQuery searchUsersQuery;
+    searchUsersQuery.prepare(query);
+    searchUsersQuery.bindValue(":like_search", likeSearch);
+
+    if (!searchUsersQuery.exec()) {
+        qCritical() << "Couldn't execute query:" << searchUsersQuery.executedQuery()
+                    << "error:" << searchUsersQuery.lastError().text();
+        return QList<User>{};
+    }
+
+    QList<User> users;
+    while (searchUsersQuery.next())
+        users.append(getUserFromQueryResult(searchUsersQuery.record()));
+
+    return users;
 }

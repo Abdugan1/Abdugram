@@ -30,6 +30,9 @@ private slots:
 
     void onLineEditsChanged();
 
+protected:
+    void showEvent(QShowEvent *event) override;
+
 private:
     void setupUi();
 
@@ -37,18 +40,19 @@ private:
     HeaderLabel    *tellUsAboutLabel_ = nullptr;
     SecondaryLabel *pageInfo_         = nullptr;
     
-    FieldLineEdit         *firstNameEdit_       = nullptr;
-    FieldLineEdit         *lastNameEdit_        = nullptr;
-    FieldLineEdit         *usernameEdit_        = nullptr;
-    FieldLineEdit         *emailEdit_           = nullptr;
+    FieldLineEdit    *firstNameEdit_       = nullptr;
+    FieldLineEdit    *lastNameEdit_        = nullptr;
+    FieldLineEdit    *usernameEdit_        = nullptr;
+    FieldLineEdit    *emailEdit_           = nullptr;
     PhoneLineEdit    *phoneNumberEdit_     = nullptr;
     PasswordLineEdit *passwordEdit_        = nullptr;
-    FieldLineEdit         *confirmPasswordEdit_ = nullptr;
+    FieldLineEdit    *confirmPasswordEdit_ = nullptr;
 
     Button      *nextButton_ = nullptr;
     ImageButton *backButton_ = nullptr;
 
     SecondaryLabel *toLoginPageLabel_ = nullptr;
+
 };
 
 #endif // REGISTRATIONPAGE_H

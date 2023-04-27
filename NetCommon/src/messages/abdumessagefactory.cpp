@@ -4,6 +4,8 @@
 #include "messages/registermessage.h"
 #include "messages/loginstatusmessage.h"
 #include "messages/registerstatusmessage.h"
+#include "messages/searchonservermessage.h"
+#include "messages/searchusersresultmessage.h"
 
 AbduMessagePtr AbduMessageFactory::fromData(const QByteArray &data)
 {
@@ -25,6 +27,12 @@ AbduMessagePtr AbduMessageFactory::fromData(const QByteArray &data)
         break;
     case AbduMessage::Type::RegisterStaus:
         abduMessage = new RegisterStatusMessage;
+        break;
+    case AbduMessage::Type::SearchOnServer:
+        abduMessage = new SearchOnServerMessage;
+        break;
+    case AbduMessage::Type::SearchUsersResult:
+        abduMessage = new SearchUsersResultMessage;
         break;
     }
 

@@ -1,5 +1,7 @@
 #include "user.h"
 
+#include <QDataStream>
+
 User::User()
 {
 }
@@ -62,4 +64,33 @@ QString User::phone() const
 void User::setPhone(const QString &newPhone)
 {
     phone_ = newPhone;
+}
+
+QDataStream &operator<<(QDataStream &out, const User &user)
+{
+    out << user.id()       << user.username() << user.firstName()
+        << user.lastName() << user.email()    << user.phone();
+    return out;
+}
+
+QDataStream &operator>>(QDataStream &in, User &user)
+{
+    int id;
+    QString username;
+    QString firstName;
+    QString lastName;
+    QString email;
+    QString phone;
+
+    in >> id       >> username >> firstName
+       >> lastName >> email    >> phone;
+
+    user.setId(id);
+    user.setUsername(username);
+    user.setFirstName(firstName);
+    user.setLastName(lastName);
+    user.setEmail(email);
+    user.setPhone(phone);
+
+    return in;
 }

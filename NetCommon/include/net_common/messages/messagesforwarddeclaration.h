@@ -7,5 +7,7 @@ class LoginMessage;
 class LoginStatusMessage;
 class RegisterStatusMessage;
 class SyncChatsRequest;
+class SearchOnServerMessage;
+class SearchUsersResultMessage;
 
 #endif // MESSAGESFORWARDDECLARATION_H

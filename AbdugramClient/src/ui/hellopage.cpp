@@ -34,6 +34,7 @@ void HelloPage::setupUi()
     welcomeLabel_->setAlignment(Qt::AlignCenter);
 
     startButton_ = new Button{tr("Start Messaging")};
+    startButton_->setShortcut(QKeySequence{Qt::Key_Return});
 
     QVBoxLayout *vLayout = new QVBoxLayout;
     vLayout->addSpacerItem(createVSpacer());

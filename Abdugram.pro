@@ -24,6 +24,7 @@ AbdugramClient.depends += SqlClient
 AbdugramServer.depends += SqlServer
 
 SqlServer.depends += DataStructures
+NetCommon.depends += DataStructures
 
 OTHER_FILES += \
     Functions.pri \

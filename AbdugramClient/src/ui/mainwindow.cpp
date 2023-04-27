@@ -3,6 +3,7 @@
 #include "hellopage.h"
 #include "loginpage.h"
 #include "registrationpage.h"
+#include "mainpage.h"
 #include "problemwidget.h"
 #include "../sectimer.h"
 
@@ -13,6 +14,7 @@
 #include <QLabel>
 #include <QMovie>
 #include <QTimer>
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow{parent}
@@ -51,8 +53,34 @@ void MainWindow::onConnectionError()
 
 void MainWindow::onMessageReceived(const AbduMessagePtr &message)
 {
-    ClientMessageVisitor visitor;
+    ClientMessageVisitor visitor{this};
     message->accept(&visitor);
+}
+
+void MainWindow::toHelloPage()
+{
+    stackedWidget_->toWidget(helloPage_);
+}
+
+void MainWindow::toLoginPage()
+{
+    stackedWidget_->toWidget(loginPage_);
+}
+
+void MainWindow::toRegistrationPage()
+{
+    stackedWidget_->toWidget(registrationPage_);
+}
+
+void MainWindow::toMainPage()
+{
+    stackedWidget_->toWidget(mainPage_);
+}
+
+void MainWindow::sendMessage(const AbduMessagePtr &message)
+{
+    qDebug() << (message->type() == AbduMessage::Type::SearchOnServer);
+    tcpSession_->send(message);
 }
 
 void MainWindow::setupUi()
@@ -63,10 +91,13 @@ void MainWindow::setupUi()
 
     registrationPage_ = new RegistrationPage;
 
+    mainPage_ = new MainPage;
+
     stackedWidget_ = new StackedWidget;
     stackedWidget_->addWidget(helloPage_);
     stackedWidget_->addWidget(loginPage_);
     stackedWidget_->addWidget(registrationPage_);
+    stackedWidget_->addWidget(mainPage_);
     stackedWidget_->setCurrentWidget(helloPage_);
 
     setCentralWidget(stackedWidget_);
@@ -126,11 +157,8 @@ void MainWindow::connectTcpLogic()
 
     connect(connectionProblem_, &ProblemWidget::reconnectNowClicked, this, &MainWindow::connectToServer);
 
-    connect(registrationPage_, &RegistrationPage::registerRequested, this, [this](const AbduMessagePtr &registerMessage) {
-        tcpSession_->send(registerMessage);
-    });
 
-    connect(loginPage_, &LoginPage::loginRequested, this, [this](const AbduMessagePtr &loginMessage) {
-        tcpSession_->send(loginMessage);
-    });
+    connect(registrationPage_, &RegistrationPage::registerRequested, this, &MainWindow::sendMessage);
+    connect(loginPage_, &LoginPage::loginRequested, this, &MainWindow::sendMessage);
+    connect(mainPage_, &MainPage::searchOnServerRequested, this, &MainWindow::sendMessage);
 }

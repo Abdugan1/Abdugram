@@ -11,6 +11,10 @@ include($$PWD/../Functions.pri)
 
 INCLUDEPATH += $$PWD/include/net_common
 
+# data structures
+INCLUDEPATH += $$PWD/../DataStructures/include
+LIBS += -L$$OUT_PWD/../DataStructures/data_structures/lib -ldata_structures
+
 HEADERS += \
     include/net_common/NetCommon_global.h \
     include/net_common/consts.h \
@@ -24,6 +28,8 @@ HEADERS += \
     include/net_common/messages/messagevisitor.h \
     include/net_common/messages/registermessage.h \
     include/net_common/messages/registerstatusmessage.h \
+    include/net_common/messages/searchonservermessage.h \
+    include/net_common/messages/searchusersresultmessage.h \
     include/net_common/messages/syncchatsrequest.h \
     include/net_common/tcpsession.h \
 
@@ -37,6 +43,8 @@ SOURCES += \
     src/messages/loginstatusmessage.cpp \
     src/messages/registermessage.cpp \
     src/messages/registerstatusmessage.cpp \
+    src/messages/searchonservermessage.cpp \
+    src/messages/searchusersresultmessage.cpp \
     src/messages/syncchatsrequest.cpp \
     src/tcpsession.cpp
 

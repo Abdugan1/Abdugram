@@ -8,7 +8,8 @@
 #include <net_common/messages/registerstatusmessage.h>
 #include <net_common/messages/loginmessage.h>
 #include <net_common/messages/loginstatusmessage.h>
-
+#include <net_common/messages/searchonservermessage.h>
+#include <net_common/messages/searchusersresultmessage.h>
 
 #include <sql_server/userstable.h>
 
@@ -70,4 +71,19 @@ void ServerMessageVisitor::visit(const SyncChatsRequest &message)
     const QString   username   = message.fromUsername();
     const QDateTime lastUpdate = message.lastUpdate();
 
+}
+
+void ServerMessageVisitor::visit(const SearchOnServerMessage &message)
+{
+    const QString searchText = message.searchText();
+
+    AnyMessagePtr<SearchUsersResultMessage> searchResult{new SearchUsersResultMessage};
+    searchResult->setUsers(UsersTable::getUsers("%" + searchText + "%"));
+
+    server_->sendToClient(client_, static_cast<AbduMessagePtr>(searchResult));
+}
+
+void ServerMessageVisitor::visit(const SearchUsersResultMessage &message)
+{
+    Q_UNUSED(message);
 }

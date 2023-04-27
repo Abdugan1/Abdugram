@@ -76,6 +76,12 @@ void RegistrationPage::onLineEditsChanged()
                             && (confirmPasswordEdit_->text() == passwordEdit_->text()));
 }
 
+void RegistrationPage::showEvent(QShowEvent *event)
+{
+    QWidget::showEvent(event);
+    firstNameEdit_->setFocus();
+}
+
 void RegistrationPage::setupUi()
 {
     //
@@ -128,6 +134,7 @@ void RegistrationPage::setupUi()
     //
     nextButton_ = new Button{tr("Next")};
     nextButton_->setEnabled(false);
+    nextButton_->setShortcut(QKeySequence{Qt::Key_Return});
 
     //
     toLoginPageLabel_ = new SecondaryLabel{tr("Already have an account? "

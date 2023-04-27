@@ -8,6 +8,12 @@ MainPage::MainPage(QWidget *parent)
     : QSplitter{parent}
 {
     setupUi();
+
+    connect(sidePanel_, &SidePanel::searchOnServerRequested,
+            this,       &MainPage::searchOnServerRequested);
+
+    connect(sidePanel_, &SidePanel::searchOnLocalRequested,
+            this,       &MainPage::searchOnLocalRequested);
 }
 
 void MainPage::setupUi()
@@ -19,5 +25,4 @@ void MainPage::setupUi()
     addWidget(messageListView_);
 
     setHandleWidth(1);
-    qDebug() << handleWidth();
 }

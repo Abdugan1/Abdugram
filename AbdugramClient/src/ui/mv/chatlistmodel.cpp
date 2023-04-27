@@ -28,11 +28,11 @@ ChatListModel::ChatListModel(QObject *parent)
     yqyl.setLastMessage("Last message is presented here");
     yqyl.setMessageDate(QDateTime{QDate{2002, 05, 17}, QTime{9, 43}});
 
-    addChatItem(abdugani);
-    addChatItem(nurzhan);
-    addChatItem(biko);
-    addChatItem(para);
-    addChatItem(yqyl);
+//    addChatItem(abdugani);
+//    addChatItem(nurzhan);
+//    addChatItem(biko);
+//    addChatItem(para);
+//    addChatItem(yqyl);
 }
 
 int ChatListModel::rowCount(const QModelIndex &) const

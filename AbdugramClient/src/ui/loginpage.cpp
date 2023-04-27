@@ -41,6 +41,12 @@ void LoginPage::onLineEditsChanged()
                             && !passwordEdit_->text().isEmpty());
 }
 
+void LoginPage::showEvent(QShowEvent *event)
+{
+    QWidget::showEvent(event);
+    usernameEdit_->setFocus();
+}
+
 void LoginPage::setupUi()
 {
     //
@@ -49,11 +55,14 @@ void LoginPage::setupUi()
 
     //
     usernameEdit_ = new FieldLineEdit{tr("Username")};
+    usernameEdit_->setFocus();
+
     passwordEdit_ = new FieldLineEdit{tr("Password")};
 
     //
     nextButton_ = new Button{tr("Next")};
     nextButton_->setEnabled(false);
+    nextButton_->setShortcut(QKeySequence{Qt::Key_Return});
 
     //
     toRegisterPage_ = new SecondaryLabel{tr("Do not have an account yet? "

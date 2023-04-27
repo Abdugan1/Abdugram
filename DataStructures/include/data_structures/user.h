@@ -4,6 +4,7 @@
 #include "DataStructures_global.h"
 
 #include <QString>
+class QDataStream;
 
 class DATASTRUCTURES_EXPORT User
 {
@@ -36,5 +37,8 @@ private:
     QString email_;
     QString phone_;
 };
+
+QDataStream &operator<<(QDataStream &out, const User &user);
+QDataStream &operator>>(QDataStream &in, User &user);
 
 #endif // USER_H

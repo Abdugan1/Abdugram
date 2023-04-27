@@ -40,7 +40,6 @@ MainPage::handle {
 SearchLineEdit {
     border-width: 0px;
     background-color: @helperColor;
-    outline-color: red;
 
     qproperty-textColor: @mainLabelColor;
     qproperty-placeholderColor: @secondaryLabelColor;
@@ -96,7 +95,7 @@ FieldLineEdit {
     border: none;
 
     qproperty-textColor: @mainLabelColor;
-    qproperty-placeholderColor: red;
+    qproperty-placeholderColor: @secondaryLabelColor;
     qproperty-lineColor: @decorationColor;
 }
 

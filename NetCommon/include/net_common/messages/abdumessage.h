@@ -25,10 +25,12 @@ public:
         Login      = ClientSide + 1,
         Register,
         SyncChatsRequest,
+        SearchOnServer,
 
         ServerSide = 1000000,
         LoginStatus = ServerSide + 1,
         RegisterStaus,
+        SearchUsersResult
     };
 
 public:

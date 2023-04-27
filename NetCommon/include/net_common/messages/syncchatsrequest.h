@@ -4,7 +4,7 @@
 #include "abdumessage.h"
 #include <QDateTime>
 
-class SyncChatsRequest : public AbduMessage
+class NETCOMMON_EXPORT SyncChatsRequest : public AbduMessage
 {
 public:
     explicit SyncChatsRequest();
