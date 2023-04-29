@@ -32,14 +32,10 @@ private slots:
     void connectToServer();
     void onConnectionError();
 
-    void onMessageReceived(const AbduMessagePtr &message);
-
     void toHelloPage();
     void toLoginPage();
     void toRegistrationPage();
     void toMainPage();
-
-    void sendMessage(const AbduMessagePtr &message);
 
 private:
     void setupUi();
@@ -48,8 +44,6 @@ private:
     void connectTcpLogic();
 
 private:
-    TcpSession *tcpSession_ = nullptr;
-
     int connectAttempts_ = 0;
     SecTimer *reconnectSoonTimer_       = nullptr;
     ProblemWidget *connectionProblem_   = nullptr;

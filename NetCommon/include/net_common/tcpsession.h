@@ -4,7 +4,7 @@
 #include <QTcpSocket>
 
 #include "NetCommon_global.h"
-#include "messages/abdumessage.h"
+#include "messages/messagesforwarddeclaration.h"
 
 class NETCOMMON_EXPORT TcpSession : public QTcpSocket
 {

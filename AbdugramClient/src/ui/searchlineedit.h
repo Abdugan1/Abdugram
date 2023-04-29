@@ -13,9 +13,8 @@ class SearchLineEdit : public LineEdit
 public:
     explicit SearchLineEdit(QWidget *parent = nullptr);
 
-signals:
-    void searchOnServerRequested(const AbduMessagePtr &searchOnServerMessage);
-    void searchOnLocalRequested(const QString &text);
+private:
+    void searchOnServer();
 
 private:
     QTimer *searchServerTimer_ = nullptr;

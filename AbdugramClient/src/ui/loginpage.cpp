@@ -4,6 +4,7 @@
 #include "fieldlineedit.h"
 #include "button.h"
 #include "imagebutton.h"
+#include "net/networkhandler.h"
 
 #include <QBoxLayout>
 
@@ -28,11 +29,14 @@ LoginPage::LoginPage(QWidget *parent)
 
 void LoginPage::sendLoginMessage()
 {
+    if (!networkHandler()->isConnected())
+        return;
+
     AnyMessagePtr<LoginMessage> loginMessage{new LoginMessage};
     loginMessage->setUsername(usernameEdit_->text());
     loginMessage->setPassword(passwordEdit_->text());
 
-    emit loginRequested(static_cast<AbduMessagePtr>(loginMessage));
+    networkHandler()->sendToServer(static_cast<AbduMessagePtr>(loginMessage));
 }
 
 void LoginPage::onLineEditsChanged()

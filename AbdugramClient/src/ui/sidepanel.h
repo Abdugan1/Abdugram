@@ -15,10 +15,6 @@ class SidePanel : public QWidget
 public:
     explicit SidePanel(QWidget *parent = nullptr);
 
-signals:
-    void searchOnServerRequested(const AbduMessagePtr &searchOnServerMessage);
-    void searchOnLocalRequested(const QString &text);
-
 private:
     void setupUi();
 

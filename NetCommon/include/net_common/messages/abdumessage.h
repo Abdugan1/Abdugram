@@ -5,12 +5,7 @@
 
 #include <QString>
 #include "../datastream.h"
-#include <QSharedDataPointer>
-
-class AbduMessage;
-using AbduMessagePtr = QSharedDataPointer<AbduMessage>;
-template<typename T>
-using AnyMessagePtr = QSharedDataPointer<T>;
+#include "messagesforwarddeclaration.h"
 
 class MessageVisitor;
 

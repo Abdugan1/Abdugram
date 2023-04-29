@@ -6,11 +6,12 @@
 #include "mainpage.h"
 #include "problemwidget.h"
 #include "../sectimer.h"
-
-#include "net/clientmessagevisitor.h"
+#include "net/networkhandler.h"
 
 #include <net_common/tcpsession.h>
 #include <net_common/consts.h>
+
+
 #include <QLabel>
 #include <QMovie>
 #include <QTimer>
@@ -36,7 +37,7 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 void MainWindow::connectToServer()
 {
     reconnectSoonTimer_->stop();
-    tcpSession_->connectToHost(consts::server::Address, consts::server::Port);
+    networkHandler()->connectToServer();
 }
 
 void MainWindow::onConnectionError()
@@ -49,12 +50,6 @@ void MainWindow::onConnectionError()
         reconnectSoonTimer_->start();
     }
     connectionProblem_->setVisible(true);
-}
-
-void MainWindow::onMessageReceived(const AbduMessagePtr &message)
-{
-    ClientMessageVisitor visitor{this};
-    message->accept(&visitor);
 }
 
 void MainWindow::toHelloPage()
@@ -75,12 +70,6 @@ void MainWindow::toRegistrationPage()
 void MainWindow::toMainPage()
 {
     stackedWidget_->toWidget(mainPage_);
-}
-
-void MainWindow::sendMessage(const AbduMessagePtr &message)
-{
-    qDebug() << (message->type() == AbduMessage::Type::SearchOnServer);
-    tcpSession_->send(message);
 }
 
 void MainWindow::setupUi()
@@ -111,7 +100,7 @@ void MainWindow::setupUi()
 void MainWindow::connectUiLogic()
 {
     connect(helloPage_, &HelloPage::startMessagingClicked, this, [this]() {
-        if (tcpSession_->state() == QTcpSocket::ConnectedState) {
+        if (networkHandler()->isConnected()) {
             stackedWidget_->toWidget(loginPage_);
         }
     });
@@ -135,16 +124,12 @@ void MainWindow::connectUiLogic()
 
 void MainWindow::connectTcpLogic()
 {
-    tcpSession_ = new TcpSession;
-
-    connect(tcpSession_, &TcpSession::connected, this, [this]() {
+    connect(networkHandler(), &NetworkHandler::connectedSucessfully, this, [this]() {
         connectAttempts_ = 0;
         connectionProblem_->hide();
     });
 
-    connect(tcpSession_, &TcpSession::errorOccurred, this, &MainWindow::onConnectionError);
-
-    connect(tcpSession_, &TcpSession::received, this, &MainWindow::onMessageReceived);
+    connect(networkHandler(), &NetworkHandler::connectionError, this, &MainWindow::onConnectionError);
 
     reconnectSoonTimer_ = new SecTimer{this};
     reconnectSoonTimer_->setDuration(16);
@@ -157,8 +142,5 @@ void MainWindow::connectTcpLogic()
 
     connect(connectionProblem_, &ProblemWidget::reconnectNowClicked, this, &MainWindow::connectToServer);
 
-
-    connect(registrationPage_, &RegistrationPage::registerRequested, this, &MainWindow::sendMessage);
-    connect(loginPage_, &LoginPage::loginRequested, this, &MainWindow::sendMessage);
-    connect(mainPage_, &MainPage::searchOnServerRequested, this, &MainWindow::sendMessage);
+    connect(networkHandler(), &NetworkHandler::loginSuccessfully, this, &MainWindow::toMainPage);
 }

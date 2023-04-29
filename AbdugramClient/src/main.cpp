@@ -5,6 +5,7 @@
 #include <QDebug>
 
 #include <net_common/messages/abdumessage.h>
+#include <net_common/tcpsession.h>
 
 #include <sql_client/databaseclient.h>
 
@@ -12,8 +13,15 @@
 
 #include "ui/mainwindow.h"
 
-void setupStyleSheet(QString rawStyleSheet)
+void setupStyleSheet(const QString &qssFileName)
 {
+    QFile qssFile(qssFileName);
+    if (!qssFile.open(QFile::ReadOnly)) {
+        qDebug() << "Could not read file";
+        return;
+    }
+    QString rawStyleSheet = qssFile.readAll();
+
     QFile styleVarsFile(":/qss/style_vars.txt");
     if (!styleVarsFile.open(QFile::ReadOnly)) {
         qDebug() << "Could not open" << styleVarsFile.fileName();
@@ -51,12 +59,7 @@ int main(int argc, char *argv[])
     Logger::setEchoMode(true);
 
     // Setting qss
-    QFile qssFile(":/qss/style.qss");
-    if (qssFile.open(QFile::ReadOnly)) {
-        setupStyleSheet(qssFile.readAll());
-    } else {
-        qDebug() << "Could not read file";
-    }
+    setupStyleSheet(":/qss/style.qss");
 
     // Setting fonts
     QFontDatabase::addApplicationFont(":/fonts/Montserrat-Regular.ttf");

@@ -23,8 +23,6 @@ signals:
     void backButtonClicked();
     void toLoginPageClicked();
 
-    void registerRequested(const AbduMessagePtr &registerMessage);
-
 private slots:
     void sendRegisterMessage();
 

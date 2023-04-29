@@ -8,6 +8,8 @@
 #include "passwordlineedit.h"
 #include "regexes.h"
 
+#include "net/networkhandler.h"
+
 #include <net_common/messages/registermessage.h>
 
 #include <QBoxLayout>
@@ -54,6 +56,9 @@ RegistrationPage::RegistrationPage(QWidget *parent)
 
 void RegistrationPage::sendRegisterMessage()
 {
+    if (!networkHandler()->isConnected())
+        return;
+
     AnyMessagePtr<RegisterMessage> registerMessage{new RegisterMessage};
     registerMessage->setFirstName(firstNameEdit_->text());
     registerMessage->setLastName(lastNameEdit_->text());
@@ -62,7 +67,7 @@ void RegistrationPage::sendRegisterMessage()
     registerMessage->setPhone(phoneNumberEdit_->getPhone());
     registerMessage->setPassword(passwordEdit_->text());
 
-    emit registerRequested(static_cast<AbduMessagePtr>(registerMessage));
+    networkHandler()->sendToServer(static_cast<AbduMessagePtr>(registerMessage));
 }
 
 void RegistrationPage::onLineEditsChanged()

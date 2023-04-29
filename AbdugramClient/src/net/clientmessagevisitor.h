@@ -3,12 +3,12 @@
 
 #include <net_common/messages/messagevisitor.h>
 
-class MainWindow;
+class NetworkHandler;
 
 class ClientMessageVisitor : public MessageVisitor
 {
 public:
-    explicit ClientMessageVisitor(MainWindow *mainWindow);
+    explicit ClientMessageVisitor(NetworkHandler *networkHandler);
 
     void visit(const RegisterMessage          &message) override;
     void visit(const LoginMessage             &message) override;
@@ -19,7 +19,7 @@ public:
     void visit(const SearchUsersResultMessage &mesasge) override;
 
 private:
-    MainWindow *mainWindow_ = nullptr;
+    NetworkHandler *networkHandler_ = nullptr;
 };
 
 #endif // CLIENTMESSAGEVISITOR_H

@@ -1,6 +1,8 @@
 #include "searchlineedit.h"
 #include <QTimer>
 
+#include "net/networkhandler.h"
+
 #include <net_common/messages/searchonservermessage.h>
 
 SearchLineEdit::SearchLineEdit(QWidget *parent)
@@ -14,10 +16,15 @@ SearchLineEdit::SearchLineEdit(QWidget *parent)
         searchServerTimer_->start();
     });
 
-    connect(searchServerTimer_, &QTimer::timeout, this, [this]() {
-        AnyMessagePtr<SearchOnServerMessage> searchOnServerMessage{new SearchOnServerMessage{}};
-        searchOnServerMessage->setSearchText(text());
-        emit searchOnServerRequested(static_cast<AbduMessagePtr>(searchOnServerMessage));
-    });
-    connect(this, &SearchLineEdit::textEdited, this, &SearchLineEdit::searchOnLocalRequested);
+    connect(searchServerTimer_, &QTimer::timeout, this, &SearchLineEdit::searchOnServer);
+}
+
+void SearchLineEdit::searchOnServer()
+{
+    if (!networkHandler()->isConnected() || text().isEmpty())
+        return;
+
+    AnyMessagePtr<SearchOnServerMessage> searchOnServerMessage{new SearchOnServerMessage{}};
+    searchOnServerMessage->setSearchText(text());
+    networkHandler()->sendToServer(static_cast<AbduMessagePtr>(searchOnServerMessage));
 }

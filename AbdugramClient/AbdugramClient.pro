@@ -30,6 +30,7 @@ INCLUDEPATH += $$PWD/src/
 SOURCES += \
     src/main.cpp \
     src/net/clientmessagevisitor.cpp \
+    src/net/networkhandler.cpp \
     src/sectimer.cpp \
     src/ui/button.cpp \
     src/ui/fieldlineedit.cpp \
@@ -62,6 +63,7 @@ SOURCES += \
 
 HEADERS += \
     src/net/clientmessagevisitor.h \
+    src/net/networkhandler.h \
     src/sectimer.h \
     src/ui/button.h \
     src/ui/fieldlineedit.h \

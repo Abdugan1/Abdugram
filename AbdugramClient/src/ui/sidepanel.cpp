@@ -9,12 +9,6 @@ SidePanel::SidePanel(QWidget *parent)
     : QWidget{parent}
 {
     setupUi();
-
-    connect(searchLineEdit_, &SearchLineEdit::searchOnServerRequested,
-            this,            &SidePanel::searchOnServerRequested);
-
-    connect(searchLineEdit_, &SearchLineEdit::searchOnLocalRequested,
-            this,            &SidePanel::searchOnLocalRequested);
 }
 
 void SidePanel::setupUi()

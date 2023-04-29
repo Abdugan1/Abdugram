@@ -14,10 +14,6 @@ class MainPage : public QSplitter
 public:
     explicit MainPage(QWidget *parent = nullptr);
 
-signals:
-    void searchOnServerRequested(const AbduMessagePtr &searchOnServerMessage);
-    void searchOnLocalRequested(const QString &text);
-
 private:
     void setupUi();
 
