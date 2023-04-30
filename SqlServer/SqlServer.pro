@@ -9,10 +9,6 @@ TARGET = sql_server
 include($$PWD/../LibDirsConfig.pri)
 include($$PWD/../Functions.pri)
 
-# data structures
-INCLUDEPATH += $$PWD/../DataStructures/include
-LIBS += -L$$OUT_PWD/../DataStructures/data_structures/lib -ldata_structures
-
 INCLUDEPATH += include/sql_server
 INCLUDEPATH += ../SqlCommon/include
 

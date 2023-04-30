@@ -1,10 +1,11 @@
 #ifndef CHAT_H
 #define CHAT_H
 
-#include <QString>
-#include <QDateTime>
+#include "../SqlCommon_global.h"
 
-class Chat
+#include <QString>
+
+class SQLCOMMON_EXPORT Chat
 {
 public:
     explicit Chat();

@@ -5,7 +5,7 @@
 #include <net_common/messages/loginstatusmessage.h>
 #include <net_common/messages/searchusersresultmessage.h>
 
-#include <data_structures/user.h>
+#include <sql_common/data_structures/user.h>
 
 #include <QDebug>
 
@@ -55,6 +55,7 @@ void ClientMessageVisitor::visit(const SearchUsersResultMessage &message)
     const QList<User> users = message.users();
     for (const auto& user : users) {
         qDebug() << "username:" << user.username();
+        qDebug() << "updatedAt" << user.updatedAt();
     }
     networkHandler_->emitSearchResult(users);
 }

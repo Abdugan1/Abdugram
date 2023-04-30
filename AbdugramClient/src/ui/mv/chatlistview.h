@@ -6,6 +6,8 @@
 class ChatListModel;
 class ChatListDelegate;
 
+class User;
+
 class ChatListView : public QListView
 {
     Q_OBJECT
@@ -35,9 +37,14 @@ signals:
 
     void highlightColorChanged();
 
+private slots:
+    void setTemporaryModel(const QList<User> &foundUserList);
+
 private:
-    ChatListModel    *model_    = nullptr;
-    ChatListDelegate *delegate_ = nullptr;
+    ChatListModel *mainModel_ = nullptr;
+    ChatListModel *tempModel_ = nullptr;
+
+    ChatListDelegate *delegate_  = nullptr;
 
     // For delegate
     QColor chatNameColor_    = Qt::black;

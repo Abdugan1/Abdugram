@@ -1,5 +1,7 @@
 #include "chatlistmodel.h"
 
+#include <QModelIndex>
+
 ChatListModel::ChatListModel(QObject *parent)
     : QAbstractListModel{parent}
 {
@@ -61,4 +63,12 @@ void ChatListModel::addChatItem(const ChatItem &item)
     beginInsertRows(QModelIndex(), row, row);
     chatItems_.append(item);
     endInsertRows();
+}
+
+void ChatListModel::clear()
+{
+    int oldSize = chatItems_.size();
+    chatItems_.clear();
+    if (oldSize != chatItems_.size())
+        emit dataChanged(this->index(0, 0), this->index(oldSize, 0));
 }

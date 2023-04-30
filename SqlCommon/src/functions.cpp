@@ -1,6 +1,7 @@
-#include "../include/sql_common/functions.h"
+#include "functions.h"
 
 #include <QFile>
+#include <QDateTime>
 #include <QDebug>
 
 QString readFullFile(const QString &fileName)
@@ -16,4 +17,9 @@ QString readFullFile(const QString &fileName)
     return content;
 }
 
-const Qt::DateFormat DateTimeFormat = Qt::ISODate;
+const QString DateTimePattern = "yyyy-MM-dd HH:mm:ss";
+
+QDateTime stringToDateTime(const QString &dateTimeString)
+{
+    return QDateTime::fromString(dateTimeString, DateTimePattern);
+}

@@ -1,6 +1,7 @@
-#include "../include/sql_server/chatstable.h"
-#include "sql_common/functions.h"
-#include "data_structures/chat.h"
+#include "chatstable.h"
+
+#include <sql_common/functions.h>
+#include <sql_common/data_structures/chat.h>
 
 #include <QSqlQuery>
 #include <QVariant>

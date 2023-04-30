@@ -1,7 +1,7 @@
 #include "messages/searchusersresultmessage.h"
 #include "messages/messagevisitor.h"
 
-#include <data_structures/user.h>
+#include <sql_common/data_structures/user.h>
 
 SearchUsersResultMessage::SearchUsersResultMessage()
     : AbduMessage{Type::SearchUsersResult}

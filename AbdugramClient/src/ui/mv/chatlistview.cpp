@@ -2,9 +2,12 @@
 #include "chatlistmodel.h"
 #include "chatlistdelegate.h"
 
+#include "net/networkhandler.h"
+
 ChatListView::ChatListView(QWidget *parent)
     : QListView{parent}
-    , model_{new ChatListModel{this}}
+    , mainModel_{new ChatListModel{this}}
+    , tempModel_{new ChatListModel{this}}
     , delegate_{new ChatListDelegate{this}}
 {
     connect(this, &ChatListView::chatNameColorChanged, this, [this]() {
@@ -20,7 +23,9 @@ ChatListView::ChatListView(QWidget *parent)
         delegate_->setHighlightColor(highlightColor_);
     });
 
-    setModel(model_);
+    connect(networkHandler(), &NetworkHandler::searchResult, this, &ChatListView::setTemporaryModel);
+
+    setModel(mainModel_);
     setItemDelegate(delegate_);
     setSelectionMode(QAbstractItemView::SingleSelection);
     setVerticalScrollMode(QListView::ScrollPerPixel);
@@ -78,4 +83,10 @@ void ChatListView::setHighlightColor(const QColor &newHighlightColor)
         return;
     highlightColor_ = newHighlightColor;
     emit highlightColorChanged();
+}
+
+void ChatListView::setTemporaryModel(const QList<User> &foundUserList)
+{
+    tempModel_->clear();
+
 }

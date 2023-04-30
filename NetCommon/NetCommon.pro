@@ -11,9 +11,9 @@ include($$PWD/../Functions.pri)
 
 INCLUDEPATH += $$PWD/include/net_common
 
-# data structures
-INCLUDEPATH += $$PWD/../DataStructures/include
-LIBS += -L$$OUT_PWD/../DataStructures/data_structures/lib -ldata_structures
+# sql library
+INCLUDEPATH += $$PWD/../SqlCommon/include
+LIBS += -L$$OUT_PWD/../SqlCommon/sql_common/lib -lsql_common
 
 HEADERS += \
     include/net_common/NetCommon_global.h \

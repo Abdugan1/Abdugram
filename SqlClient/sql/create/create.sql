@@ -1,7 +1,6 @@
 CREATE TABLE IF NOT EXISTS users (
   id INTEGER PRIMARY KEY,
   username TEXT UNIQUE,
-  password TEXT,
   first_name TEXT,
   last_name TEXT,
   email TEXT UNIQUE,

@@ -3,7 +3,6 @@ TEMPLATE = subdirs
 SUBDIRS += \
     AbdugramClient \
     AbdugramServer \
-    DataStructures \
     Logger \
     NetCommon \
     SqlClient \
@@ -16,15 +15,14 @@ SqlClient.file      = SqlClient/SqlClient.pro
 SqlCommon.file      = SqlCommon/SqlCommon.pro
 SqlServer.file      = SqlServer/SqlServer.pro
 NetCommon.file      = NetCommon/NetCommon.pro
-DataStructures.file = DataStructures/DataStructures.pro
 
 AbdugramClient.depends += NetCommon
 AbdugramClient.depends += SqlClient
 
 AbdugramServer.depends += SqlServer
 
-SqlServer.depends += DataStructures
-NetCommon.depends += DataStructures
+SqlClient.depends += SqlCommon
+SqlServer.depends += SqlCommon
 
 OTHER_FILES += \
     Functions.pri \

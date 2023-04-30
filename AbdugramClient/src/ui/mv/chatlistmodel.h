@@ -25,6 +25,8 @@ public:
 
     void addChatItem(const ChatItem &item);
 
+    void clear();
+
 private:
     using ChatItems = QList<ChatItem>;
     ChatItems chatItems_;

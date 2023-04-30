@@ -13,7 +13,7 @@
 
 #include <sql_server/userstable.h>
 
-#include <data_structures/user.h>
+#include <sql_common/data_structures/user.h>
 
 #include <QDebug>
 

@@ -7,22 +7,7 @@
 #include <QDebug>
 
 #include <sql_common/functions.h>
-
-#include <data_structures/user.h>
-
-User getUserFromQueryResult(const QSqlRecord &record)
-{
-    User user;
-
-    user.setId(record.value("id").toInt());
-    user.setUsername(record.value("username").toString());
-    user.setFirstName(record.value("first_name").toString());
-    user.setLastName(record.value("last_name").toString());
-    user.setEmail(record.value("email").toString());
-    user.setPhone(record.value("phone").toString());
-
-    return user;
-}
+#include <sql_common/data_structures/user.h>
 
 UsersTable::UsersTable()
 {
@@ -75,7 +60,7 @@ bool UsersTable::isUserExists(const QString &username, const QString &password)
     if (!isUserExistsQuery.exec() || !isUserExistsQuery.first()) {
         qCritical() << "Couldn't execute query:" << isUserExistsQuery.executedQuery()
                     << "error:" << isUserExistsQuery.lastError().text();
-        return false; // Should return something else???
+        return false; // TODO: Should return something else???
     }
 
     return isUserExistsQuery.value(0).toBool();

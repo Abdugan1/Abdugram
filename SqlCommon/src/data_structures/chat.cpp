@@ -1,4 +1,4 @@
-#include "chat.h"
+#include "data_structures/chat.h"
 
 Chat::Chat()
 {

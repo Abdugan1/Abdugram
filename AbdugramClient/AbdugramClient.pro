@@ -16,10 +16,6 @@ LIBS += -L$$OUT_PWD/../SqlClient/sql_client/lib -lsql_client
 INCLUDEPATH += $$PWD/../SqlCommon/include
 LIBS += -L$$OUT_PWD/../SqlCommon/sql_common/lib -lsql_common
 
-# data structures
-INCLUDEPATH += $$PWD/../DataStructures/include
-LIBS += -L$$OUT_PWD/../DataStructures/data_structures/lib -ldata_structures
-
 # logger library
 INCLUDEPATH += $$PWD/../Logger/include
 LIBS += -L$$OUT_PWD/../Logger/logger/lib -llogger
