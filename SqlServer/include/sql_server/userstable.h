@@ -9,8 +9,6 @@ class User;
 class UsersTable
 {
 public:
-    explicit UsersTable();
-
     static bool isUsernameExists(const QString &username);
 
     static void addUser(const User &user, const QString &password);

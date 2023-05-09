@@ -7,6 +7,7 @@ class ChatListModel;
 class ChatListDelegate;
 
 class User;
+class ChatItem;
 
 class ChatListView : public QListView
 {
@@ -31,14 +32,20 @@ public:
     void setHighlightColor(const QColor &newHighlightColor);
 
 signals:
+    void selectionWasChanged(const ChatItem &selectedChat);
+
     void chatNameColorChanged();
     void lastMessageColorChanged();
     void messageDateColorChanged();
 
     void highlightColorChanged();
 
-private slots:
+public slots:
+    void setMainModel();
     void setTemporaryModel(const QList<User> &foundUserList);
+
+protected slots:
+    void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
 
 private:
     ChatListModel *mainModel_ = nullptr;

@@ -3,10 +3,8 @@
 
 #include <QSplitter>
 
-#include "net_common/messages/abdumessage.h"
-
 class SidePanel;
-class MessageListView;
+class ConversationSide;
 
 class MainPage : public QSplitter
 {
@@ -18,8 +16,8 @@ private:
     void setupUi();
 
 private:
-    SidePanel       *sidePanel_       = nullptr;
-    MessageListView *messageListView_ = nullptr;
+    SidePanel        *sidePanel_        = nullptr;
+    ConversationSide *conversationSide_ = nullptr;
 };
 
 #endif // MAINPAGE_H

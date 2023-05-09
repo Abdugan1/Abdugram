@@ -11,8 +11,6 @@ class Chat;
 class ChatsTable
 {
 public:
-    explicit ChatsTable();
-
     static QList<Chat> getNewChatsWhereUserIsParticipiant(const QString &username,
                                                           const QDateTime &lastUpdate);
 };

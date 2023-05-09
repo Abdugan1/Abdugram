@@ -5,6 +5,8 @@
 
 #include "messageitem.h"
 
+class ChatItem;
+
 class MessageListModel : public QAbstractListModel
 {
     Q_OBJECT
@@ -22,8 +24,9 @@ public:
 
     bool isEmpty() const;
 
+
 private:
-    using MessageItems = QList<MessageItem>;
+    using MessageItems = QVector<MessageItem>;
     MessageItems messageItems_;
 };
 

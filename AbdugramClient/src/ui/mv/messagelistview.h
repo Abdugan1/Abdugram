@@ -6,6 +6,8 @@
 class MessageListModel;
 class MessageListDelegate;
 
+class ChatItem;
+
 class MessageListView : public QListView
 {
     Q_OBJECT
@@ -29,14 +31,8 @@ signals:
     void textColorChanged();
     void timeColorChanged();
 
-protected:
-    void paintEvent(QPaintEvent *event) override;
-
 private:
-    void drawSomething();
-
-private:
-    MessageListModel    *model_ = nullptr;
+    MessageListModel    *model_     = nullptr;
     MessageListDelegate *delegate_ = nullptr;
 
     // for delegate

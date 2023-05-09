@@ -1,5 +1,6 @@
 #include "messagelistmodel.h"
 #include "messageitem.h"
+#include "chatitem.h"
 
 MessageListModel::MessageListModel(QObject *parent)
     : QAbstractListModel{parent}

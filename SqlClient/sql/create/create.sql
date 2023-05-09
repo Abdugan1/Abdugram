@@ -17,16 +17,17 @@ CREATE TABLE IF NOT EXISTS chats (
   id INTEGER PRIMARY KEY,
   name TEXT,
   description TEXT,
-  is_group_chat INTEGER,
+  type TEXT CHECK(type IN ('private', 'group', 'channel')),
   created_at DATETIME,
   updated_at DATETIME,
+  deleted_at DATETIME,
   is_deleted INTEGER
 );
 
 CREATE TABLE IF NOT EXISTS chat_users (
   chat_id INTEGER,
   user_id INTEGER,
-  role TEXT,
+  role TEXT CHECK (role IN('admin', 'user')),
   joined_at DATETIME,
   left_at DATETIME,
   PRIMARY KEY (chat_id, user_id),
@@ -40,22 +41,14 @@ CREATE TABLE IF NOT EXISTS messages (
   sender_id INTEGER,
   reply_to_id INTEGER,
   text TEXT,
+  is_edited INTEGER,
   created_at DATETIME,
   updated_at DATETIME,
-  is_deleted INTEGER,
   FOREIGN KEY (chat_id) REFERENCES chats(id) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (reply_to_id) REFERENCES messages(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS message_edits (
-  id INTEGER PRIMARY KEY,
-  message_id INTEGER,
-  editor_id INTEGER,
-  edited_at DATETIME,
-  FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY (editor_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
-);
 
 CREATE TABLE IF NOT EXISTS message_deletions (
   id INTEGER PRIMARY KEY,
@@ -73,17 +66,4 @@ CREATE TABLE IF NOT EXISTS message_reads (
   read_at DATETIME,
   FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (reader_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS invites (
-  id INTEGER PRIMARY KEY,
-  chat_id INTEGER,
-  sender_id INTEGER,
-  invitee_id INTEGER,
-  created_at DATETIME,
-  accepted_at DATETIME,
-  declined_at DATETIME,
-  FOREIGN KEY (chat_id) REFERENCES chats(id) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY (invitee_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
 );

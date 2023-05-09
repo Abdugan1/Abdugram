@@ -13,7 +13,12 @@ SearchLineEdit::SearchLineEdit(QWidget *parent)
     searchServerTimer_->setSingleShot(true);
 
     connect(this, &SearchLineEdit::textEdited, this, [this]() {
-        searchServerTimer_->start();
+        if (!text().isEmpty()) {
+            searchServerTimer_->start();
+        } else {
+            searchServerTimer_->stop();
+            emit searchIsEmpty();
+        }
     });
 
     connect(searchServerTimer_, &QTimer::timeout, this, &SearchLineEdit::searchOnServer);
@@ -21,7 +26,7 @@ SearchLineEdit::SearchLineEdit(QWidget *parent)
 
 void SearchLineEdit::searchOnServer()
 {
-    if (!networkHandler()->isConnected() || text().isEmpty())
+    if (!networkHandler()->isConnected())
         return;
 
     AnyMessagePtr<SearchOnServerMessage> searchOnServerMessage{new SearchOnServerMessage{}};

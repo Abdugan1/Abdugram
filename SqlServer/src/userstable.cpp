@@ -9,11 +9,6 @@
 #include <sql_common/functions.h>
 #include <sql_common/data_structures/user.h>
 
-UsersTable::UsersTable()
-{
-
-}
-
 bool UsersTable::isUsernameExists(const QString &username)
 {
     const QString query = readFullFile("./.sql/users/count_of_username.sql");

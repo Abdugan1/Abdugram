@@ -1,6 +1,6 @@
 #include "mainpage.h"
 #include "sidepanel.h"
-#include "mv/messagelistview.h"
+#include "conversationside.h"
 
 #include <QDebug>
 
@@ -12,11 +12,11 @@ MainPage::MainPage(QWidget *parent)
 
 void MainPage::setupUi()
 {
-    sidePanel_       = new SidePanel;
-    messageListView_ = new MessageListView;
+    sidePanel_        = new SidePanel;
+    conversationSide_ = new ConversationSide;
 
     addWidget(sidePanel_);
-    addWidget(messageListView_);
+    addWidget(conversationSide_);
 
     setHandleWidth(1);
 }

@@ -29,6 +29,8 @@ SOURCES += \
     src/net/networkhandler.cpp \
     src/sectimer.cpp \
     src/ui/button.cpp \
+    src/ui/chatheader.cpp \
+    src/ui/conversationside.cpp \
     src/ui/fieldlineedit.cpp \
     src/ui/headerlabel.cpp \
     src/ui/hellopage.cpp \
@@ -38,6 +40,8 @@ SOURCES += \
     src/ui/mainlabel.cpp \
     src/ui/mainpage.cpp \
     src/ui/mainwindow.cpp \
+    src/ui/messageside.cpp \
+    src/ui/messagetextedit.cpp \
     src/ui/mv/chatitem.cpp \
     src/ui/mv/chatlistdelegate.cpp \
     src/ui/mv/chatlistmodel.cpp \
@@ -55,13 +59,16 @@ SOURCES += \
     src/ui/searchlineedit.cpp \
     src/ui/secondarylabel.cpp \
     src/ui/sidepanel.cpp \
-    src/ui/stackedwidget.cpp
+    src/ui/stackedwidget.cpp \
+    src/ui/textedit.cpp
 
 HEADERS += \
     src/net/clientmessagevisitor.h \
     src/net/networkhandler.h \
     src/sectimer.h \
     src/ui/button.h \
+    src/ui/chatheader.h \
+    src/ui/conversationside.h \
     src/ui/fieldlineedit.h \
     src/ui/headerlabel.h \
     src/ui/hellopage.h \
@@ -71,6 +78,8 @@ HEADERS += \
     src/ui/mainlabel.h \
     src/ui/mainpage.h \
     src/ui/mainwindow.h \
+    src/ui/messageside.h \
+    src/ui/messagetextedit.h \
     src/ui/mv/chatitem.h \
     src/ui/mv/chatlistdelegate.h \
     src/ui/mv/chatlistmodel.h \
@@ -88,7 +97,8 @@ HEADERS += \
     src/ui/searchlineedit.h \
     src/ui/secondarylabel.h \
     src/ui/sidepanel.h \
-    src/ui/stackedwidget.h
+    src/ui/stackedwidget.h \
+    src/ui/textedit.h
 
 RESOURCES += \
     rcs/fonts.qrc \

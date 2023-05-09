@@ -1,5 +1,7 @@
 #include "chatlistmodel.h"
 
+#include <sql_common/data_structures/user.h>
+
 #include <QModelIndex>
 
 ChatListModel::ChatListModel(QObject *parent)
@@ -65,10 +67,21 @@ void ChatListModel::addChatItem(const ChatItem &item)
     endInsertRows();
 }
 
-void ChatListModel::clear()
+ChatItem ChatListModel::chatItem(int row) const
+{
+    return chatItems_[row];
+}
+
+void ChatListModel::setUserList(const QList<User> &userList)
 {
     int oldSize = chatItems_.size();
     chatItems_.clear();
-    if (oldSize != chatItems_.size())
-        emit dataChanged(this->index(0, 0), this->index(oldSize, 0));
+    chatItems_.reserve(userList.size());
+    for (const auto& user : userList) {
+        ChatItem chatItem;
+        chatItem.setChatName(user.username());
+        chatItems_.append(chatItem);
+    }
+
+    emit dataChanged(index(0, 0), index(oldSize, 0));
 }

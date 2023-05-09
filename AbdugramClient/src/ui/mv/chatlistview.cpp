@@ -85,8 +85,26 @@ void ChatListView::setHighlightColor(const QColor &newHighlightColor)
     emit highlightColorChanged();
 }
 
+void ChatListView::setMainModel()
+{
+    setModel(mainModel_);
+}
+
 void ChatListView::setTemporaryModel(const QList<User> &foundUserList)
 {
-    tempModel_->clear();
+    tempModel_->setUserList(foundUserList);
+    this->setModel(tempModel_);
+}
 
+void ChatListView::selectionChanged(const QItemSelection &selected, const QItemSelection &deselected)
+{
+    if (selected.empty())
+        return;
+
+    QModelIndex selectedIndex = selected.indexes().first();
+    if (!selectedIndex.isValid())
+        return;
+
+    if (auto model = static_cast<const ChatListModel*>(this->model()))
+        emit selectionWasChanged(model->chatItem(selectedIndex.row()));
 }

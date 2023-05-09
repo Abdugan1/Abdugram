@@ -24,6 +24,7 @@ ChatListView {
 MessageListView {
     background-color: @backgroundColor;
     font-size: 11pt;
+    border: none;
 
     /* For MessageListDelegate */
     qproperty-backgroundColor: @decorationColor;
@@ -48,6 +49,35 @@ SearchLineEdit {
 /* MainPage */
 MainPage {
     background-color: @backgroundColor;
+}
+
+/* ChatHeader */
+ChatHeader {
+    /* dont know why border-bottom dont works */
+    border: 1px solid black;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+
+    padding-left: 10px;
+    padding-top: 7px;
+    padding-bottom: 3px;
+}
+
+/* MessageSide */
+MessageSide {
+    border-top: 1px solid black;
+    padding: 7px;
+}
+
+/* MessageTextEdit */
+MessageTextEdit {
+    background-color: @backgroundColor;
+    selection-background-color: @decorationColor;
+    border: none;
+
+    qproperty-textColor: @mainLabelColor;
+    qproperty-placeholderColor: @secondaryLabelColor;
 }
 
 /* Button */
@@ -92,6 +122,7 @@ ImageButton {
 /* FieldLineEdit */
 FieldLineEdit {
     background-color: @backgroundColor;
+    selection-background-color: @decorationColor;
     border: none;
 
     qproperty-textColor: @mainLabelColor;

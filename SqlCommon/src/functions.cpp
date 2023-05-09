@@ -16,10 +16,3 @@ QString readFullFile(const QString &fileName)
 
     return content;
 }
-
-const QString DateTimePattern = "yyyy-MM-dd HH:mm:ss";
-
-QDateTime stringToDateTime(const QString &dateTimeString)
-{
-    return QDateTime::fromString(dateTimeString, DateTimePattern);
-}

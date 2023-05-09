@@ -9,6 +9,10 @@ SidePanel::SidePanel(QWidget *parent)
     : QWidget{parent}
 {
     setupUi();
+
+    connect(searchLineEdit_, &SearchLineEdit::searchIsEmpty, chatListView_, &ChatListView::setMainModel);
+
+    connect(chatListView_, &ChatListView::selectionWasChanged, this, &SidePanel::selectionWasChanged);
 }
 
 void SidePanel::setupUi()

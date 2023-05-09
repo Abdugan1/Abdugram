@@ -18,11 +18,6 @@ Chat getChatFromQueryResult(const QSqlRecord &record)
     return chat;
 }
 
-ChatsTable::ChatsTable()
-{
-
-}
-
 QList<Chat> ChatsTable::getNewChatsWhereUserIsParticipiant(const QString &username, const QDateTime &lastUpdate)
 {
     const QString query = readFullFile("./.sql/chats/get_new_chats_where_username_is_participiant.sql");

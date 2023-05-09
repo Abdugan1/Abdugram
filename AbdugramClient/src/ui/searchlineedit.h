@@ -13,6 +13,9 @@ class SearchLineEdit : public LineEdit
 public:
     explicit SearchLineEdit(QWidget *parent = nullptr);
 
+signals:
+    void searchIsEmpty();
+
 private:
     void searchOnServer();
 

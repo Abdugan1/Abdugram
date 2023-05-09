@@ -5,6 +5,7 @@
 
 #include "chatitem.h"
 
+class User;
 
 class ChatListModel : public QAbstractListModel
 {
@@ -24,11 +25,12 @@ public:
     QVariant data(const QModelIndex &index, int role) const override;
 
     void addChatItem(const ChatItem &item);
+    ChatItem chatItem(int row) const;
 
-    void clear();
+    void setUserList(const QList<User> &userList);
 
 private:
-    using ChatItems = QList<ChatItem>;
+    using ChatItems = QVector<ChatItem>;
     ChatItems chatItems_;
 };
 
