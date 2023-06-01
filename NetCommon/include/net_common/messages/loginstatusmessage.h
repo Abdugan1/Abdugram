@@ -11,6 +11,9 @@ public:
     bool success() const;
     void setSuccess(bool newSuccess);
 
+    int userId() const;
+    void setUserId(int newUserId);
+
     void accept(MessageVisitor *visitor) const override;
 
 protected:
@@ -19,6 +22,7 @@ protected:
 
 private:
     bool success_ = false;
+    int  userId_  = -1;
 
 };
 

@@ -6,9 +6,9 @@ CREATE TABLE IF NOT EXISTS users (
     last_name VARCHAR(40),
     email VARCHAR(255),
     phone VARCHAR(16),
+    avatar_url TEXT,
     is_online BOOLEAN DEFAULT 0,
     last_time_online DATETIME,
-    avatar_url TEXT,
     url_to_profile TEXT,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -29,9 +29,11 @@ CREATE TABLE IF NOT EXISTS chats (
 );
 
 CREATE TABLE IF NOT EXISTS chat_users (
-    user_id INT NOT NULL,
     chat_id INT NOT NULL,
-    role ENUM('admin', 'user')
+    user_id INT NOT NULL,
+    role ENUM('admin', 'user'),
+    joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    left_at TIMESTAMP,
     CONSTRAINT pk_chat_users PRIMARY KEY (user_id, chat_id),
     CONSTRAINT fk_chat_users_user_id FOREIGN KEY (user_id) REFERENCES users(id),
     CONSTRAINT fk_chat_users_chat_id FOREIGN KEY (chat_id) REFERENCES chats(id)
@@ -44,7 +46,6 @@ CREATE TABLE IF NOT EXISTS messages (
     reply_to_id INT,
     text VARCHAR(255) NOT NULL,
     is_edited BOOLEAN DEFAULT FALSE,
-    deleted_for_user_id INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT fk_messages_sender_id FOREIGN KEY (sender_id) REFERENCES users(id),
@@ -63,8 +64,9 @@ CREATE TABLE IF NOT EXISTS message_deletions (
 
 
 CREATE TABLE IF NOT EXISTS message_reads (
-    user_id INT NOT NULL,
+    id INT NOT NULL,
     message_id INT NOT NULL,
+    user_id INT NOT NULL,
     read_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT pk_message_reads PRIMARY KEY (user_id, message_id),
     CONSTRAINT fk_message_reads_user_id FOREIGN KEY (user_id) REFERENCES users(id),

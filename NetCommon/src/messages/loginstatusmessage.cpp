@@ -24,10 +24,20 @@ void LoginStatusMessage::accept(MessageVisitor *visitor) const
 
 void LoginStatusMessage::getBodyData(DataStream *stream)
 {
-    *stream >> success_;
+    *stream >> success_ >> userId_;
 }
 
 void LoginStatusMessage::writeBodyData(DataStream *stream) const
 {
-    *stream << success_;
+    *stream << success_ << userId_;
+}
+
+int LoginStatusMessage::userId() const
+{
+    return userId_;
+}
+
+void LoginStatusMessage::setUserId(int newUserId)
+{
+    userId_ = newUserId;
 }

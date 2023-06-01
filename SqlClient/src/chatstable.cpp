@@ -1,6 +1,7 @@
 #include "chatstable.h"
 
 #include <sql_common/functions.h>
+#include <sql_common/data_structures/user.h>
 
 #include <QString>
 #include <QSqlQuery>
@@ -22,4 +23,9 @@ bool ChatsTable::isChatExist(const QString &chatName)
     }
 
     return isChatExistQuery.value(0).toBool();
+}
+
+void ChatsTable::addPrivateChat(int chatId, const User &user1, const User &user2)
+{
+
 }

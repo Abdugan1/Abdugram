@@ -33,6 +33,7 @@ void DatabaseClient::createTables()
 
     QString fileName("./.sql/create/create.sql");
     QString queries = readFullFile(fileName);
+
     QStringList queryList = queries.split(";");
     for (QString query : queryList) {
         query = query.trimmed();

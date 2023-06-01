@@ -2,12 +2,32 @@
 #include "mainlabel.h"
 #include "secondarylabel.h"
 
+#include "net/networkhandler.h"
+
 #include <QVBoxLayout>
 
 ChatHeader::ChatHeader(QWidget *parent)
     : QFrame{parent}
 {
     setupUi();
+
+    connect(networkHandler(), &NetworkHandler::connectionError, this, &ChatHeader::setLastOnlineLabelAsConnecting);
+//    connect(networkHandler(), &NetworkHandler::connectedSucessfully, this, )
+}
+
+void ChatHeader::setChatName(const QString &text)
+{
+    chatName_->setText(text);
+}
+
+void ChatHeader::setLastOnlineLabelAsConnecting()
+{
+    lastOnlineLabel_->setText("Connecting...");
+}
+
+void ChatHeader::requestLastOnlineTimeOfCurrentUser()
+{
+    const QString username = chatName_->text();
 }
 
 void ChatHeader::setupUi()

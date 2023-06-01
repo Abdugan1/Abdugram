@@ -3,6 +3,7 @@
 
 #include <QBoxLayout>
 #include <QPixmap>
+#include <QKeyEvent>
 #include <QDebug>
 
 MessageTextEdit::MessageTextEdit(QWidget *parent)
@@ -13,6 +14,12 @@ MessageTextEdit::MessageTextEdit(QWidget *parent)
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     connect(document(), &QTextDocument::contentsChanged, this, &MessageTextEdit::setAppropriateSize);
+}
+
+void MessageTextEdit::sendMessage()
+{
+    emit sendMessageRequest(document()->toPlainText());
+    clear();
 }
 
 void MessageTextEdit::setAppropriateSize()
@@ -29,3 +36,12 @@ void MessageTextEdit::showEvent(QShowEvent *event)
     setAppropriateSize();
 }
 #endif
+
+void MessageTextEdit::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Return && !(event->modifiers() & Qt::ShiftModifier)) {
+        sendMessage();
+    } else {
+        TextEdit::keyPressEvent(event);
+    }
+}

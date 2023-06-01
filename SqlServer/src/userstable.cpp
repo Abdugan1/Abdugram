@@ -61,7 +61,7 @@ bool UsersTable::isUserExists(const QString &username, const QString &password)
     return isUserExistsQuery.value(0).toBool();
 }
 
-QList<User> UsersTable::getUsers(const QString &likeSearch)
+QList<User> UsersTable::getUsersByLikeSearch(const QString &likeSearch)
 {
     const QString query = readFullFile("./.sql/users/search.sql");
 
@@ -80,4 +80,38 @@ QList<User> UsersTable::getUsers(const QString &likeSearch)
         users.append(getUserFromQueryResult(searchUsersQuery.record()));
 
     return users;
+}
+
+int UsersTable::getUserId(const QString &username)
+{
+    const QString query = readFullFile("./sql/users/get_user_id_by_username.sql");
+
+    QSqlQuery getUserIdQuery;
+    getUserIdQuery.prepare(query);
+    getUserIdQuery.bindValue(":username", username);
+
+    if (!getUserIdQuery.exec() || !getUserIdQuery.first()) {
+        qCritical() << "Couldn't execute query:" << getUserIdQuery.executedQuery()
+                    << "error:" << getUserIdQuery.lastError().text();
+        return -1;
+    }
+
+    return getUserIdQuery.value(0).toInt();
+}
+
+User UsersTable::getUserById(int id)
+{
+    const QString query = readFullFile("./sql/users/get_user_by_id.sql");
+
+    QSqlQuery getUserByIdQuery;
+    getUserByIdQuery.prepare(query);
+    getUserByIdQuery.bindValue(":user_id", id);
+
+    if (!getUserByIdQuery.exec() || !getUserByIdQuery.first()) {
+        qWarning() << "Couldn't execute query:" << getUserByIdQuery.executedQuery()
+                   << "error:" << getUserByIdQuery.lastError().text();
+        return User{};
+    }
+
+    return getUserFromQueryResult(getUserByIdQuery.record());
 }

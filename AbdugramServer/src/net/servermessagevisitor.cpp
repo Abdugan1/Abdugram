@@ -10,8 +10,11 @@
 #include <net_common/messages/loginstatusmessage.h>
 #include <net_common/messages/searchonservermessage.h>
 #include <net_common/messages/searchusersresultmessage.h>
+#include <net_common/messages/createprivatechatmessage.h>
+#include <net_common/messages/createprivatechatresultmessage.h>
 
 #include <sql_server/userstable.h>
+#include <sql_server/chatstable.h>
 
 #include <sql_common/data_structures/user.h>
 
@@ -53,6 +56,9 @@ void ServerMessageVisitor::visit(const LoginMessage &message)
     AnyMessagePtr<LoginStatusMessage> loginStatus{new LoginStatusMessage};
     loginStatus->setSuccess(UsersTable::isUserExists(username, password));
 
+    if (loginStatus->success())
+        loginStatus->setUserId(UsersTable::getUserId(username));
+
     server_->sendToClient(client_, static_cast<AbduMessagePtr>(loginStatus));
 }
 
@@ -78,7 +84,7 @@ void ServerMessageVisitor::visit(const SearchOnServerMessage &message)
     const QString searchText = message.searchText();
 
     AnyMessagePtr<SearchUsersResultMessage> searchResult{new SearchUsersResultMessage};
-    searchResult->setUsers(UsersTable::getUsers("%" + searchText + "%"));
+    searchResult->setUsers(UsersTable::getUsersByLikeSearch("%" + searchText + "%"));
 
     server_->sendToClient(client_, static_cast<AbduMessagePtr>(searchResult));
 }
@@ -86,4 +92,25 @@ void ServerMessageVisitor::visit(const SearchOnServerMessage &message)
 void ServerMessageVisitor::visit(const SearchUsersResultMessage &message)
 {
     Q_UNUSED(message);
+}
+
+void ServerMessageVisitor::visit(const CreatePrivateChatMessage &message)
+{
+    const int user1Id = message.user1Id();
+    const int user2Id = message.user2Id();
+
+    using ResultMessage = AnyMessagePtr<CreatePrivateChatResultMessage>;
+    ResultMessage createPrivateChatResultMessage{new CreatePrivateChatResultMessage};
+    createPrivateChatResultMessage->setChatId(ChatsTable::createPrivateChat(user1Id, user2Id));
+
+    createPrivateChatResultMessage->setSecondParticipiant(UsersTable::getUserById(user2Id));
+    server_->sendToClient(client_, static_cast<AbduMessagePtr>(createPrivateChatResultMessage));
+
+    createPrivateChatResultMessage->setSecondParticipiant(UsersTable::getUserById(user1Id));
+    server_->sendToClient(user1Id, static_cast<AbduMessagePtr>(createPrivateChatResultMessage));
+}
+
+void ServerMessageVisitor::visit(const CreatePrivateChatResultMessage &message)
+{
+
 }

@@ -35,6 +35,7 @@ private slots:
     void processMessage(const AbduMessagePtr &message);
 
     void sendToClient(TcpSession *client, const AbduMessagePtr &message);
+    void sendToClient(int         userId, const AbduMessagePtr &message);
 
 protected:
     void incomingConnection(qintptr handle) override;

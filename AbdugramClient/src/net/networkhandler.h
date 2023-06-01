@@ -19,6 +19,8 @@ public:
 
     bool isConnected() const;
 
+    int userId() const;
+
 signals:
     void connectedSucessfully();
     void connectionError();
@@ -45,6 +47,7 @@ private:
 
 private:
     TcpSession *tcpSession_ = nullptr;
+    int userId_ = 0;
 
     friend class ClientMessageVisitor;
 };

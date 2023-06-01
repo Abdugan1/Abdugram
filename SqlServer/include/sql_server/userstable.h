@@ -15,7 +15,11 @@ public:
 
     static bool isUserExists(const QString &username, const QString &password);
 
-    static QList<User> getUsers(const QString &likeSearch);
+    static QList<User> getUsersByLikeSearch(const QString &likeSearch);
+
+    static int getUserId(const QString &username);
+
+    static User getUserById(int id);
 };
 
 #endif // USERSTABLE_H

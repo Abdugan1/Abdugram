@@ -8,18 +8,17 @@ class NetworkHandler;
 class ClientMessageVisitor : public MessageVisitor
 {
 public:
-    explicit ClientMessageVisitor(NetworkHandler *networkHandler);
+    explicit ClientMessageVisitor();
 
-    void visit(const RegisterMessage          &message) override;
-    void visit(const LoginMessage             &message) override;
-    void visit(const RegisterStatusMessage    &message) override;
-    void visit(const LoginStatusMessage       &message) override;
-    void visit(const SyncChatsRequest         &message) override;
-    void visit(const SearchOnServerMessage    &message) override;
-    void visit(const SearchUsersResultMessage &mesasge) override;
-
-private:
-    NetworkHandler *networkHandler_ = nullptr;
+    void visit(const RegisterMessage                &message) override;
+    void visit(const LoginMessage                   &message) override;
+    void visit(const RegisterStatusMessage          &message) override;
+    void visit(const LoginStatusMessage             &message) override;
+    void visit(const SyncChatsRequest               &message) override;
+    void visit(const SearchOnServerMessage          &message) override;
+    void visit(const SearchUsersResultMessage       &mesasge) override;
+    void visit(const CreatePrivateChatMessage       &message) override;
+    void visit(const CreatePrivateChatResultMessage &message) override;
 };
 
 #endif // CLIENTMESSAGEVISITOR_H

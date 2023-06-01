@@ -48,7 +48,7 @@ void NetworkHandler::sendToServer(const AbduMessagePtr &message)
 
 void NetworkHandler::onMessageReceived(const AbduMessagePtr &message)
 {
-    ClientMessageVisitor visitor{this};
+    ClientMessageVisitor visitor;
     message->accept(&visitor);
 }
 
@@ -65,5 +65,10 @@ void NetworkHandler::emitRegisterSuccessfully()
 void NetworkHandler::emitSearchResult(const QList<User> &usersSearchResult)
 {
     emit searchResult(usersSearchResult);
+}
+
+int NetworkHandler::userId() const
+{
+    return userId_;
 }
 

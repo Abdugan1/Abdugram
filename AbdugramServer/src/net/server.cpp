@@ -78,6 +78,11 @@ void Server::sendToClient(TcpSession *client, const AbduMessagePtr &message)
     QMetaObject::invokeMethod(client, "send", Qt::BlockingQueuedConnection, Q_ARG(AbduMessagePtr, message));
 }
 
+void Server::sendToClient(int userId, const AbduMessagePtr &message)
+{
+    qWarning() << "currently not implemented";
+}
+
 void Server::incomingConnection(qintptr socketDescriptor)
 {
     TcpSession *session = createSession();

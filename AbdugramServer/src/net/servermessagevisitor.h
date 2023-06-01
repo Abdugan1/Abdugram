@@ -11,18 +11,19 @@ class ServerMessageVisitor : public MessageVisitor
 public:
     explicit ServerMessageVisitor(Server *server, TcpSession *client);
 
-    void visit(const RegisterMessage          &message) override;
-    void visit(const LoginMessage             &message) override;
-    void visit(const RegisterStatusMessage    &message) override;
-    void visit(const LoginStatusMessage       &message) override;
-    void visit(const SyncChatsRequest         &message) override;
-    void visit(const SearchOnServerMessage    &message) override;
-    void visit(const SearchUsersResultMessage &message) override;
+    void visit(const RegisterMessage                &message) override;
+    void visit(const LoginMessage                   &message) override;
+    void visit(const RegisterStatusMessage          &message) override;
+    void visit(const LoginStatusMessage             &message) override;
+    void visit(const SyncChatsRequest               &message) override;
+    void visit(const SearchOnServerMessage          &message) override;
+    void visit(const SearchUsersResultMessage       &message) override;
+    void visit(const CreatePrivateChatMessage       &message) override;
+    void visit(const CreatePrivateChatResultMessage &message) override;
 
 private:
     Server      *server_ = nullptr;
     TcpSession  *client_ = nullptr;
-
 };
 
 #endif // SERVERMESSAGEVISITOR_H

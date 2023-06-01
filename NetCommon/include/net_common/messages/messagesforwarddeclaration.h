@@ -11,6 +11,8 @@ class RegisterStatusMessage;
 class SyncChatsRequest;
 class SearchOnServerMessage;
 class SearchUsersResultMessage;
+class CreatePrivateChatMessage;
+class CreatePrivateChatResultMessage;
 
 using AbduMessagePtr = QSharedDataPointer<AbduMessage>;
 template<typename T>

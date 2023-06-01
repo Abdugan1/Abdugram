@@ -12,7 +12,13 @@ class ChatHeader : public QFrame
 public:
     explicit ChatHeader(QWidget *parent = nullptr);
 
+    void setChatName(const QString &text);
+
 signals:
+
+private slots:
+    void setLastOnlineLabelAsConnecting();
+    void requestLastOnlineTimeOfCurrentUser();
 
 private:
     void setupUi();

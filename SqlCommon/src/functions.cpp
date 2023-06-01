@@ -2,6 +2,8 @@
 
 #include <QFile>
 #include <QDateTime>
+#include <QSqlQuery>
+#include <QSqlError>
 #include <QDebug>
 
 QString readFullFile(const QString &fileName)

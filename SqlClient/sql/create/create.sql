@@ -6,11 +6,12 @@ CREATE TABLE IF NOT EXISTS users (
   email TEXT UNIQUE,
   phone TEXT,
   avatar_url TEXT,
+  is_online INTEGER,
+  is_deleted INTEGER,
+  url_to_profile TEXT,
   created_at DATETIME,
   updated_at DATETIME,
-  last_time_online DATETIME,
-  is_online INTEGER,
-  is_deleted INTEGER
+  last_time_online DATETIME
 );
 
 CREATE TABLE IF NOT EXISTS chats (
@@ -18,10 +19,10 @@ CREATE TABLE IF NOT EXISTS chats (
   name TEXT,
   description TEXT,
   type TEXT CHECK(type IN ('private', 'group', 'channel')),
+  created_by_user_id INT,
   created_at DATETIME,
   updated_at DATETIME,
-  deleted_at DATETIME,
-  is_deleted INTEGER
+  deleted_at DATETIME
 );
 
 CREATE TABLE IF NOT EXISTS chat_users (
@@ -53,17 +54,17 @@ CREATE TABLE IF NOT EXISTS messages (
 CREATE TABLE IF NOT EXISTS message_deletions (
   id INTEGER PRIMARY KEY,
   message_id INTEGER,
-  deleter_id INTEGER,
+  deleted_for_user_id INTEGER,
   deleted_at DATETIME,
   FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY (deleter_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
+  FOREIGN KEY (deleted_for_user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS message_reads (
   id INTEGER PRIMARY KEY,
   message_id INTEGER,
-  reader_id INTEGER,
+  user_id INTEGER,
   read_at DATETIME,
   FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY (reader_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
 );

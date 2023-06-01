@@ -8,6 +8,8 @@ MainPage::MainPage(QWidget *parent)
     : QSplitter{parent}
 {
     setupUi();
+
+    connect(sidePanel_, &SidePanel::selectionWasChanged, conversationSide_, &ConversationSide::setCurrentChat);
 }
 
 void MainPage::setupUi()

@@ -12,6 +12,9 @@ class MessageSide : public QFrame
 public:
     explicit MessageSide(QWidget *parent = nullptr);
 
+signals:
+    void sendMessageRequest(const QString &messageText);
+
 private:
     void setupUi();
 

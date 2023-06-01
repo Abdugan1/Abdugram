@@ -11,13 +11,21 @@ class MessageTextEdit : public TextEdit
 public:
     explicit MessageTextEdit(QWidget *parent = nullptr);
 
+signals:
+    void sendMessageRequest(const QString &messageText);
+
+public slots:
+    void sendMessage();
+
 private slots:
     void setAppropriateSize();
 
-#ifdef Q_OS_LINUX
 protected:
+#ifdef Q_OS_LINUX
     void showEvent(QShowEvent *event) override;
 #endif
+
+    void keyPressEvent(QKeyEvent *event) override;
 
 private:
     void setupUi();
