@@ -22,8 +22,8 @@ HEADERS += \
     include/net_common/fields.h \
     include/net_common/messages/abdumessage.h \
     include/net_common/messages/abdumessagefactory.h \
-    include/net_common/messages/createprivatechatmessage.h \
-    include/net_common/messages/createprivatechatresultmessage.h \
+    include/net_common/messages/createchatmessage.h \
+    include/net_common/messages/createchatresultmessage.h \
     include/net_common/messages/loginmessage.h \
     include/net_common/messages/loginstatusmessage.h \
     include/net_common/messages/messagesforwarddeclaration.h \
@@ -41,8 +41,8 @@ SOURCES += \
     src/fields.cpp \
     src/messages/abdumessage.cpp \
     src/messages/abdumessagefactory.cpp \
-    src/messages/createprivatechatmessage.cpp \
-    src/messages/createprivatechatresultmessage.cpp \
+    src/messages/createchatmessage.cpp \
+    src/messages/createchatresultmessage.cpp \
     src/messages/loginmessage.cpp \
     src/messages/loginstatusmessage.cpp \
     src/messages/registermessage.cpp \

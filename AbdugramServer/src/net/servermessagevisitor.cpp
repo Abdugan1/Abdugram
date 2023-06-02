@@ -10,14 +10,16 @@
 #include <net_common/messages/loginstatusmessage.h>
 #include <net_common/messages/searchonservermessage.h>
 #include <net_common/messages/searchusersresultmessage.h>
-#include <net_common/messages/createprivatechatmessage.h>
-#include <net_common/messages/createprivatechatresultmessage.h>
+#include <net_common/messages/createchatmessage.h>
+#include <net_common/messages/createchatresultmessage.h>
 
 #include <sql_server/userstable.h>
 #include <sql_server/chatstable.h>
+#include <sql_server/chatuserstable.h>
 
 #include <sql_common/data_structures/user.h>
 
+#include <QSqlDatabase>
 #include <QDebug>
 
 ServerMessageVisitor::ServerMessageVisitor(Server *server, TcpSession *client)
@@ -94,23 +96,44 @@ void ServerMessageVisitor::visit(const SearchUsersResultMessage &message)
     Q_UNUSED(message);
 }
 
-void ServerMessageVisitor::visit(const CreatePrivateChatMessage &message)
+void ServerMessageVisitor::visit(const CreateChatMessage &message)
 {
-    const int user1Id = message.user1Id();
-    const int user2Id = message.user2Id();
+    const Chat            chat      = message.chat();
+    const QList<ChatUser> chatUsers = message.chatUsers();
 
-    using ResultMessage = AnyMessagePtr<CreatePrivateChatResultMessage>;
-    ResultMessage createPrivateChatResultMessage{new CreatePrivateChatResultMessage};
-    createPrivateChatResultMessage->setChatId(ChatsTable::createPrivateChat(user1Id, user2Id));
+    QSqlDatabase::database().transaction();
 
-    createPrivateChatResultMessage->setSecondParticipiant(UsersTable::getUserById(user2Id));
-    server_->sendToClient(client_, static_cast<AbduMessagePtr>(createPrivateChatResultMessage));
+    const int addedChatId = ChatsTable::addChat(chat);
+    if (addedChatId == -1) {
+        QSqlDatabase::database().rollback();
+        return;
+    }
 
-    createPrivateChatResultMessage->setSecondParticipiant(UsersTable::getUserById(user1Id));
-    server_->sendToClient(user1Id, static_cast<AbduMessagePtr>(createPrivateChatResultMessage));
+    if (!ChatUsersTable::addUsersToChat(addedChatId, chatUsers)) {
+        QSqlDatabase::database().rollback();
+        return;
+    }
+
+    if (!QSqlDatabase::database().commit()) {
+        QSqlDatabase::database().rollback();
+        return;
+    }
+
+
+    // Result
+    const Chat            addedChat      = ChatsTable::getChatById(addedChatId);
+    const QList<ChatUser> addedChatUsers = ChatUsersTable::getChatUsers(addedChatId);
+
+    using ResultMessage = AnyMessagePtr<CreateChatResultMessage>;
+    ResultMessage createChatResultMessage{new CreateChatResultMessage};
+    createChatResultMessage->setChat(addedChat);
+    createChatResultMessage->setChatUsers(addedChatUsers);
+
+    for (const auto &chatUser : addedChatUsers) {
+        server_->sendToClient(chatUser.userId(), static_cast<AbduMessagePtr>(createChatResultMessage));
+    }
 }
 
-void ServerMessageVisitor::visit(const CreatePrivateChatResultMessage &message)
+void ServerMessageVisitor::visit(const CreateChatResultMessage &message)
 {
-
 }

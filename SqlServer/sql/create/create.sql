@@ -21,17 +21,15 @@ CREATE TABLE IF NOT EXISTS chats (
     name VARCHAR(40) NOT NULL,
     description VARCHAR(255),
     type ENUM('private', 'group', 'channel'),
-    created_by_user_id INT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    deleted_at TIMESTAMP,
-    CONSTRAINT fk_chats_created_by_user_id FOREIGN KEY (created_by_user_id) REFERENCES users(id)
+    deleted_at TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS chat_users (
     chat_id INT NOT NULL,
     user_id INT NOT NULL,
-    role ENUM('admin', 'user'),
+    role ENUM('owner', 'admin', 'user'),
     joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     left_at TIMESTAMP,
     CONSTRAINT pk_chat_users PRIMARY KEY (user_id, chat_id),

@@ -3,14 +3,17 @@
 
 #include "SqlClient_global.h"
 
+#include "chatuserstable.h"
+
 class User;
+class Chat;
 
 class SQLCLIENT_EXPORT ChatsTable
 {
 public:
     static bool isChatExist(const QString &chatName);
 
-    static void addPrivateChat(int chatId, const User &user1, const User& user2);
+    static bool addChat(const Chat &chat);
 };
 
 #endif // CHATSTABLE_H

@@ -15,4 +15,6 @@ enum class ErrorImportance {
 
 extern QString readFullFile(const QString &fileName);
 
+extern bool executeQuery(QSqlQuery &query, ErrorImportance errorImportance);
+
 #endif // FUNCTIONS_H

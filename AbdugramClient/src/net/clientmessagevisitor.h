@@ -17,8 +17,8 @@ public:
     void visit(const SyncChatsRequest               &message) override;
     void visit(const SearchOnServerMessage          &message) override;
     void visit(const SearchUsersResultMessage       &mesasge) override;
-    void visit(const CreatePrivateChatMessage       &message) override;
-    void visit(const CreatePrivateChatResultMessage &message) override;
+    void visit(const CreateChatMessage       &message) override;
+    void visit(const CreateChatResultMessage &message) override;
 };
 
 #endif // CLIENTMESSAGEVISITOR_H

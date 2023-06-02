@@ -18,8 +18,8 @@ public:
     virtual void visit(const SyncChatsRequest               &message) = 0;
     virtual void visit(const SearchOnServerMessage          &message) = 0;
     virtual void visit(const SearchUsersResultMessage       &message) = 0;
-    virtual void visit(const CreatePrivateChatMessage       &message) = 0;
-    virtual void visit(const CreatePrivateChatResultMessage &message) = 0;
+    virtual void visit(const CreateChatMessage       &message) = 0;
+    virtual void visit(const CreateChatResultMessage &message) = 0;
 };
 
 #endif // MESSAGEVISITOR_H

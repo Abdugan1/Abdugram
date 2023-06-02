@@ -5,12 +5,6 @@
 #include <QDataStream>
 #include <QMap>
 
-static const QMap<QString, Chat::Type> StringToType {
-    {"private", Chat::Type::Private},
-    {"group",   Chat::Type::Group},
-    {"channal", Chat::Type::Channel},
-};
-
 Chat::Chat()
 {
 
@@ -96,52 +90,59 @@ void Chat::setDeletedAt(const QDateTime &newDeletedAt)
     deletedAt_ = newDeletedAt;
 }
 
-QDataStream &operator<<(QDataStream &out, const Chat &chat)
+QString Chat::typeToString(Type type)
 {
-    out << chat.id()        << chat.name()            << chat.description()
-        << chat.type()      << chat.createdByUserId() << chat.createdAt()
-        << chat.updatedAt() << chat.deletedAt();
-    return out;
+    static const QMap<Type, QString> types {
+        {Chat::Type::Private, "private"},
+        {Chat::Type::Group, "group"},
+        {Chat::Type::Channel, "channel"},
+    };
+    if (!types.contains(type))
+        return QString{};
+    return types[type];
 }
 
-QDataStream &operator>>(QDataStream &in, Chat &chat)
+Chat::Type Chat::stringToType(const QString &str)
 {
-    int id = -1;
-    QString name;
-    QString description;
-    Chat::Type type = Chat::Type::Private;
-    int createdByUserId = -1;
-    QDateTime createdAt;
-    QDateTime updatedAt;
-    QDateTime deletedAt;
-
-    in >> id        >> name        >> description >> type >> createdByUserId
-       >> createdAt >> updatedAt   >> deletedAt;
-
-    chat.setId(id);
-    chat.setName(name);
-    chat.setDescription(description);
-    chat.setType(type);
-    chat.setCreatedByUserId(createdByUserId);
-    chat.setCreatedAt(createdAt);
-    chat.setUpdatedAt(updatedAt);
-    chat.setDeletedAt(deletedAt);
-
-    return in;
+    static const QMap<QString, Chat::Type> types{
+        {"private", Chat::Type::Private},
+        {"group",   Chat::Type::Group},
+        {"channal", Chat::Type::Channel},
+    };
+    if (!types.contains(str))
+        return Type::Unknown;
+    return types[str];
 }
 
-Chat getChatFromQueryResult(const QSqlRecord &record)
+Chat Chat::fromSqlRecord(const QSqlRecord &record)
 {
     Chat chat;
 
     chat.setId(record.value("id").toInt());
     chat.setName(record.value("name").toString());
     chat.setDescription(record.value("description").toString());
-    chat.setType(StringToType[record.value("type").toString()]);
+    chat.setType(Chat::stringToType(record.value("type").toString()));
     chat.setCreatedByUserId(record.value("created_by_user_id").toInt());
     chat.setCreatedAt(record.value("created_at").toDateTime());
     chat.setUpdatedAt(record.value("updated_at").toDateTime());
     chat.setDeletedAt(record.value("deleted_at").toDateTime());
 
     return chat;
+}
+
+QDataStream &operator<<(QDataStream &out, const Chat &chat)
+{
+    out << chat.id_        << chat.name_            << chat.description_
+        << chat.type_      << chat.createdByUserId_ << chat.createdAt_
+        << chat.updatedAt_ << chat.deletedAt_;
+    return out;
+}
+
+QDataStream &operator>>(QDataStream &in, Chat &chat)
+{
+    in >> chat.id_        >> chat.name_            >> chat.description_
+       >> chat.type_      >> chat.createdByUserId_ >> chat.createdAt_
+       >> chat.updatedAt_ >> chat.deletedAt_;
+
+    return in;
 }

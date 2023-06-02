@@ -14,11 +14,13 @@ INCLUDEPATH += ../SqlCommon/include
 
 SOURCES += \
     src/chatstable.cpp \
+    src/chatuserstable.cpp \
     src/databaseclient.cpp
 
 HEADERS += \
     include/sql_client/SqlClient_global.h \
     include/sql_client/chatstable.h \
+    include/sql_client/chatuserstable.h \
     include/sql_client/databaseclient.h
 
 DISTFILES += \

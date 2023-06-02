@@ -1,5 +1,4 @@
 #include "chatstable.h"
-#include "userstable.h"
 
 #include <sql_common/functions.h>
 #include <sql_common/data_structures/chat.h>
@@ -20,63 +19,41 @@ QList<Chat> ChatsTable::getNewChatsWhereUserIsParticipiant(const QString &userna
     getChatsQuery.bindValue(":username", username);
     getChatsQuery.bindValue(":last_update", lastUpdate);
 
-    if (!getChatsQuery.exec()) {
-        qCritical() << "Coudln't execute query:" << getChatsQuery.executedQuery()
-                    << "error:" << getChatsQuery.lastError().text();
+    if (!executeQuery(getChatsQuery, ErrorImportance::Critical)) {
+        return QList<Chat>{};
     }
     QList<Chat> chats;
     while (getChatsQuery.next()) {
-        chats.append(getChatFromQueryResult(getChatsQuery.record()));
+        chats.append(Chat::fromSqlRecord(getChatsQuery.record()));
     }
     return chats;
 }
 
-int ChatsTable::createPrivateChat(int user1Id, int user2Id)
+int ChatsTable::addChat(const Chat &chat)
 {
-    // Start transaction
-    QSqlDatabase::database().transaction();
+    const QString query = readFullFile("./.sql/chats/add_chat.sql");
 
-    QSqlQuery createPrivateChatQuery;
-    if (createPrivateChatQuery.exec(readFullFile("./sql/chats/create_private_chat.sql"))) {
-        qCritical() << "Coudln't execute query:" << createPrivateChatQuery.executedQuery()
-                    << "error:" << createPrivateChatQuery.lastError().text();
-        QSqlDatabase::database().rollback();
-        return -1;
+    QSqlQuery addChatQuery;
+    addChatQuery.prepare(query);
+    addChatQuery.bindValue(":name", chat.name());
+    addChatQuery.bindValue(":description", chat.description());
+    addChatQuery.bindValue(":type", Chat::typeToString(chat.type()));
+
+    return (executeQuery(addChatQuery, ErrorImportance::Critical) ? addChatQuery.lastInsertId().toInt() : -1);
+}
+
+Chat ChatsTable::getChatById(int chatId)
+{
+    const QString query = readFullFile("./.sql/chats/get_chat_by_id.sql");
+
+    QSqlQuery getChatByIdQuery;
+    getChatByIdQuery.prepare(query);
+    getChatByIdQuery.bindValue(":chat_id", chatId);
+
+    if (!executeQuery(getChatByIdQuery, ErrorImportance::Critical)) {
+        return Chat{};
     }
 
-    const int autoIncrementedChatId = createPrivateChatQuery.lastInsertId().toInt();
-
-    const QString query = readFullFile("./sql/chat_users/add_user_to_chat.sql");
-
-    QSqlQuery addUserToChatQuery;
-    addUserToChatQuery.prepare(query);
-    addUserToChatQuery.bindValue(":chat_id", autoIncrementedChatId);
-    addUserToChatQuery.bindValue(":role", "admin");
-
-    // Add first user
-    addUserToChatQuery.bindValue(":user_id", user1Id);
-    if (!addUserToChatQuery.exec()) {
-        qCritical() << "Coudln't execute query:" << addUserToChatQuery.executedQuery()
-                    << "error:" << addUserToChatQuery.lastError().text();
-        QSqlDatabase::database().rollback();
-        return -1;
-    }
-
-    // Add second user
-    addUserToChatQuery.bindValue(":user_id", user2Id);
-    if (!addUserToChatQuery.exec()) {
-        qCritical() << "Coudln't execute query:" << addUserToChatQuery.executedQuery()
-                    << "error:" << addUserToChatQuery.lastError().text();
-        QSqlDatabase::database().rollback();
-        return -1;
-    }
-
-    // Commit transaction
-    if (!QSqlDatabase::database().commit()) {
-        qCritical() << "Failed to commit transaction:" << QSqlDatabase::database().lastError().text();
-        QSqlDatabase::database().rollback();
-        return -1;
-    }
-
-    return autoIncrementedChatId;
+    getChatByIdQuery.first();
+    return Chat::fromSqlRecord(getChatByIdQuery.record());
 }

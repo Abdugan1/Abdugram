@@ -11,6 +11,7 @@ class SQLCOMMON_EXPORT Chat
 {
 public:
     enum Type {
+        Unknown,
         Private,
         Group,
         Channel,
@@ -42,6 +43,11 @@ public:
     QDateTime deletedAt() const;
     void setDeletedAt(const QDateTime &newDeletedAt);
 
+    static QString typeToString(Type type);
+    static Type stringToType(const QString &str);
+
+    static Chat fromSqlRecord(const QSqlRecord &record);
+
 private:
     int id_ = -1;
     QString name_;
@@ -52,11 +58,12 @@ private:
     QDateTime updatedAt_;
     QDateTime deletedAt_;
 
+    friend QDataStream &operator<<(QDataStream &out, const Chat &chat);
+    friend QDataStream &operator>>(QDataStream &in, Chat &chat);
+
 };
 
 QDataStream &operator<<(QDataStream &out, const Chat &chat);
 QDataStream &operator>>(QDataStream &in, Chat &chat);
-
-extern Chat getChatFromQueryResult(const QSqlRecord &record);
 
 #endif // CHAT_H

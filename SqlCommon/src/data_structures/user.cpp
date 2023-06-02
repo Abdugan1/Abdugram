@@ -130,52 +130,7 @@ void User::setIsDeleted(bool newIsDeleted)
     isDeleted_ = newIsDeleted;
 }
 
-QDataStream &operator<<(QDataStream &out, const User &user)
-{
-    out << user.id()             << user.username()  << user.firstName()
-        << user.lastName()       << user.email()     << user.phone()
-        << user.avatarUrl()      << user.createdAt() << user.updatedAt()
-        << user.lastTimeOnline() << user.isOnline()  << user.isDeleted();
-    return out;
-}
-
-QDataStream &operator>>(QDataStream &in, User &user)
-{
-    int id;
-    QString username;
-    QString firstName;
-    QString lastName;
-    QString email;
-    QString phone;
-    QString avatarUrl;
-    QDateTime createdAt;
-    QDateTime updatedAt;
-    QDateTime lastTimeOnline;
-    bool      isOnline;
-    bool      isDeleted;
-
-    in  >> id             >> username  >> firstName
-        >> lastName       >> email     >> phone
-        >> avatarUrl      >> createdAt >> updatedAt
-        >> lastTimeOnline >> isOnline  >> isDeleted;
-
-    user.setId(id);
-    user.setUsername(username);
-    user.setFirstName(firstName);
-    user.setLastName(lastName);
-    user.setEmail(email);
-    user.setPhone(phone);
-    user.setAvatarUrl(avatarUrl);
-    user.setCreatedAt(createdAt);
-    user.setUpdatedAt(updatedAt);
-    user.setLastTimeOnline(lastTimeOnline);
-    user.setIsOnline(isOnline);
-    user.setIsDeleted(isDeleted);
-
-    return in;
-}
-
-User getUserFromQueryResult(const QSqlRecord &record)
+User User::fromSqlRecord(const QSqlRecord &record)
 {
     User user;
 
@@ -193,4 +148,22 @@ User getUserFromQueryResult(const QSqlRecord &record)
     user.setIsDeleted(record.value("is_deleted").toBool());
 
     return user;
+}
+
+QDataStream &operator<<(QDataStream &out, const User &user)
+{
+    out << user.id_             << user.username_  << user.firstName_
+        << user.lastName_       << user.email_     << user.phone_
+        << user.avatarUrl_      << user.createdAt_ << user.updatedAt_
+        << user.lastTimeOnline_ << user.isOnline_  << user.isDeleted_;
+    return out;
+}
+
+QDataStream &operator>>(QDataStream &in, User &user)
+{
+    in >> user.id_             >> user.username_  >> user.firstName_
+       >> user.lastName_       >> user.email_     >> user.phone_
+       >> user.avatarUrl_      >> user.createdAt_ >> user.updatedAt_
+       >> user.lastTimeOnline_ >> user.isOnline_  >> user.isDeleted_;
+    return in;
 }

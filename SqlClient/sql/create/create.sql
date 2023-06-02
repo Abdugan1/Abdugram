@@ -19,7 +19,6 @@ CREATE TABLE IF NOT EXISTS chats (
   name TEXT,
   description TEXT,
   type TEXT CHECK(type IN ('private', 'group', 'channel')),
-  created_by_user_id INT,
   created_at DATETIME,
   updated_at DATETIME,
   deleted_at DATETIME
@@ -28,7 +27,7 @@ CREATE TABLE IF NOT EXISTS chats (
 CREATE TABLE IF NOT EXISTS chat_users (
   chat_id INTEGER,
   user_id INTEGER,
-  role TEXT CHECK (role IN('admin', 'user')),
+  role TEXT CHECK (role IN('owner', 'admin', 'user')),
   joined_at DATETIME,
   left_at DATETIME,
   PRIMARY KEY (chat_id, user_id),

@@ -4,7 +4,7 @@
 #include <net_common/messages/registerstatusmessage.h>
 #include <net_common/messages/loginstatusmessage.h>
 #include <net_common/messages/searchusersresultmessage.h>
-#include <net_common/messages/createprivatechatresultmessage.h>
+#include <net_common/messages/createchatresultmessage.h>
 
 #include <sql_common/data_structures/user.h>
 
@@ -61,12 +61,12 @@ void ClientMessageVisitor::visit(const SearchUsersResultMessage &message)
     networkHandler()->emitSearchResult(users);
 }
 
-void ClientMessageVisitor::visit(const CreatePrivateChatMessage &message)
+void ClientMessageVisitor::visit(const CreateChatMessage &message)
 {
 }
 
-void ClientMessageVisitor::visit(const CreatePrivateChatResultMessage &message)
+void ClientMessageVisitor::visit(const CreateChatResultMessage &message)
 {
-    const int  chatId             = message.chatId();
-    const User secondParticipiant = message.secondParticipiant();
+//    const Chat            chat      = message.chat();
+//    const QList<ChatUser> chatUsers = message.chatUsers();
 }

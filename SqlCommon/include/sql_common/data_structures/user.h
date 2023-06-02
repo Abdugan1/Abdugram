@@ -48,6 +48,8 @@ public:
     bool isDeleted() const;
     void setIsDeleted(bool newIsDeleted);
 
+    static User fromSqlRecord(const QSqlRecord &record);
+
 private:
     int       id_ = -1;
 
@@ -64,11 +66,12 @@ private:
     QDateTime lastTimeOnline_;
     bool      isOnline_  = false;
     bool      isDeleted_ = false;
+
+    friend QDataStream &operator<<(QDataStream &out, const User &user);
+    friend QDataStream &operator>>(QDataStream &in, User &user);
 };
 
 QDataStream &operator<<(QDataStream &out, const User &user);
 QDataStream &operator>>(QDataStream &in, User &user);
-
-extern User getUserFromQueryResult(const QSqlRecord &record);
 
 #endif // USER_H

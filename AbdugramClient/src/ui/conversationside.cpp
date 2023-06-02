@@ -5,7 +5,10 @@
 
 #include "net/networkhandler.h"
 
-#include <net_common/messages/createprivatechatmessage.h>
+#include <net_common/messages/createchatmessage.h>
+
+#include <sql_common/data_structures/chat.h>
+#include <sql_common/data_structures/chatuser.h>
 
 #include <QVBoxLayout>
 #include <QDebug>
@@ -37,10 +40,20 @@ void ConversationSide::requestCreatePrivateChat()
         return;
     }
 
-    AnyMessagePtr<CreatePrivateChatMessage> createPrivateChat{new CreatePrivateChatMessage};
+    Chat chat;
+    chat.setType(Chat::Type::Private);
 
-    createPrivateChat->setUser1Id(networkHandler()->userId());
-    createPrivateChat->setUser2Id(currentChat_.userId());
+    ChatUser chatUser1;
+    chatUser1.setUserId(networkHandler()->userId());
+    chatUser1.setRole(ChatUser::Role::Owner);
+
+    ChatUser chatUser2;
+    chatUser2.setUserId(currentChat_.userId());
+    chatUser2.setRole(ChatUser::Role::Owner);
+
+    AnyMessagePtr<CreateChatMessage> createPrivateChat{new CreateChatMessage};
+    createPrivateChat->setChat(chat);
+    createPrivateChat->setChatUsers({chatUser1, chatUser2});
 
     networkHandler()->sendToServer(static_cast<AbduMessagePtr>(createPrivateChat));
 }
