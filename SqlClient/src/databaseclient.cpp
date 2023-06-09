@@ -1,5 +1,7 @@
 #include "databaseclient.h"
 
+#include <sql_common/functions.h>
+
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QDebug>

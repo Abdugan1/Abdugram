@@ -55,6 +55,7 @@ QList<ChatUser> ChatUsersTable::getChatUsers(int chatId)
     const QString query = readFullFile("./.sql/chat_users/get_chat_users.sql");
 
     QSqlQuery getChatUsersQuery;
+    getChatUsersQuery.prepare(query);
     getChatUsersQuery.setForwardOnly(true);
     getChatUsersQuery.bindValue(":chat_id", chatId);
 

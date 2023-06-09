@@ -6,8 +6,11 @@
 #include <net_common/messages/messagesforwarddeclaration.h>
 #include <net_common/tcpsession.h>
 
-class User;
 class TcpSession;
+
+class User;
+class Chat;
+class ChatUser;
 
 class NetworkHandler : public QObject
 {
@@ -28,6 +31,7 @@ signals:
     void loginSuccessfully();
     void registerSuccessfully();
     void searchResult(const QList<User> &usersSearchResult);
+    void newChatAdded(int chatId);
 
 public slots:
     void connectToServer();
@@ -44,6 +48,7 @@ private:
     void emitLoginSuccessfully();
     void emitRegisterSuccessfully();
     void emitSearchResult(const QList<User> &usersSearchResult);
+    void emitNewChatAdded(int chatId);
 
 private:
     TcpSession *tcpSession_ = nullptr;

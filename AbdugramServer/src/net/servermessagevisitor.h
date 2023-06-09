@@ -4,12 +4,12 @@
 #include <net_common/messages/messagevisitor.h>
 
 class Server;
-class TcpSession;
+class Session;
 
 class ServerMessageVisitor : public MessageVisitor
 {
 public:
-    explicit ServerMessageVisitor(Server *server, TcpSession *client);
+    explicit ServerMessageVisitor(Server *server, Session *client);
 
     void visit(const RegisterMessage          &message) override;
     void visit(const LoginMessage             &message) override;
@@ -22,8 +22,8 @@ public:
     void visit(const CreateChatResultMessage &message) override;
 
 private:
-    Server      *server_ = nullptr;
-    TcpSession  *client_ = nullptr;
+    Server   *server_ = nullptr;
+    Session  *client_ = nullptr;
 };
 
 #endif // SERVERMESSAGEVISITOR_H

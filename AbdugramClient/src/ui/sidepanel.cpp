@@ -3,6 +3,12 @@
 #include "searchlineedit.h"
 #include "mv/chatlistview.h"
 
+#include "net/networkhandler.h"
+
+#include <sql_common/data_structures/chat.h>
+
+#include <sql_client/chatstable.h>
+
 #include <QBoxLayout>
 
 SidePanel::SidePanel(QWidget *parent)
@@ -13,6 +19,20 @@ SidePanel::SidePanel(QWidget *parent)
     connect(searchLineEdit_, &SearchLineEdit::searchIsEmpty, chatListView_, &ChatListView::setMainModel);
 
     connect(chatListView_, &ChatListView::selectionWasChanged, this, &SidePanel::selectionWasChanged);
+
+
+    //
+    connect(networkHandler(), &NetworkHandler::newChatAdded, this, [this](int chatId) {
+        Chat chat = ChatsTable::getChatById(chatId);
+        ChatItemPtr chatItem{new ChatItem};
+        chatItem->setChatId(chat.id());
+        chatItem->setChatName(chat.name());
+        chatItem->setChatType(chat.type());
+
+        chatListView_->addNewChatItemToMainModel(chatItem);
+
+        emit newChatItemAdded(chatItem);
+    });
 }
 
 void SidePanel::setupUi()

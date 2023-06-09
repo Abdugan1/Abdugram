@@ -1,6 +1,7 @@
 #include "conversationside.h"
 #include "chatheader.h"
 #include "mv/messagelistview.h"
+#include "mv/founduserchatitem.h"
 #include "messageside.h"
 
 #include "net/networkhandler.h"
@@ -9,6 +10,8 @@
 
 #include <sql_common/data_structures/chat.h>
 #include <sql_common/data_structures/chatuser.h>
+
+#include <sql_client/chatstable.h>
 
 #include <QVBoxLayout>
 #include <QDebug>
@@ -19,26 +22,39 @@ ConversationSide::ConversationSide(QWidget *parent)
     setupUi();
 
     connect(messageSide_, &MessageSide::sendMessageRequest, this, [this]() {
-        if (currentChat_.id() == -1) {
+        if (currentChat_->chatId() == -1) {
             requestCreatePrivateChat();
         }
     });
 }
 
-void ConversationSide::setCurrentChat(const ChatItem &chat)
+ChatItem ConversationSide::currentChat() const
+{
+    return *currentChat_;
+}
+
+void ConversationSide::setCurrentChat(const ChatItemPtr &chat)
 {
     currentChat_ = chat;
-    if (chat.id() == -1) {
-        chatHeader_->setChatName(chat.chatName());
+    chatHeader_->setChatName(chat->chatName());
+}
+
+void ConversationSide::checkCurrentChat(const ChatItemPtr &chat)
+{
+    if (chat->chatName() == currentChat_->chatName()) {
+        setCurrentChat(chat);
     }
 }
 
 void ConversationSide::requestCreatePrivateChat()
 {
-    if (currentChat_.userId() == -1) {
+    qDebug() << "Requesting new chat";
+    auto currentChat = dynamic_cast<FoundUserChatItem *>(currentChat_.get());
+    if (currentChat && currentChat->userId() == -1) {
         qCritical() << "Can't create private chat! current chat user id is undefined";
         return;
     }
+    qDebug() << "Walked through check";
 
     Chat chat;
     chat.setType(Chat::Type::Private);
@@ -48,7 +64,7 @@ void ConversationSide::requestCreatePrivateChat()
     chatUser1.setRole(ChatUser::Role::Owner);
 
     ChatUser chatUser2;
-    chatUser2.setUserId(currentChat_.userId());
+    chatUser2.setUserId(currentChat->userId());
     chatUser2.setRole(ChatUser::Role::Owner);
 
     AnyMessagePtr<CreateChatMessage> createPrivateChat{new CreateChatMessage};

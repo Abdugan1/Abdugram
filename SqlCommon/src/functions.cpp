@@ -39,3 +39,21 @@ bool executeQuery(QSqlQuery &query, ErrorImportance errorImportance)
     }
     return true;
 }
+
+bool executeTransaction(std::function<bool ()> callable)
+{
+    QSqlDatabase::database().transaction();
+
+    bool success = callable();
+
+    if (success) {
+        if (!QSqlDatabase::database().commit()) {
+            QSqlDatabase::database().rollback();
+            success = false;
+        }
+    } else {
+        QSqlDatabase::database().rollback();
+    }
+
+    return success;
+}

@@ -18,11 +18,12 @@
 #include <sql_server/chatuserstable.h>
 
 #include <sql_common/data_structures/user.h>
+#include <sql_common/functions.h>
 
 #include <QSqlDatabase>
 #include <QDebug>
 
-ServerMessageVisitor::ServerMessageVisitor(Server *server, TcpSession *client)
+ServerMessageVisitor::ServerMessageVisitor(Server *server, Session *client)
     : server_{server}
     , client_{client}
 {
@@ -58,8 +59,10 @@ void ServerMessageVisitor::visit(const LoginMessage &message)
     AnyMessagePtr<LoginStatusMessage> loginStatus{new LoginStatusMessage};
     loginStatus->setSuccess(UsersTable::isUserExists(username, password));
 
-    if (loginStatus->success())
-        loginStatus->setUserId(UsersTable::getUserId(username));
+    if (loginStatus->success()) {
+        loginStatus->setUserId(UsersTable::getUserIdByUsername(username));
+        server_->addSession(loginStatus->userId(), client_);
+    }
 
     server_->sendToClient(client_, static_cast<AbduMessagePtr>(loginStatus));
 }
@@ -98,30 +101,36 @@ void ServerMessageVisitor::visit(const SearchUsersResultMessage &message)
 
 void ServerMessageVisitor::visit(const CreateChatMessage &message)
 {
+    qDebug() << "Get create new chat message";
     const Chat            chat      = message.chat();
     const QList<ChatUser> chatUsers = message.chatUsers();
 
-    QSqlDatabase::database().transaction();
 
-    const int addedChatId = ChatsTable::addChat(chat);
-    if (addedChatId == -1) {
-        QSqlDatabase::database().rollback();
-        return;
-    }
+    int addedChatId = -1;
+    bool success = executeTransaction([&]() {
+        addedChatId = ChatsTable::addChat(chat);
+        if (addedChatId == -1) {
+            return false;
+        }
 
-    if (!ChatUsersTable::addUsersToChat(addedChatId, chatUsers)) {
-        QSqlDatabase::database().rollback();
-        return;
-    }
+        if (!ChatUsersTable::addUsersToChat(addedChatId, chatUsers)) {
+            return false;
+        }
 
-    if (!QSqlDatabase::database().commit()) {
-        QSqlDatabase::database().rollback();
+        return true;
+    });
+
+
+    if (!success) {
+        qDebug() << "Can't succeed :(";
         return;
     }
 
 
     // Result
+    qDebug() << "Get chat:";
     const Chat            addedChat      = ChatsTable::getChatById(addedChatId);
+    qDebug() << "Get chat users:";
     const QList<ChatUser> addedChatUsers = ChatUsersTable::getChatUsers(addedChatId);
 
     using ResultMessage = AnyMessagePtr<CreateChatResultMessage>;

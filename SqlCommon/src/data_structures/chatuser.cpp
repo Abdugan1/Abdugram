@@ -96,7 +96,7 @@ ChatUser ChatUser::fromSqlRecord(const QSqlRecord &record)
     chatUser.setChatId(record.value("chat_id").toInt());
     chatUser.setUserId(record.value("user_id").toInt());
     chatUser.setRole(ChatUser::stringToRole(record.value("role").toString()));
-    chatUser.setJoinedAt(record.value("joinder_at").toDateTime());
+    chatUser.setJoinedAt(record.value("joined_at").toDateTime());
     chatUser.setLeftAt(record.value("left_at").toDateTime());
 
     return chatUser;

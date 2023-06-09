@@ -1,5 +1,7 @@
 #include "databaseserver.h"
 
+#include <sql_common/functions.h>
+
 #include <QDir>
 #include <QDirIterator>
 #include <QSqlQuery>

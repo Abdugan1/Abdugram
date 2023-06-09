@@ -1,5 +1,4 @@
 #include "data_structures/user.h"
-#include "functions.h"
 
 #include <QDataStream>
 #include <QSqlRecord>
@@ -120,16 +119,6 @@ void User::setIsOnline(bool newIsOnline)
     isOnline_ = newIsOnline;
 }
 
-bool User::isDeleted() const
-{
-    return isDeleted_;
-}
-
-void User::setIsDeleted(bool newIsDeleted)
-{
-    isDeleted_ = newIsDeleted;
-}
-
 User User::fromSqlRecord(const QSqlRecord &record)
 {
     User user;
@@ -141,21 +130,43 @@ User User::fromSqlRecord(const QSqlRecord &record)
     user.setEmail(record.value("email").toString());
     user.setPhone(record.value("phone").toString());
     user.setAvatarUrl(record.value("avatar_url").toString());
+    user.setIsOnline(record.value("is_online").toBool());
+    user.setLastTimeOnline(record.value("last_time_online").toDateTime());
+    user.setUrlToProfile(record.value("url_to_profile").toString());
     user.setCreatedAt(record.value("created_at").toDateTime());
     user.setUpdatedAt(record.value("updated_at").toDateTime());
-    user.setLastTimeOnline(record.value("last_time_online").toDateTime());
-    user.setIsOnline(record.value("isOnline").toBool());
-    user.setIsDeleted(record.value("is_deleted").toBool());
+    user.setDeletedAt(record.value("deleted_at").toDateTime());
 
     return user;
+}
+
+QDateTime User::deletedAt() const
+{
+    return deletedAt_;
+}
+
+void User::setDeletedAt(const QDateTime &newDeletedAt)
+{
+    deletedAt_ = newDeletedAt;
+}
+
+QString User::urlToProfile() const
+{
+    return urlToProfile_;
+}
+
+void User::setUrlToProfile(const QString &newUrlToProfile)
+{
+    urlToProfile_ = newUrlToProfile;
 }
 
 QDataStream &operator<<(QDataStream &out, const User &user)
 {
     out << user.id_             << user.username_  << user.firstName_
         << user.lastName_       << user.email_     << user.phone_
-        << user.avatarUrl_      << user.createdAt_ << user.updatedAt_
-        << user.lastTimeOnline_ << user.isOnline_  << user.isDeleted_;
+        << user.avatarUrl_      << user.isOnline_  << user.lastTimeOnline_
+        << user.urlToProfile_   << user.createdAt_ << user.updatedAt_
+        << user.deletedAt_;
     return out;
 }
 
@@ -163,7 +174,8 @@ QDataStream &operator>>(QDataStream &in, User &user)
 {
     in >> user.id_             >> user.username_  >> user.firstName_
        >> user.lastName_       >> user.email_     >> user.phone_
-       >> user.avatarUrl_      >> user.createdAt_ >> user.updatedAt_
-       >> user.lastTimeOnline_ >> user.isOnline_  >> user.isDeleted_;
+       >> user.avatarUrl_      >> user.isOnline_  >> user.lastTimeOnline_
+       >> user.urlToProfile_   >> user.createdAt_ >> user.updatedAt_
+       >> user.deletedAt_;
     return in;
 }

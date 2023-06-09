@@ -30,16 +30,6 @@ void Chat::setName(const QString &newName)
     name_ = newName;
 }
 
-int Chat::createdByUserId() const
-{
-    return createdByUserId_;
-}
-
-void Chat::setCreatedByUserId(int newCreatedByUserId)
-{
-    createdByUserId_ = newCreatedByUserId;
-}
-
 Chat::Type Chat::type() const
 {
     return type_;
@@ -122,7 +112,6 @@ Chat Chat::fromSqlRecord(const QSqlRecord &record)
     chat.setName(record.value("name").toString());
     chat.setDescription(record.value("description").toString());
     chat.setType(Chat::stringToType(record.value("type").toString()));
-    chat.setCreatedByUserId(record.value("created_by_user_id").toInt());
     chat.setCreatedAt(record.value("created_at").toDateTime());
     chat.setUpdatedAt(record.value("updated_at").toDateTime());
     chat.setDeletedAt(record.value("deleted_at").toDateTime());
@@ -132,17 +121,16 @@ Chat Chat::fromSqlRecord(const QSqlRecord &record)
 
 QDataStream &operator<<(QDataStream &out, const Chat &chat)
 {
-    out << chat.id_        << chat.name_            << chat.description_
-        << chat.type_      << chat.createdByUserId_ << chat.createdAt_
-        << chat.updatedAt_ << chat.deletedAt_;
+    out << chat.id_        << chat.name_      << chat.description_
+        << chat.type_      << chat.createdAt_ << chat.updatedAt_
+        << chat.deletedAt_;
     return out;
 }
 
 QDataStream &operator>>(QDataStream &in, Chat &chat)
 {
-    in >> chat.id_        >> chat.name_            >> chat.description_
-       >> chat.type_      >> chat.createdByUserId_ >> chat.createdAt_
-       >> chat.updatedAt_ >> chat.deletedAt_;
-
+    in >> chat.id_        >> chat.name_      >> chat.description_
+       >> chat.type_      >> chat.createdAt_ >> chat.updatedAt_
+       >> chat.deletedAt_;
     return in;
 }

@@ -31,6 +31,7 @@ SOURCES += \
     src/main.cpp \
     src/net/server.cpp \
     src/net/servermessagevisitor.cpp \
+    src/net/session.cpp \
     src/net/threadpool.cpp \
     src/serverlogger.cpp \
     src/ui/cursedwindow.cpp \
@@ -42,6 +43,7 @@ SOURCES += \
 HEADERS += \
     src/net/server.h \
     src/net/servermessagevisitor.h \
+    src/net/session.h \
     src/net/threadpool.h \
     src/serverlogger.h \
     src/ui/cursedwindow.h \

@@ -10,6 +10,7 @@ MainPage::MainPage(QWidget *parent)
     setupUi();
 
     connect(sidePanel_, &SidePanel::selectionWasChanged, conversationSide_, &ConversationSide::setCurrentChat);
+    connect(sidePanel_, &SidePanel::newChatItemAdded,    conversationSide_, &ConversationSide::checkCurrentChat);
 }
 
 void MainPage::setupUi()

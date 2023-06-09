@@ -5,12 +5,10 @@
 AbduMessage::AbduMessage(Type type)
     : type_{type}
 {
-    qDebug() << "Constructor:" << typeid(this).name();
 }
 
 AbduMessage::~AbduMessage()
 {
-    qDebug() << "Destructor:" << typeid(this).name();
 }
 
 AbduMessage::Type AbduMessage::type() const

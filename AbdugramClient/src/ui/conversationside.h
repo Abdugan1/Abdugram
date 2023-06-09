@@ -15,8 +15,12 @@ class ConversationSide : public QWidget
 public:
     explicit ConversationSide(QWidget *parent = nullptr);
 
+    ChatItem currentChat() const;
+
 public slots:
-    void setCurrentChat(const ChatItem &chat);
+    void setCurrentChat(const ChatItemPtr &chat);
+
+    void checkCurrentChat(const ChatItemPtr &chat);
 
 private slots:
     void requestCreatePrivateChat();
@@ -29,7 +33,7 @@ private:
     MessageListView *messageView_ = nullptr;
     MessageSide     *messageSide_ = nullptr;
 
-    ChatItem currentChat_;
+    ChatItemPtr currentChat_;
 };
 
 #endif // CONVERSATIONSIDE_H

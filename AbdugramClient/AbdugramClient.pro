@@ -46,6 +46,7 @@ SOURCES += \
     src/ui/mv/chatlistdelegate.cpp \
     src/ui/mv/chatlistmodel.cpp \
     src/ui/mv/chatlistview.cpp \
+    src/ui/mv/founduserchatitem.cpp \
     src/ui/mv/messageitem.cpp \
     src/ui/mv/messagelistdelegate.cpp \
     src/ui/mv/messagelistmodel.cpp \
@@ -84,6 +85,7 @@ HEADERS += \
     src/ui/mv/chatlistdelegate.h \
     src/ui/mv/chatlistmodel.h \
     src/ui/mv/chatlistview.h \
+    src/ui/mv/founduserchatitem.h \
     src/ui/mv/messageitem.h \
     src/ui/mv/messagelistdelegate.h \
     src/ui/mv/messagelistmodel.h \

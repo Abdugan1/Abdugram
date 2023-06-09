@@ -5,13 +5,14 @@
 
 #include <QString>
 
+class ChatUser;
+
 class SQLCLIENT_EXPORT ChatUsersTable
 {
 public:
-
+    static bool addUserToChat(const ChatUser &chatUser, int chatId);
 private:
-    explicit ChatUsersTable();
-
+    explicit ChatUsersTable() = default;
 };
 
 #endif // CHATUSERSTABLE_H

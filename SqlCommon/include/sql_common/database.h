@@ -17,12 +17,7 @@ protected:
     virtual void createTables() = 0;
 
 private:
-    static QSqlError executeQuery(const QString &queryStr);
-
-private:
     static QSqlDatabase db_;
 };
-
-extern QString readFullFile(const QString &fileName);
 
 #endif // DATABASE_H

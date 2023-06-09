@@ -21,13 +21,13 @@ public:
         Register,
         SyncChatsRequest,
         SearchOnServer,
-        CreatePrivateChat,
+        CreateChat,
 
         ServerSide = 1000000,
         LoginStatus = ServerSide + 1,
         RegisterStaus,
         SearchUsersResult,
-        CreatePrivateChatResult
+        CreateChatResult
     };
 
 public:

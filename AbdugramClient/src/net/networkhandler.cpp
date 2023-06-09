@@ -67,6 +67,11 @@ void NetworkHandler::emitSearchResult(const QList<User> &usersSearchResult)
     emit searchResult(usersSearchResult);
 }
 
+void NetworkHandler::emitNewChatAdded(int chatId)
+{
+    emit newChatAdded(chatId);
+}
+
 int NetworkHandler::userId() const
 {
     return userId_;

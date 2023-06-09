@@ -5,6 +5,8 @@
 
 #include "chatuserstable.h"
 
+#include <QList>
+
 class User;
 class Chat;
 
@@ -14,6 +16,13 @@ public:
     static bool isChatExist(const QString &chatName);
 
     static bool addChat(const Chat &chat);
+
+    static Chat getChatById(int chatId);
+
+    static QList<Chat> getAllChats();
+
+private:
+    explicit ChatsTable() = default;
 };
 
 #endif // CHATSTABLE_H

@@ -33,6 +33,7 @@ public:
     QDateTime leftAt() const;
     void setLeftAt(const QDateTime &newLeftAt);
 
+
     bool isValid() const;
 
     static QString roleToString(Role role);
@@ -51,9 +52,5 @@ private:
     friend QDataStream &operator>>(QDataStream &in, ChatUser &chatUser);
 
 };
-
-QDataStream &operator<<(QDataStream &out, const ChatUser &chatUser);
-QDataStream &operator>>(QDataStream &in, ChatUser &chatUser);
-
 
 #endif // CHATUSER_H

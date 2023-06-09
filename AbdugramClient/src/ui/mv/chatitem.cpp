@@ -55,22 +55,12 @@ void ChatItem::setChatType(Chat::Type newChatType)
     chatType_ = newChatType;
 }
 
-int ChatItem::id() const
+int ChatItem::chatId() const
 {
-    return id_;
+    return chatId_;
 }
 
-void ChatItem::setId(int newId)
+void ChatItem::setChatId(int newId)
 {
-    id_ = newId;
-}
-
-int ChatItem::userId() const
-{
-    return userId_;
-}
-
-void ChatItem::setUserId(int newUserId)
-{
-    userId_ = newUserId;
+    chatId_ = newId;
 }

@@ -7,6 +7,12 @@
 #include <net_common/messages/createchatresultmessage.h>
 
 #include <sql_common/data_structures/user.h>
+#include <sql_common/data_structures/chatuser.h>
+#include <sql_common/functions.h>
+
+#include <sql_client/userstable.h>
+#include <sql_client/chatstable.h>
+#include <sql_client/chatuserstable.h>
 
 #include <QDebug>
 
@@ -54,11 +60,18 @@ void ClientMessageVisitor::visit(const SearchOnServerMessage &message)
 void ClientMessageVisitor::visit(const SearchUsersResultMessage &message)
 {
     const QList<User> users = message.users();
-    for (const auto& user : users) {
-        qDebug() << "username:" << user.username();
-        qDebug() << "updatedAt" << user.updatedAt();
-    }
-    networkHandler()->emitSearchResult(users);
+
+    bool success = executeTransaction([&]() {
+        for (const auto& user : users) {
+            if (!UsersTable::addOrIgnoreUser(user)) {
+                return false;
+            }
+        }
+        return true;
+    });
+
+    if (success)
+        networkHandler()->emitSearchResult(users);
 }
 
 void ClientMessageVisitor::visit(const CreateChatMessage &message)
@@ -67,6 +80,29 @@ void ClientMessageVisitor::visit(const CreateChatMessage &message)
 
 void ClientMessageVisitor::visit(const CreateChatResultMessage &message)
 {
-//    const Chat            chat      = message.chat();
-//    const QList<ChatUser> chatUsers = message.chatUsers();
+    Chat                  chat      = message.chat();
+    const QList<ChatUser> chatUsers = message.chatUsers();
+
+    bool success = executeTransaction([&]() {
+        if (chat.type() == Chat::Type::Private) {
+            auto it = std::find_if(chatUsers.begin(), chatUsers.end(), [&](const ChatUser &chatUser) {
+                return chatUser.userId() != networkHandler()->userId();
+            });
+            chat.setName(UsersTable::getUserById(it->userId()).username());
+        }
+
+        if (!ChatsTable::addChat(chat))
+            return false;
+
+        for (const auto &chatUser : chatUsers) {
+            if (!ChatUsersTable::addUserToChat(chatUser, chat.id()))
+                return false;
+        }
+
+        return true;
+    });
+
+    if (success) {
+        networkHandler()->emitNewChatAdded(chat.id());
+    }
 }

@@ -5,12 +5,19 @@
 #include <QDateTime>
 #include <QUrl>
 
+#include <memory>
+
 #include <sql_common/data_structures/chat.h>
+
+class ChatItem;
+
+using ChatItemPtr = std::shared_ptr<ChatItem>;
 
 class ChatItem
 {
 public:
     explicit ChatItem();
+    virtual ~ChatItem() = default;
 
     QUrl avatar() const;
     void setAvatar(const QUrl &newAvatar);
@@ -27,11 +34,8 @@ public:
     Chat::Type chatType() const;
     void setChatType(Chat::Type newChatType);
 
-    int id() const;
-    void setId(int newId);
-
-    int userId() const;
-    void setUserId(int newUserId);
+    int chatId() const;
+    void setChatId(int newId);
 
 private:
     QUrl avatar_;
@@ -40,8 +44,7 @@ private:
     QDateTime messageDate_;
 
     Chat::Type chatType_ = Chat::Type::Private;
-    int id_ = -1;
-    int userId_ = -1;
+    int chatId_ = -1;
 };
 
 #endif // CHATITEM_H

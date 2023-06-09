@@ -7,11 +7,11 @@ CREATE TABLE IF NOT EXISTS users (
   phone TEXT,
   avatar_url TEXT,
   is_online INTEGER,
-  is_deleted INTEGER,
+  last_time_online DATETIME,
   url_to_profile TEXT,
   created_at DATETIME,
   updated_at DATETIME,
-  last_time_online DATETIME
+  deleted_at DATETIME
 );
 
 CREATE TABLE IF NOT EXISTS chats (

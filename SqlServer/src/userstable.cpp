@@ -78,9 +78,9 @@ QList<User> UsersTable::getUsersByLikeSearch(const QString &likeSearch)
     return users;
 }
 
-int UsersTable::getUserId(const QString &username)
+int UsersTable::getUserIdByUsername(const QString &username)
 {
-    const QString query = readFullFile("./sql/users/get_user_id_by_username.sql");
+    const QString query = readFullFile("./.sql/users/get_user_id_by_username.sql");
 
     QSqlQuery getUserIdQuery;
     getUserIdQuery.prepare(query);

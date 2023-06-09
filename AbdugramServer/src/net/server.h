@@ -2,12 +2,13 @@
 #define SERVER_H
 
 #include <QTcpServer>
+#include <QHash>
 
 #include <net_common/messages/abdumessage.h>
 
 #include "threadpool.h"
 
-class TcpSession;
+class Session;
 class ServerMessageVisitor;
 
 class Server : public QTcpServer
@@ -34,17 +35,20 @@ public slots:
 private slots:
     void processMessage(const AbduMessagePtr &message);
 
-    void sendToClient(TcpSession *client, const AbduMessagePtr &message);
-    void sendToClient(int         userId, const AbduMessagePtr &message);
+    void sendToClient(Session *client, const AbduMessagePtr &message);
+    void sendToClient(int     userId,  const AbduMessagePtr &message);
 
 protected:
     void incomingConnection(qintptr handle) override;
 
 private:
-    TcpSession *createSession();
+    Session *createSession();
+
+    void addSession(int id, Session *session);
 
 private:
     ThreadPool *threadPool_ = nullptr;
+    QHash<int, Session *> sessions_;
     friend class ServerMessageVisitor;
 };
 

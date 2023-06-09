@@ -1,8 +1,13 @@
 #include "chatlistview.h"
 #include "chatlistmodel.h"
 #include "chatlistdelegate.h"
+#include "founduserchatitem.h"
 
 #include "net/networkhandler.h"
+
+#include <sql_common/data_structures/user.h>
+
+#include <sql_client/chatstable.h>
 
 ChatListView::ChatListView(QWidget *parent)
     : QListView{parent}
@@ -10,6 +15,8 @@ ChatListView::ChatListView(QWidget *parent)
     , tempModel_{new ChatListModel{this}}
     , delegate_{new ChatListDelegate{this}}
 {
+    initMainModel();
+
     connect(this, &ChatListView::chatNameColorChanged, this, [this]() {
         delegate_->setChatNameColor(chatNameColor_);
     });
@@ -29,6 +36,7 @@ ChatListView::ChatListView(QWidget *parent)
     setItemDelegate(delegate_);
     setSelectionMode(QAbstractItemView::SingleSelection);
     setVerticalScrollMode(QListView::ScrollPerPixel);
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     setContentsMargins(0, 0, 0, 0);
 }
@@ -85,6 +93,11 @@ void ChatListView::setHighlightColor(const QColor &newHighlightColor)
     emit highlightColorChanged();
 }
 
+void ChatListView::addNewChatItemToMainModel(const ChatItemPtr &chatItem)
+{
+    mainModel_->addChatItem(chatItem);
+}
+
 void ChatListView::setMainModel()
 {
     setModel(mainModel_);
@@ -92,7 +105,15 @@ void ChatListView::setMainModel()
 
 void ChatListView::setTemporaryModel(const QList<User> &foundUserList)
 {
-    tempModel_->setUserList(foundUserList);
+    QVector<ChatItemPtr> chatItems;
+    chatItems.reserve(foundUserList.size());
+    for (const auto &foundUser : foundUserList) {
+        std::shared_ptr<FoundUserChatItem> chatItem{new FoundUserChatItem};
+        chatItem->setUserId(foundUser.id());
+        chatItem->setChatName(foundUser.username());
+        chatItems.append(chatItem);
+    }
+    tempModel_->setChatItems(chatItems);
     this->setModel(tempModel_);
 }
 
@@ -107,4 +128,17 @@ void ChatListView::selectionChanged(const QItemSelection &selected, const QItemS
 
     if (auto model = static_cast<const ChatListModel*>(this->model()))
         emit selectionWasChanged(model->chatItem(selectedIndex.row()));
+}
+
+void ChatListView::initMainModel()
+{
+    const QList<Chat> chats = ChatsTable::getAllChats();
+
+    for (const auto &chat : chats) {
+        ChatItemPtr chatItem{new ChatItem};
+        chatItem->setChatId(chat.id());
+        chatItem->setChatName(chat.name());
+        chatItem->setChatType(chat.type());
+        mainModel_->addChatItem(chatItem);
+    }
 }

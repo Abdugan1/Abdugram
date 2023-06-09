@@ -3,8 +3,10 @@
 
 #include <sql_common/data_structures/chatuser.h>
 
+#include <QDebug>
+
 CreateChatMessage::CreateChatMessage()
-    : AbduMessage{Type::CreatePrivateChat}
+    : AbduMessage{Type::CreateChat}
 {
 
 }

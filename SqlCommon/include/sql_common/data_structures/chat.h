@@ -31,9 +31,6 @@ public:
     Type type() const;
     void setType(Type newType);
 
-    int createdByUserId() const;
-    void setCreatedByUserId(int newCreatedByUserId);
-
     QDateTime createdAt() const;
     void setCreatedAt(const QDateTime &newCreatedAt);
 
@@ -53,7 +50,6 @@ private:
     QString name_;
     QString description_;
     Type type_ = Type::Private;
-    int createdByUserId_ = -1;
     QDateTime createdAt_;
     QDateTime updatedAt_;
     QDateTime deletedAt_;
@@ -62,8 +58,5 @@ private:
     friend QDataStream &operator>>(QDataStream &in, Chat &chat);
 
 };
-
-QDataStream &operator<<(QDataStream &out, const Chat &chat);
-QDataStream &operator>>(QDataStream &in, Chat &chat);
 
 #endif // CHAT_H

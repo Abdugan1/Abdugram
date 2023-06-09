@@ -17,7 +17,7 @@ public:
 
     static QList<User> getUsersByLikeSearch(const QString &likeSearch);
 
-    static int getUserId(const QString &username);
+    static int getUserIdByUsername(const QString &username);
 
     static User getUserById(int id);
 };

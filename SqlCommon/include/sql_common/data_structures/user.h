@@ -45,10 +45,13 @@ public:
     bool isOnline() const;
     void setIsOnline(bool newIsOnline);
 
-    bool isDeleted() const;
-    void setIsDeleted(bool newIsDeleted);
-
     static User fromSqlRecord(const QSqlRecord &record);
+
+    QDateTime deletedAt() const;
+    void setDeletedAt(const QDateTime &newDeletedAt);
+
+    QString urlToProfile() const;
+    void setUrlToProfile(const QString &newUrlToProfile);
 
 private:
     int       id_ = -1;
@@ -60,18 +63,19 @@ private:
     QString   phone_;
     QString   avatarUrl_;
 
-    QDateTime createdAt_;
-    QDateTime updatedAt_;
+    bool      isOnline_  = false;
 
     QDateTime lastTimeOnline_;
-    bool      isOnline_  = false;
-    bool      isDeleted_ = false;
+
+    QString   urlToProfile_;
+
+    QDateTime createdAt_;
+    QDateTime updatedAt_;
+    QDateTime deletedAt_;
+
 
     friend QDataStream &operator<<(QDataStream &out, const User &user);
     friend QDataStream &operator>>(QDataStream &in, User &user);
 };
-
-QDataStream &operator<<(QDataStream &out, const User &user);
-QDataStream &operator>>(QDataStream &in, User &user);
 
 #endif // USER_H

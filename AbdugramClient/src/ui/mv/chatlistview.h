@@ -3,11 +3,13 @@
 
 #include <QListView>
 
+#include "chatitem.h"
+
 class ChatListModel;
 class ChatListDelegate;
 
 class User;
-class ChatItem;
+class Chat;
 
 class ChatListView : public QListView
 {
@@ -31,9 +33,12 @@ public:
     QColor highlightColor() const;
     void setHighlightColor(const QColor &newHighlightColor);
 
-signals:
-    void selectionWasChanged(const ChatItem &selectedChat);
+    void addNewChatItemToMainModel(const ChatItemPtr &chatItem);
 
+signals:
+    void selectionWasChanged(const ChatItemPtr &selectedChat);
+
+    // NOT necessary
     void chatNameColorChanged();
     void lastMessageColorChanged();
     void messageDateColorChanged();
@@ -46,6 +51,9 @@ public slots:
 
 protected slots:
     void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
+
+private:
+    void initMainModel();
 
 private:
     ChatListModel *mainModel_ = nullptr;

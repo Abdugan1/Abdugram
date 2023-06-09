@@ -3,14 +3,20 @@
 
 #include <QAbstractListModel>
 
+#include <memory>
+
 #include "chatitem.h"
 
 class User;
+class Chat;
+class ChatUser;
 
 class ChatListModel : public QAbstractListModel
 {
     Q_OBJECT
 public:
+    using ChatItems   = QVector<ChatItemPtr>;
+
     enum Roles {
         Avatar = Qt::UserRole + 1,
         ChatName,
@@ -24,13 +30,12 @@ public:
 
     QVariant data(const QModelIndex &index, int role) const override;
 
-    void addChatItem(const ChatItem &item);
-    ChatItem chatItem(int row) const;
+    void addChatItem(const ChatItemPtr &item);
+    ChatItemPtr chatItem(int row) const;
 
-    void setUserList(const QList<User> &userList);
+    void setChatItems(const ChatItems &chatItems);
 
 private:
-    using ChatItems = QVector<ChatItem>;
     ChatItems chatItems_;
 };
 
