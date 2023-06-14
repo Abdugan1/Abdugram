@@ -38,7 +38,6 @@ private:
 
     static const int MaxWidth_;
     static const int Radius_;
-    static const int TempMyId_;
 
     static const int HMargin_;
     static const int VMargin_;

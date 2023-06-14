@@ -14,6 +14,7 @@ INCLUDEPATH += ../SqlCommon/include
 
 SOURCES += \
     src/chatuserstable.cpp \
+    src/messagestable.cpp \
     src/userstable.cpp \
     src/chatstable.cpp \
     src/databaseserver.cpp
@@ -23,6 +24,7 @@ HEADERS += \
     include/sql_server/chatstable.h \
     include/sql_server/chatuserstable.h \
     include/sql_server/databaseserver.h \
+    include/sql_server/messagestable.h \
     include/sql_server/userstable.h
 
 DISTFILES += \

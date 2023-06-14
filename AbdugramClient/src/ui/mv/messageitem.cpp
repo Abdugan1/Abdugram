@@ -1,5 +1,7 @@
 #include "messageitem.h"
 
+#include <sql_common/data_structures/message.h>
+
 MessageItem::MessageItem()
 {
 
@@ -33,4 +35,15 @@ QDateTime MessageItem::dateTime() const
 void MessageItem::setDateTime(const QDateTime &newDateTime)
 {
     dateTime_ = newDateTime;
+}
+
+MessageItem MessageItem::fromMessage(const Message &message)
+{
+    MessageItem messageItem;
+
+    messageItem.setSenderId(message.senderId());
+    messageItem.setText(message.text());
+    messageItem.setDateTime(message.createdAt());
+
+    return messageItem;
 }

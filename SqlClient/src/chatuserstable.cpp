@@ -12,12 +12,6 @@ bool ChatUsersTable::addUserToChat(const ChatUser &chatUser, int chatId)
 {
     const QString query = readFullFile("./.sql/chat_users/add_user_to_chat.sql");
 
-    qDebug() << "chatId:" << chatUser.chatId();
-    qDebug() << "userId:" << chatUser.userId();
-    qDebug() << "role:"   << ChatUser::roleToString(chatUser.role());
-    qDebug() << "joindedAt:" << chatUser.joinedAt();
-    qDebug() << "leftAt:" << chatUser.leftAt();
-
     QSqlQuery addUserToChatQuery;
     addUserToChatQuery.prepare(query);
     addUserToChatQuery.bindValue(":chat_id", chatId);

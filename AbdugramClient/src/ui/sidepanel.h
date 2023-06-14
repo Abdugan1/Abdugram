@@ -22,6 +22,9 @@ signals:
 
     void newChatItemAdded(const ChatItemPtr &chatItem);
 
+private slots:
+    void addNewChatToView(const Chat &chat);
+
 private:
     void setupUi();
 

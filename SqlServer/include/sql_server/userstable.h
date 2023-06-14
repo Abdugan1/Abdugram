@@ -20,6 +20,9 @@ public:
     static int getUserIdByUsername(const QString &username);
 
     static User getUserById(int id);
+
+private:
+    explicit UsersTable() = default;
 };
 
 #endif // USERSTABLE_H

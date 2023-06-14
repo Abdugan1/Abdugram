@@ -1,9 +1,8 @@
 #include "messagelistview.h"
 #include "messagelistmodel.h"
 #include "messagelistdelegate.h"
-#include "chatitem.h"
 
-#include <sql_client/chatstable.h>
+#include <sql_client/databaseclient.h>
 
 #include <QPainter>
 #include <QDebug>
@@ -22,6 +21,8 @@ MessageListView::MessageListView(QWidget *parent)
     connect(this, &MessageListView::timeColorChanged, this, [this](){
         delegate_->setTimeColor(timeColor_);
     });
+
+    connect(database(), &DatabaseClient::messageAdded, this, &MessageListView::scrollToBottom);
 
     setModel(model_);
     setItemDelegate(delegate_);
@@ -68,4 +69,9 @@ void MessageListView::setTimeColor(const QColor &newTimeColor)
         return;
     timeColor_ = newTimeColor;
     emit timeColorChanged();
+}
+
+void MessageListView::setChatId(int chatId)
+{
+    model_->setChatId(chatId);
 }

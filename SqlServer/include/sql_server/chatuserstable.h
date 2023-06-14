@@ -20,7 +20,7 @@ public:
     static QList<ChatUser> getChatUsers(int chatId);
 
 private:
-    explicit ChatUsersTable();
+    explicit ChatUsersTable() = default;
 
 };
 

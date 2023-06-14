@@ -5,7 +5,7 @@
 
 #include "messageitem.h"
 
-class ChatItem;
+class Message;
 
 class MessageListModel : public QAbstractListModel
 {
@@ -24,10 +24,17 @@ public:
 
     bool isEmpty() const;
 
+    int chatId() const;
+    void setChatId(int newChatId);
+
+private slots:
+    void onMessageAdded(const Message &message);
 
 private:
     using MessageItems = QVector<MessageItem>;
     MessageItems messageItems_;
+
+    int chatId_ = -1;
 };
 
 #endif // MESSAGELISTMODEL_H

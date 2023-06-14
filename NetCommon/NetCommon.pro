@@ -32,6 +32,8 @@ HEADERS += \
     include/net_common/messages/registerstatusmessage.h \
     include/net_common/messages/searchonservermessage.h \
     include/net_common/messages/searchusersresultmessage.h \
+    include/net_common/messages/sendmessagemessage.h \
+    include/net_common/messages/sendmessageresultmessage.h \
     include/net_common/messages/syncchatsrequest.h \
     include/net_common/tcpsession.h \
 
@@ -49,6 +51,8 @@ SOURCES += \
     src/messages/registerstatusmessage.cpp \
     src/messages/searchonservermessage.cpp \
     src/messages/searchusersresultmessage.cpp \
+    src/messages/sendmessagemessage.cpp \
+    src/messages/sendmessageresultmessage.cpp \
     src/messages/syncchatsrequest.cpp \
     src/tcpsession.cpp
 

@@ -12,8 +12,12 @@ public:
 
     static User getUserById(int userId);
 
+    static int lastInsertedId();
+
 private:
     explicit UsersTable() = default;
+
+    static int lastInsertedId_;
 };
 
 #endif // USERSTABLE_H

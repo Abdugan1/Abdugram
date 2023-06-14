@@ -70,8 +70,3 @@ QList<ChatUser> ChatUsersTable::getChatUsers(int chatId)
 
     return chatUsers;
 }
-
-ChatUsersTable::ChatUsersTable()
-{
-
-}

@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS messages (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT fk_messages_sender_id FOREIGN KEY (sender_id) REFERENCES users(id),
     CONSTRAINT fk_messages_chat_id FOREIGN KEY (chat_id) REFERENCES chats(id),
-    CONSTRAINT fk_messages_reply_to_id FOREIGN KEY (reply_to_id) REFERENCES messages(id),
+    CONSTRAINT fk_messages_reply_to_id FOREIGN KEY (reply_to_id) REFERENCES messages(id)
 );
 
 CREATE TABLE IF NOT EXISTS message_deletions (
@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS message_deletions (
     message_id INTEGER,
     deleted_for_user_id INT,
     deleted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_message_deletions_message_id FOREIGN KEY (message_id) REFERENCES message(id),
+    CONSTRAINT fk_message_deletions_message_id FOREIGN KEY (message_id) REFERENCES messages(id),
     CONSTRAINT fk_message_deletions_deleted_for_user_id FOREIGN KEY (deleted_for_user_id) REFERENCES users(id)
 );
 

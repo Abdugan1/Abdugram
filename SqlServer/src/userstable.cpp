@@ -96,7 +96,7 @@ int UsersTable::getUserIdByUsername(const QString &username)
 
 User UsersTable::getUserById(int id)
 {
-    const QString query = readFullFile("./sql/users/get_user_by_id.sql");
+    const QString query = readFullFile("./.sql/users/get_user_by_id.sql");
 
     QSqlQuery getUserByIdQuery;
     getUserByIdQuery.prepare(query);

@@ -1,11 +1,12 @@
 #include "messagelistdelegate.h"
 #include "messagelistmodel.h"
 
+#include "net/networkhandler.h"
+
 #include <QPainter>
 
 const int MessageListDelegate::MaxWidth_ = 400;
 const int MessageListDelegate::Radius_   = 20;
-const int MessageListDelegate::TempMyId_ = 0;
 
 const int MessageListDelegate::HMargin_ = 15;
 const int MessageListDelegate::VMargin_ = 7;
@@ -147,7 +148,9 @@ void MessageListDelegate::setPainterOrigin(QPainter *painter, const QStyleOption
     const int fullWidth = option.rect.width();
     const int bgWidth   = getBackgroundRect(option, index).width();
 
-    const int dx = senderId != TempMyId_ ? HMargin_ : fullWidth - HMargin_ - bgWidth;
+    const int myId = networkHandler()->userId();
+
+    const int dx = senderId != myId ? HMargin_ : fullWidth - HMargin_ - bgWidth;
     const int dy = VMargin_;
 
     painter->translate(dx, dy);

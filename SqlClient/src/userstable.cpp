@@ -8,6 +8,8 @@
 #include <QVariant>
 #include <QDebug>
 
+int UsersTable::lastInsertedId_ = -1;
+
 bool UsersTable::addOrIgnoreUser(const User &user)
 {
     const QString query = readFullFile("./.sql/users/add_or_ignore_user.sql");
@@ -28,7 +30,12 @@ bool UsersTable::addOrIgnoreUser(const User &user)
     addUserQuery.bindValue(":updated_at", user.updatedAt());
     addUserQuery.bindValue(":deleted_at", user.deletedAt());
 
-    return executeQuery(addUserQuery, ErrorImportance::Critical);
+    bool success = executeQuery(addUserQuery, ErrorImportance::Critical);
+
+    if (success)
+        lastInsertedId_ = addUserQuery.lastInsertId().toInt();
+
+    return success;
 }
 
 User UsersTable::getUserById(int userId)
@@ -44,4 +51,9 @@ User UsersTable::getUserById(int userId)
 
     getUserByIdQuery.first();
     return User::fromSqlRecord(getUserByIdQuery.record());
+}
+
+int UsersTable::lastInsertedId()
+{
+    return lastInsertedId_;
 }

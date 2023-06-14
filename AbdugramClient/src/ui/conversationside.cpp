@@ -7,6 +7,7 @@
 #include "net/networkhandler.h"
 
 #include <net_common/messages/createchatmessage.h>
+#include <net_common/messages/sendmessagemessage.h>
 
 #include <sql_common/data_structures/chat.h>
 #include <sql_common/data_structures/chatuser.h>
@@ -21,11 +22,7 @@ ConversationSide::ConversationSide(QWidget *parent)
 {
     setupUi();
 
-    connect(messageSide_, &MessageSide::sendMessageRequest, this, [this]() {
-        if (currentChat_->chatId() == -1) {
-            requestCreatePrivateChat();
-        }
-    });
+    connect(messageSide_, &MessageSide::sendMessageRequest, this, &ConversationSide::onSendMessageRequested);
 }
 
 ChatItem ConversationSide::currentChat() const
@@ -37,6 +34,7 @@ void ConversationSide::setCurrentChat(const ChatItemPtr &chat)
 {
     currentChat_ = chat;
     chatHeader_->setChatName(chat->chatName());
+    messageView_->setChatId(chat->chatId());
 }
 
 void ConversationSide::checkCurrentChat(const ChatItemPtr &chat)
@@ -48,13 +46,11 @@ void ConversationSide::checkCurrentChat(const ChatItemPtr &chat)
 
 void ConversationSide::requestCreatePrivateChat()
 {
-    qDebug() << "Requesting new chat";
     auto currentChat = dynamic_cast<FoundUserChatItem *>(currentChat_.get());
     if (currentChat && currentChat->userId() == -1) {
         qCritical() << "Can't create private chat! current chat user id is undefined";
         return;
     }
-    qDebug() << "Walked through check";
 
     Chat chat;
     chat.setType(Chat::Type::Private);
@@ -72,6 +68,25 @@ void ConversationSide::requestCreatePrivateChat()
     createPrivateChat->setChatUsers({chatUser1, chatUser2});
 
     networkHandler()->sendToServer(static_cast<AbduMessagePtr>(createPrivateChat));
+}
+
+void ConversationSide::onSendMessageRequested(const QString &messageText)
+{
+    if (currentChat_->chatId() == -1) {
+        requestCreatePrivateChat();
+    } else {
+        qDebug() << "sending message";
+        Message message;
+        message.setChatId(currentChat_->chatId());
+        message.setSenderId(networkHandler()->userId());
+        message.setText(messageText);
+
+        AnyMessagePtr<SendMessageMessage> sendMessage{new SendMessageMessage};
+        sendMessage->setMessage(message);
+        qDebug() << "type:" << static_cast<int>(sendMessage->type());
+
+        networkHandler()->sendToServer(static_cast<AbduMessagePtr>(sendMessage));
+    }
 }
 
 void ConversationSide::setupUi()

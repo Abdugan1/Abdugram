@@ -4,15 +4,19 @@
 #include <QSharedDataPointer>
 
 class AbduMessage;
-class RegisterMessage;
+
 class LoginMessage;
-class LoginStatusMessage;
-class RegisterStatusMessage;
+class RegisterMessage;
 class SyncChatsRequest;
 class SearchOnServerMessage;
-class SearchUsersResultMessage;
 class CreateChatMessage;
+class SendMessageMessage;
+
+class LoginStatusMessage;
+class RegisterStatusMessage;
+class SearchUsersResultMessage;
 class CreateChatResultMessage;
+class SendMessageResultMessage;
 
 using AbduMessagePtr = QSharedDataPointer<AbduMessage>;
 template<typename T>

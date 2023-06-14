@@ -4,6 +4,8 @@
 #include <QString>
 #include <QDateTime>
 
+class Message;
+
 class MessageItem
 {
 public:
@@ -17,6 +19,8 @@ public:
 
     QDateTime dateTime() const;
     void setDateTime(const QDateTime &newDateTime);
+
+    static MessageItem fromMessage(const Message &message);
 
 private:
     int senderId_ = -1;

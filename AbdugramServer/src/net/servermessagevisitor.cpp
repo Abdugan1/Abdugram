@@ -4,18 +4,22 @@
 
 #include <net_common/tcpsession.h>
 
-#include <net_common/messages/registermessage.h>
-#include <net_common/messages/registerstatusmessage.h>
 #include <net_common/messages/loginmessage.h>
-#include <net_common/messages/loginstatusmessage.h>
+#include <net_common/messages/registermessage.h>
 #include <net_common/messages/searchonservermessage.h>
-#include <net_common/messages/searchusersresultmessage.h>
 #include <net_common/messages/createchatmessage.h>
+#include <net_common/messages/sendmessagemessage.h>
+
+#include <net_common/messages/loginstatusmessage.h>
+#include <net_common/messages/registerstatusmessage.h>
+#include <net_common/messages/searchusersresultmessage.h>
 #include <net_common/messages/createchatresultmessage.h>
+#include <net_common/messages/sendmessageresultmessage.h>
 
 #include <sql_server/userstable.h>
 #include <sql_server/chatstable.h>
 #include <sql_server/chatuserstable.h>
+#include <sql_server/messagestable.h>
 
 #include <sql_common/data_structures/user.h>
 #include <sql_common/functions.h>
@@ -60,21 +64,12 @@ void ServerMessageVisitor::visit(const LoginMessage &message)
     loginStatus->setSuccess(UsersTable::isUserExists(username, password));
 
     if (loginStatus->success()) {
-        loginStatus->setUserId(UsersTable::getUserIdByUsername(username));
-        server_->addSession(loginStatus->userId(), client_);
+        int userId = UsersTable::getUserIdByUsername(username);
+        loginStatus->setUser(UsersTable::getUserById(userId));
+        server_->addSession(loginStatus->user().id(), client_);
     }
 
     server_->sendToClient(client_, static_cast<AbduMessagePtr>(loginStatus));
-}
-
-void ServerMessageVisitor::visit(const RegisterStatusMessage &message)
-{
-    Q_UNUSED(message);
-}
-
-void ServerMessageVisitor::visit(const LoginStatusMessage &message)
-{
-    Q_UNUSED(message);
 }
 
 void ServerMessageVisitor::visit(const SyncChatsRequest &message)
@@ -94,14 +89,8 @@ void ServerMessageVisitor::visit(const SearchOnServerMessage &message)
     server_->sendToClient(client_, static_cast<AbduMessagePtr>(searchResult));
 }
 
-void ServerMessageVisitor::visit(const SearchUsersResultMessage &message)
-{
-    Q_UNUSED(message);
-}
-
 void ServerMessageVisitor::visit(const CreateChatMessage &message)
 {
-    qDebug() << "Get create new chat message";
     const Chat            chat      = message.chat();
     const QList<ChatUser> chatUsers = message.chatUsers();
 
@@ -121,16 +110,12 @@ void ServerMessageVisitor::visit(const CreateChatMessage &message)
     });
 
 
-    if (!success) {
-        qDebug() << "Can't succeed :(";
+    if (!success)
         return;
-    }
 
 
     // Result
-    qDebug() << "Get chat:";
     const Chat            addedChat      = ChatsTable::getChatById(addedChatId);
-    qDebug() << "Get chat users:";
     const QList<ChatUser> addedChatUsers = ChatUsersTable::getChatUsers(addedChatId);
 
     using ResultMessage = AnyMessagePtr<CreateChatResultMessage>;
@@ -143,6 +128,27 @@ void ServerMessageVisitor::visit(const CreateChatMessage &message)
     }
 }
 
-void ServerMessageVisitor::visit(const CreateChatResultMessage &message)
+void ServerMessageVisitor::visit(const SendMessageMessage &message)
 {
+    const Message msg = message.message();
+    const int addedMessageId = MessagesTable::addMessage(msg);
+
+    qDebug() << "addedMessageId:" << addedMessageId;
+
+    if (addedMessageId == -1)
+        return;
+
+    qDebug() << "Crossed";
+
+    const Message addedMessage = MessagesTable::getMessageById(addedMessageId);
+    AnyMessagePtr<SendMessageResultMessage> resultMessage{new SendMessageResultMessage};
+    resultMessage->setMessage(addedMessage);
+
+    const QList<ChatUser> chatUsers = ChatUsersTable::getChatUsers(msg.chatId());
+    qDebug() << "chatUsers.size:" << chatUsers.size();
+
+    for (const auto &chatUser : chatUsers) {
+        server_->sendToClient(chatUser.userId(), static_cast<AbduMessagePtr>(resultMessage));
+        qDebug() << chatUser.userId();
+    }
 }

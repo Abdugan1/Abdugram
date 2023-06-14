@@ -22,6 +22,9 @@ public:
     static int addChat(const Chat &chat);
 
     static Chat getChatById(int chatId);
+
+private:
+    explicit ChatsTable() = default;
 };
 
 #endif // CHATSTABLE_H

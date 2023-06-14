@@ -45,6 +45,9 @@ public:
 
     static Chat fromSqlRecord(const QSqlRecord &record);
 
+    friend QDataStream &operator<<(QDataStream &out, const Chat &chat);
+    friend QDataStream &operator>>(QDataStream &in, Chat &chat);
+
 private:
     int id_ = -1;
     QString name_;
@@ -53,10 +56,6 @@ private:
     QDateTime createdAt_;
     QDateTime updatedAt_;
     QDateTime deletedAt_;
-
-    friend QDataStream &operator<<(QDataStream &out, const Chat &chat);
-    friend QDataStream &operator>>(QDataStream &in, Chat &chat);
-
 };
 
 #endif // CHAT_H

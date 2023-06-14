@@ -22,12 +22,14 @@ public:
         SyncChatsRequest,
         SearchOnServer,
         CreateChat,
+        SendMessage,
 
-        ServerSide = 1000000,
+        ServerSide = 1000000000,
         LoginStatus = ServerSide + 1,
         RegisterStaus,
         SearchUsersResult,
-        CreateChatResult
+        CreateChatResult,
+        SendMessageResult
     };
 
 public:

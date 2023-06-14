@@ -25,6 +25,8 @@ public slots:
 private slots:
     void requestCreatePrivateChat();
 
+    void onSendMessageRequested(const QString &messageText);
+
 private:
     void setupUi();
 

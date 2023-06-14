@@ -26,6 +26,8 @@ public:
     QColor timeColor() const;
     void setTimeColor(const QColor &newTimeColor);
 
+    void setChatId(int chatId);
+
 signals:
     void backgroundColorChanged();
     void textColorChanged();

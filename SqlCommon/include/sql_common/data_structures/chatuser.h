@@ -41,16 +41,15 @@ public:
 
     static ChatUser fromSqlRecord(const QSqlRecord &record);
 
+    friend QDataStream &operator<<(QDataStream &out, const ChatUser &chatUser);
+    friend QDataStream &operator>>(QDataStream &in, ChatUser &chatUser);
+
 private:
     int chatId_ = -1;
     int userId_ = -1;
     Role role_  = User;
     QDateTime joinedAt_;
     QDateTime leftAt_;
-
-    friend QDataStream &operator<<(QDataStream &out, const ChatUser &chatUser);
-    friend QDataStream &operator>>(QDataStream &in, ChatUser &chatUser);
-
 };
 
 #endif // CHATUSER_H
