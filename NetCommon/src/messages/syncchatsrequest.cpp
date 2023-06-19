@@ -5,17 +5,16 @@
 SyncChatsRequest::SyncChatsRequest()
     : AbduMessage{Type::SyncChatsRequest}
 {
-
 }
 
-QString SyncChatsRequest::fromUsername() const
+int SyncChatsRequest::userId() const
 {
-    return fromUsername_;
+    return userId_;
 }
 
-void SyncChatsRequest::setFromUsername(const QString &newFromUsername)
+void SyncChatsRequest::setUserId(int newUserId)
 {
-    fromUsername_ = newFromUsername;
+    userId_ = newUserId;
 }
 
 QDateTime SyncChatsRequest::lastUpdate() const
@@ -35,10 +34,11 @@ void SyncChatsRequest::accept(MessageVisitor *visitor) const
 
 void SyncChatsRequest::getBodyData(DataStream *stream)
 {
-    *stream >> fromUsername_ >> lastUpdate_;
+    *stream >> userId_ >> lastUpdate_;
 }
 
 void SyncChatsRequest::writeBodyData(DataStream *stream) const
 {
-    *stream << fromUsername_ << lastUpdate_;
+    *stream << userId_ << lastUpdate_;
 }
+

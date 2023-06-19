@@ -27,27 +27,27 @@ ConversationSide::ConversationSide(QWidget *parent)
 
 ChatItem ConversationSide::currentChat() const
 {
-    return *currentChat_;
+    return *currentChatItem_;
 }
 
-void ConversationSide::setCurrentChat(const ChatItemPtr &chat)
+void ConversationSide::setCurrentChatItem(const ChatItemPtr &chat)
 {
-    currentChat_ = chat;
+    currentChatItem_ = chat;
     chatHeader_->setChatName(chat->chatName());
     messageView_->setChatId(chat->chatId());
 }
 
-void ConversationSide::checkCurrentChat(const ChatItemPtr &chat)
+void ConversationSide::checkCurrentChatItem(const ChatItemPtr &chat)
 {
-    if (chat->chatName() == currentChat_->chatName()) {
-        setCurrentChat(chat);
+    if (chat->chatName() == currentChatItem_->chatName()) {
+        setCurrentChatItem(chat);
     }
 }
 
 void ConversationSide::requestCreatePrivateChat()
 {
-    auto currentChat = dynamic_cast<FoundUserChatItem *>(currentChat_.get());
-    if (currentChat && currentChat->userId() == -1) {
+    auto currentChatItem = dynamic_cast<FoundUserChatItem *>(currentChatItem_.get());
+    if (currentChatItem && currentChatItem->userId() == -1) {
         qCritical() << "Can't create private chat! current chat user id is undefined";
         return;
     }
@@ -60,32 +60,24 @@ void ConversationSide::requestCreatePrivateChat()
     chatUser1.setRole(ChatUser::Role::Owner);
 
     ChatUser chatUser2;
-    chatUser2.setUserId(currentChat->userId());
+    chatUser2.setUserId(currentChatItem->userId());
     chatUser2.setRole(ChatUser::Role::Owner);
 
-    AnyMessagePtr<CreateChatMessage> createPrivateChat{new CreateChatMessage};
-    createPrivateChat->setChat(chat);
-    createPrivateChat->setChatUsers({chatUser1, chatUser2});
 
-    networkHandler()->sendToServer(static_cast<AbduMessagePtr>(createPrivateChat));
+    networkHandler()->sendCreateChatRequest(chat, {chatUser1, chatUser2});
 }
 
 void ConversationSide::onSendMessageRequested(const QString &messageText)
 {
-    if (currentChat_->chatId() == -1) {
+    if (currentChatItem_->chatId() == -1) {
         requestCreatePrivateChat();
     } else {
-        qDebug() << "sending message";
         Message message;
-        message.setChatId(currentChat_->chatId());
+        message.setChatId(currentChatItem_->chatId());
         message.setSenderId(networkHandler()->userId());
         message.setText(messageText);
 
-        AnyMessagePtr<SendMessageMessage> sendMessage{new SendMessageMessage};
-        sendMessage->setMessage(message);
-        qDebug() << "type:" << static_cast<int>(sendMessage->type());
-
-        networkHandler()->sendToServer(static_cast<AbduMessagePtr>(sendMessage));
+        networkHandler()->sendSendMessageRequest(message);
     }
 }
 

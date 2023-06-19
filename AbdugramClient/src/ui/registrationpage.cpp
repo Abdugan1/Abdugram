@@ -10,8 +10,6 @@
 
 #include "net/networkhandler.h"
 
-#include <net_common/messages/registermessage.h>
-
 #include <QBoxLayout>
 #include <QGridLayout>
 #include <QRegularExpressionValidator>
@@ -56,18 +54,16 @@ RegistrationPage::RegistrationPage(QWidget *parent)
 
 void RegistrationPage::sendRegisterMessage()
 {
-    if (!networkHandler()->isConnected())
-        return;
+    const QString firstName = firstNameEdit_->text();
+    const QString lastName  = lastNameEdit_->text();
+    const QString username  = usernameEdit_->text();
+    const QString email     = emailEdit_->text();
+    const QString phone     = phoneNumberEdit_->getPhone();
+    const QString password  = passwordEdit_->text();
 
-    AnyMessagePtr<RegisterMessage> registerMessage{new RegisterMessage};
-    registerMessage->setFirstName(firstNameEdit_->text());
-    registerMessage->setLastName(lastNameEdit_->text());
-    registerMessage->setUsername(usernameEdit_->text());
-    registerMessage->setEmail(emailEdit_->text());
-    registerMessage->setPhone(phoneNumberEdit_->getPhone());
-    registerMessage->setPassword(passwordEdit_->text());
-
-    networkHandler()->sendToServer(static_cast<AbduMessagePtr>(registerMessage));
+    networkHandler()->sendRegisterRequest(firstName, lastName,
+                                          username,  email,
+                                          phone,     password);
 }
 
 void RegistrationPage::onLineEditsChanged()

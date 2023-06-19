@@ -7,7 +7,7 @@
 
 #include <sql_common/data_structures/user.h>
 
-#include <sql_client/chatstable.h>
+#include <sql_client/databaseclient.h>
 
 ChatListView::ChatListView(QWidget *parent)
     : QListView{parent}
@@ -15,7 +15,7 @@ ChatListView::ChatListView(QWidget *parent)
     , tempModel_{new ChatListModel{this}}
     , delegate_{new ChatListDelegate{this}}
 {
-    initMainModel();
+    connect(database(), &DatabaseClient::connected, this, &ChatListView::initMainModel);
 
     connect(this, &ChatListView::chatNameColorChanged, this, [this]() {
         delegate_->setChatNameColor(chatNameColor_);
@@ -132,10 +132,11 @@ void ChatListView::selectionChanged(const QItemSelection &selected, const QItemS
 
 void ChatListView::initMainModel()
 {
-    const QList<Chat> chats = ChatsTable::getAllChats();
+    const QList<Chat> chats = database()->getAllChats();
 
     for (const auto &chat : chats) {
         ChatItemPtr chatItem{new ChatItem};
+        qDebug() << chat.id() << chat.name();
         chatItem->setChatId(chat.id());
         chatItem->setChatName(chat.name());
         chatItem->setChatType(chat.type());

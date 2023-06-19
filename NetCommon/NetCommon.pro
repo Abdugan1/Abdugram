@@ -35,6 +35,8 @@ HEADERS += \
     include/net_common/messages/sendmessagemessage.h \
     include/net_common/messages/sendmessageresultmessage.h \
     include/net_common/messages/syncchatsrequest.h \
+    include/net_common/messages/syncusersmessage.h \
+    include/net_common/messages/syncusersreply.h \
     include/net_common/tcpsession.h \
 
 SOURCES += \
@@ -54,6 +56,8 @@ SOURCES += \
     src/messages/sendmessagemessage.cpp \
     src/messages/sendmessageresultmessage.cpp \
     src/messages/syncchatsrequest.cpp \
+    src/messages/syncusersmessage.cpp \
+    src/messages/syncusersreply.cpp \
     src/tcpsession.cpp
 
 

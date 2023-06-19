@@ -13,6 +13,7 @@
 
 #include <QSqlQuery>
 #include <QSqlError>
+#include <QMap>
 #include <QDebug>
 
 const QString DbName = "abdugram";
@@ -23,15 +24,38 @@ DatabaseClient *DatabaseClient::instance()
     return &self;
 }
 
-void DatabaseClient::connectToDatabase()
+void DatabaseClient::connectToDatabase(int ownId)
 {
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName(".sql/" + DbName);
+    db.setDatabaseName(".sql/" + DbName + "_" +QString::number(ownId));
 
-    if (db.open())
-        createTables();
-    else
+    if (!db.open()) {
         qFatal(qPrintable("Couldn't open database!" + db.lastError().text()));
+    } else {
+        createTables();
+        emit connected();
+    }
+}
+
+QDateTime DatabaseClient::getLastUpdatedAt(Tables table)
+{
+    static const QMap<Tables, QString> tableToString {
+        {Tables::Users, "users"},
+        {Tables::Chats, "chats"},
+        {Tables::ChatUsers, "chat_users"},
+        {Tables::Messages, "messages"},
+    };
+
+    const QString query = readFullFile("./.sql/common/get_last_updated_at.sql").arg(tableToString[table]);
+
+    QSqlQuery getLastUpdatedAtQuery{query};
+
+    if (!executeQuery(getLastUpdatedAtQuery, ErrorImportance::Critical)) {
+        return QDateTime{};
+    }
+
+    getLastUpdatedAtQuery.first();
+    return getLastUpdatedAtQuery.value(0).toDateTime();
 }
 
 bool DatabaseClient::addOrIgnoreUser(const User &user)
@@ -43,7 +67,6 @@ bool DatabaseClient::addOrIgnoreUser(const User &user)
 
     return success;
 }
-
 bool DatabaseClient::addChat(Chat chat, const QList<ChatUser> &chatUsers, int ownUserId)
 {
     bool success = executeTransaction([&]() {
@@ -67,6 +90,13 @@ bool DatabaseClient::addChat(Chat chat, const QList<ChatUser> &chatUsers, int ow
 
     if (success)
         emit chatAdded(chat);
+
+    return success;
+}
+
+QList<Chat> DatabaseClient::getAllChats()
+{
+    return ChatsTable::getAllChats();
 }
 
 bool DatabaseClient::addMessage(const Message &message)

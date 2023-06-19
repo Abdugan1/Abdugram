@@ -1,8 +1,6 @@
 #include "messages/createchatresultmessage.h"
 #include "messages/messagevisitor.h"
 
-#include <sql_common/data_structures/chatuser.h>
-
 CreateChatResultMessage::CreateChatResultMessage()
     : AbduMessage{Type::CreateChatResult}
 {

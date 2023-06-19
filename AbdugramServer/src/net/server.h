@@ -8,7 +8,8 @@
 
 #include "threadpool.h"
 
-class Session;
+class TcpSession;
+class NetworkHandler;
 class ServerMessageVisitor;
 
 class Server : public QTcpServer
@@ -35,20 +36,15 @@ public slots:
 private slots:
     void processMessage(const AbduMessagePtr &message);
 
-    void sendToClient(Session *client, const AbduMessagePtr &message);
-    void sendToClient(int     userId,  const AbduMessagePtr &message);
-
 protected:
     void incomingConnection(qintptr handle) override;
 
 private:
-    Session *createSession();
-
-    void addSession(int id, Session *session);
+    TcpSession *createSession();
 
 private:
     ThreadPool *threadPool_ = nullptr;
-    QHash<int, Session *> sessions_;
+    NetworkHandler *networkHandler_ = nullptr;
     friend class ServerMessageVisitor;
 };
 

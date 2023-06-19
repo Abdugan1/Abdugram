@@ -9,6 +9,8 @@
 #include <QSqlRecord>
 #include <QDebug>
 
+int ChatsTable::lastInsertedId_ = -1;
+
 QList<Chat> ChatsTable::getNewChatsWhereUserIsParticipiant(const QString &username, const QDateTime &lastUpdate)
 {
     const QString query = readFullFile("./.sql/chats/get_new_chats_where_username_is_participiant.sql");
@@ -29,7 +31,7 @@ QList<Chat> ChatsTable::getNewChatsWhereUserIsParticipiant(const QString &userna
     return chats;
 }
 
-int ChatsTable::addChat(const Chat &chat)
+bool ChatsTable::addChat(const Chat &chat)
 {
     const QString query = readFullFile("./.sql/chats/add_chat.sql");
 
@@ -39,7 +41,10 @@ int ChatsTable::addChat(const Chat &chat)
     addChatQuery.bindValue(":description", chat.description());
     addChatQuery.bindValue(":type", Chat::typeToString(chat.type()));
 
-    return (executeQuery(addChatQuery, ErrorImportance::Critical) ? addChatQuery.lastInsertId().toInt() : -1);
+    const bool success = executeQuery(addChatQuery, ErrorImportance::Critical);
+
+    lastInsertedId_ = addChatQuery.lastInsertId().toInt();
+    return success;
 }
 
 Chat ChatsTable::getChatById(int chatId)
@@ -56,4 +61,9 @@ Chat ChatsTable::getChatById(int chatId)
 
     getChatByIdQuery.first();
     return Chat::fromSqlRecord(getChatByIdQuery.record());
+}
+
+int ChatsTable::lastInsertedId()
+{
+    return lastInsertedId_;
 }

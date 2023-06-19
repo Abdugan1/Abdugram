@@ -18,6 +18,16 @@ void RegisterStatusMessage::setSuccess(bool newSuccess)
     success_ = newSuccess;
 }
 
+User RegisterStatusMessage::user() const
+{
+    return user_;
+}
+
+void RegisterStatusMessage::setUser(const User &newUser)
+{
+    user_ = newUser;
+}
+
 void RegisterStatusMessage::accept(MessageVisitor *visitor) const
 {
     visitor->visit(*this);
@@ -25,10 +35,10 @@ void RegisterStatusMessage::accept(MessageVisitor *visitor) const
 
 void RegisterStatusMessage::getBodyData(DataStream *stream)
 {
-    *stream >> success_;
+    *stream >> success_ >> user_;
 }
 
 void RegisterStatusMessage::writeBodyData(DataStream *stream) const
 {
-    *stream << success_;
+    *stream << success_ << user_;
 }

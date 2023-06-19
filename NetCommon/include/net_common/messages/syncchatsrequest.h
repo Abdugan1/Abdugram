@@ -9,8 +9,8 @@ class NETCOMMON_EXPORT SyncChatsRequest : public AbduMessage
 public:
     explicit SyncChatsRequest();
 
-    QString fromUsername() const;
-    void setFromUsername(const QString &newFromUsername);
+    int userId() const;
+    void setUserId(int newUserId);
 
     QDateTime lastUpdate() const;
     void setLastUpdate(const QDateTime &newLastUpdate);
@@ -22,7 +22,7 @@ protected:
     void writeBodyData(DataStream *stream) const override;
 
 private:
-    QString   fromUsername_;
+    int userId_ = -1;
     QDateTime lastUpdate_;
 
 };

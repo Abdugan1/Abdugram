@@ -52,7 +52,7 @@ public slots:
 protected slots:
     void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
 
-private:
+private slots:
     void initMainModel();
 
 private:

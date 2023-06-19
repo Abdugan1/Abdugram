@@ -9,6 +9,8 @@
 #include <sql_common/functions.h>
 #include <sql_common/data_structures/user.h>
 
+int UsersTable::lastInsertedId_ = -1;
+
 bool UsersTable::isUsernameExists(const QString &username)
 {
     const QString query = readFullFile("./.sql/users/count_of_username.sql");
@@ -17,16 +19,12 @@ bool UsersTable::isUsernameExists(const QString &username)
     usernameCountQuery.prepare(query.trimmed());
     usernameCountQuery.bindValue(":username", username);
 
-    if (!executeQuery(usernameCountQuery, ErrorImportance::Critical)) {
-        return true; // true, because if false, the UsersTable::addUser will called.
-                     //So should return something else???
-    }
-
+    executeQuery(usernameCountQuery, ErrorImportance::Fatal); // TODO: Do something else?
     usernameCountQuery.first();
     return usernameCountQuery.value(0).toBool();
 }
 
-void UsersTable::addUser(const User &user, const QString &password)
+bool UsersTable::addUser(const User &user, const QString &password)
 {
     const QString query = readFullFile("./.sql/users/add_user.sql");
 
@@ -39,7 +37,10 @@ void UsersTable::addUser(const User &user, const QString &password)
     addUserQuery.bindValue(":phone",        user.phone()    );
     addUserQuery.bindValue(":password",     password        );
 
-    executeQuery(addUserQuery, ErrorImportance::Warning);
+    const bool success = executeQuery(addUserQuery, ErrorImportance::Warning);
+
+    lastInsertedId_ = addUserQuery.lastInsertId().toInt();
+    return success;
 }
 
 bool UsersTable::isUserExists(const QString &username, const QString &password)
@@ -51,10 +52,7 @@ bool UsersTable::isUserExists(const QString &username, const QString &password)
     isUserExistsQuery.bindValue(":username", username);
     isUserExistsQuery.bindValue(":password", password);
 
-    if (!executeQuery(isUserExistsQuery, ErrorImportance::Critical)) {
-        return false; // TODO: Should return something else???
-    }
-
+    executeQuery(isUserExistsQuery, ErrorImportance::Critical); // TODO: Do something else?
     isUserExistsQuery.first();
     return isUserExistsQuery.value(0).toBool();
 }
@@ -108,4 +106,31 @@ User UsersTable::getUserById(int id)
 
     getUserByIdQuery.first();
     return User::fromSqlRecord(getUserByIdQuery.record());
+}
+
+QList<User> UsersTable::getUpdatedUsersForUser(int userId, const QDateTime &lastUpdatedAt)
+{
+    const QString query = readFullFile("./.sql/users/get_updated_users_for_user.sql");
+
+    QSqlQuery getUsersQuery;
+    getUsersQuery.setForwardOnly(true);
+    getUsersQuery.prepare(query);
+    getUsersQuery.bindValue(":user_id", userId);
+    getUsersQuery.bindValue(":last_updated_at", lastUpdatedAt);
+
+    if (!executeQuery(getUsersQuery, ErrorImportance::Critical)) {
+        return QList<User>{};
+    }
+
+    QList<User> users;
+    while (getUsersQuery.next()) {
+        users.append(User::fromSqlRecord(getUsersQuery.record()));
+    }
+
+    return users;
+}
+
+int UsersTable::lastInsertedId()
+{
+    return lastInsertedId_;
 }

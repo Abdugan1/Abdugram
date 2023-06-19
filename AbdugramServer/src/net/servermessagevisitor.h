@@ -3,25 +3,26 @@
 
 #include <net_common/messages/messagevisitor.h>
 
-class Server;
-class Session;
+class NetworkHandler;
+class TcpSession;
 
 class ServerMessageVisitor : public MessageVisitor
 {
 public:
-    explicit ServerMessageVisitor(Server *server, Session *client);
+    explicit ServerMessageVisitor(NetworkHandler *networkHandler, TcpSession *client);
     ~ServerMessageVisitor() {};
 
     void visit(const LoginMessage          &message) override;
     void visit(const RegisterMessage       &message) override;
+    void visit(const SyncUsersMessage      &message) override;
     void visit(const SyncChatsRequest      &message) override;
     void visit(const SearchOnServerMessage &message) override;
     void visit(const CreateChatMessage     &message) override;
     void visit(const SendMessageMessage    &message) override;
 
 private:
-    Server   *server_ = nullptr;
-    Session  *client_ = nullptr;
+    NetworkHandler *networkHandler_ = nullptr;
+    TcpSession     *client_ = nullptr;
 
 };
 

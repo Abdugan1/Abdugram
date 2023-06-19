@@ -28,11 +28,9 @@ bool MessagesTable::addMessage(const Message &message)
     addMessageQuery.bindValue(":created_at", message.createdAt());
     addMessageQuery.bindValue(":updated_at", message.updatedAt());
 
-    bool success = executeQuery(addMessageQuery, ErrorImportance::Critical);
+    const bool success = executeQuery(addMessageQuery, ErrorImportance::Critical);
 
-    if (success)
-        lastInsertedId_ = addMessageQuery.lastInsertId().toInt();
-
+    lastInsertedId_ = addMessageQuery.lastInsertId().toInt();
     return success;
 }
 

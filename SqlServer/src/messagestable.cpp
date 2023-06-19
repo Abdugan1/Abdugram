@@ -7,7 +7,9 @@
 #include <QSqlRecord>
 #include <QVariant>
 
-int MessagesTable::addMessage(const Message &message)
+int MessagesTable::lastInsertedId_ = -1;
+
+bool MessagesTable::addMessage(const Message &message)
 {
     const QString query = readFullFile("./.sql/messages/add_message.sql");
 
@@ -21,8 +23,10 @@ int MessagesTable::addMessage(const Message &message)
 
     addMessageQuery.bindValue(":text", message.text());
 
-    return (executeQuery(addMessageQuery, ErrorImportance::Critical)
-                ? addMessageQuery.lastInsertId().toInt() : -1);
+    const bool success = executeQuery(addMessageQuery, ErrorImportance::Critical);
+
+    lastInsertedId_ = addMessageQuery.lastInsertId().toInt();
+    return success;
 }
 
 Message MessagesTable::getMessageById(int id)
@@ -38,4 +42,9 @@ Message MessagesTable::getMessageById(int id)
 
     getMessageByIdQuery.first();
     return Message::fromSqlRecord(getMessageByIdQuery.record());
+}
+
+int MessagesTable::lastInsertedId()
+{
+    return lastInsertedId_;
 }

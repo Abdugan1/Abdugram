@@ -66,8 +66,6 @@ int main(int argc, char *argv[])
     QFontDatabase db;
     app.setFont(QFont{"Montserrat", 12, QFont::Medium});
 
-    DatabaseClient::instance()->connectToDatabase();
-
     MainWindow mainWindow;
     mainWindow.show();
 

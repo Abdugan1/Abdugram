@@ -18,9 +18,9 @@ public:
     ChatItem currentChat() const;
 
 public slots:
-    void setCurrentChat(const ChatItemPtr &chat);
+    void setCurrentChatItem(const ChatItemPtr &chat);
 
-    void checkCurrentChat(const ChatItemPtr &chat);
+    void checkCurrentChatItem(const ChatItemPtr &chat);
 
 private slots:
     void requestCreatePrivateChat();
@@ -35,7 +35,7 @@ private:
     MessageListView *messageView_ = nullptr;
     MessageSide     *messageSide_ = nullptr;
 
-    ChatItemPtr currentChat_;
+    ChatItemPtr currentChatItem_;
 };
 
 #endif // CONVERSATIONSIDE_H

@@ -1,11 +1,11 @@
 #include "servermessagevisitor.h"
-#include "net_common/messages/syncchatsrequest.h"
-#include "server.h"
+#include "networkhandler.h"
 
 #include <net_common/tcpsession.h>
 
 #include <net_common/messages/loginmessage.h>
 #include <net_common/messages/registermessage.h>
+#include <net_common/messages/syncusersmessage.h>
 #include <net_common/messages/searchonservermessage.h>
 #include <net_common/messages/createchatmessage.h>
 #include <net_common/messages/sendmessagemessage.h>
@@ -16,19 +16,17 @@
 #include <net_common/messages/createchatresultmessage.h>
 #include <net_common/messages/sendmessageresultmessage.h>
 
-#include <sql_server/userstable.h>
-#include <sql_server/chatstable.h>
-#include <sql_server/chatuserstable.h>
-#include <sql_server/messagestable.h>
-
 #include <sql_common/data_structures/user.h>
+#include <sql_common/data_structures/chatuser.h>
 #include <sql_common/functions.h>
+
+#include <sql_server/databaseserver.h>
 
 #include <QSqlDatabase>
 #include <QDebug>
 
-ServerMessageVisitor::ServerMessageVisitor(Server *server, Session *client)
-    : server_{server}
+ServerMessageVisitor::ServerMessageVisitor(NetworkHandler *networkHandler, TcpSession *client)
+    : networkHandler_{networkHandler}
     , client_{client}
 {
 
@@ -36,46 +34,52 @@ ServerMessageVisitor::ServerMessageVisitor(Server *server, Session *client)
 
 void ServerMessageVisitor::visit(const RegisterMessage &message)
 {
-    AnyMessagePtr<RegisterStatusMessage> registerStatus{new RegisterStatusMessage};
-    if (UsersTable::isUsernameExists(message.username())) {
-        registerStatus->setSuccess(false);
-    } else {
-        registerStatus->setSuccess(true);
+    const bool isUsernameExists = database()->isUsernameExists(message.username());
+    User user;
 
-        User user;
+    if (!isUsernameExists) {
         user.setUsername(message.username());
         user.setFirstName(message.firstName());
         user.setLastName(message.lastName());
         user.setEmail(message.email());
         user.setPhone(message.phone());
 
-        UsersTable::addUser(user, message.password());
+        database()->addUser(user, message.password());
     }
 
-    server_->sendToClient(client_, static_cast<AbduMessagePtr>(registerStatus));
+    emit networkHandler_->requestRegisterReply(client_, !isUsernameExists, user);
+}
+
+void ServerMessageVisitor::visit(const SyncUsersMessage &message)
+{
+    const int       userId        = message.userId();
+    const QDateTime lastUpdatedAt = message.lastUpdatedAt();
+    qDebug() << "date time:" << lastUpdatedAt << "is valid?" << lastUpdatedAt.isValid();
+    const QList<User> unsyncUsers = database()->getUpdatedUsersForUser(userId, lastUpdatedAt);
+
+    emit networkHandler_->requestSyncUsersReply(client_, unsyncUsers);
 }
 
 void ServerMessageVisitor::visit(const LoginMessage &message)
 {
     const QString username = message.username();
     const QString password = message.password();
+    qDebug() << username;
+    qDebug() << password;
 
-    AnyMessagePtr<LoginStatusMessage> loginStatus{new LoginStatusMessage};
-    loginStatus->setSuccess(UsersTable::isUserExists(username, password));
+    const bool isUserExists = database()->isUserExists(username, password);
+    int   userId = -1;
 
-    if (loginStatus->success()) {
-        int userId = UsersTable::getUserIdByUsername(username);
-        loginStatus->setUser(UsersTable::getUserById(userId));
-        server_->addSession(loginStatus->user().id(), client_);
+    if (isUserExists) {
+        userId = database()->getUserIdByUsername(username);
+        networkHandler_->addSession(userId, client_);
     }
 
-    server_->sendToClient(client_, static_cast<AbduMessagePtr>(loginStatus));
+    emit networkHandler_->requestLoginReply(client_, isUserExists, userId);
 }
 
 void ServerMessageVisitor::visit(const SyncChatsRequest &message)
 {
-    const QString   username   = message.fromUsername();
-    const QDateTime lastUpdate = message.lastUpdate();
 
 }
 
@@ -83,10 +87,9 @@ void ServerMessageVisitor::visit(const SearchOnServerMessage &message)
 {
     const QString searchText = message.searchText();
 
-    AnyMessagePtr<SearchUsersResultMessage> searchResult{new SearchUsersResultMessage};
-    searchResult->setUsers(UsersTable::getUsersByLikeSearch("%" + searchText + "%"));
+    const QList<User> foundUsers = database()->getUsersByLikeSearch("%" + searchText + "%");
 
-    server_->sendToClient(client_, static_cast<AbduMessagePtr>(searchResult));
+    emit networkHandler_->requestSearchReply(client_, foundUsers);
 }
 
 void ServerMessageVisitor::visit(const CreateChatMessage &message)
@@ -94,61 +97,34 @@ void ServerMessageVisitor::visit(const CreateChatMessage &message)
     const Chat            chat      = message.chat();
     const QList<ChatUser> chatUsers = message.chatUsers();
 
-
-    int addedChatId = -1;
-    bool success = executeTransaction([&]() {
-        addedChatId = ChatsTable::addChat(chat);
-        if (addedChatId == -1) {
-            return false;
-        }
-
-        if (!ChatUsersTable::addUsersToChat(addedChatId, chatUsers)) {
-            return false;
-        }
-
-        return true;
-    });
-
+    const bool success = database()->addChat(chat, chatUsers);
 
     if (!success)
         return;
 
+    const int addedChatId = database()->lastInsertedId(DatabaseServer::Tables::Chats);
 
-    // Result
-    const Chat            addedChat      = ChatsTable::getChatById(addedChatId);
-    const QList<ChatUser> addedChatUsers = ChatUsersTable::getChatUsers(addedChatId);
-
-    using ResultMessage = AnyMessagePtr<CreateChatResultMessage>;
-    ResultMessage createChatResultMessage{new CreateChatResultMessage};
-    createChatResultMessage->setChat(addedChat);
-    createChatResultMessage->setChatUsers(addedChatUsers);
+    const Chat            addedChat      = database()->getChatById(addedChatId);
+    const QList<ChatUser> addedChatUsers = database()->getChatUsers(addedChatId);
 
     for (const auto &chatUser : addedChatUsers) {
-        server_->sendToClient(chatUser.userId(), static_cast<AbduMessagePtr>(createChatResultMessage));
+        emit networkHandler_->requestCreateChatReply(chatUser.userId(), addedChat, addedChatUsers);
     }
 }
 
 void ServerMessageVisitor::visit(const SendMessageMessage &message)
 {
     const Message msg = message.message();
-    const int addedMessageId = MessagesTable::addMessage(msg);
 
-    qDebug() << "addedMessageId:" << addedMessageId;
-
-    if (addedMessageId == -1)
+    if (!database()->addMessage(msg))
         return;
 
-    qDebug() << "Crossed";
+    const int addedMessageId = database()->lastInsertedId(DatabaseServer::Tables::Messages);
+    const Message addedMessage = database()->getMessageById(addedMessageId);
 
-    const Message addedMessage = MessagesTable::getMessageById(addedMessageId);
-    AnyMessagePtr<SendMessageResultMessage> resultMessage{new SendMessageResultMessage};
-    resultMessage->setMessage(addedMessage);
-
-    const QList<ChatUser> chatUsers = ChatUsersTable::getChatUsers(msg.chatId());
-    qDebug() << "chatUsers.size:" << chatUsers.size();
+    const QList<ChatUser> chatUsers = database()->getChatUsers(msg.chatId());
 
     for (const auto &chatUser : chatUsers) {
-        server_->sendToClient(chatUser.userId(), static_cast<AbduMessagePtr>(resultMessage));
-        qDebug() << chatUser.userId();
+        emit networkHandler_->requestSendMessageReply(chatUser.userId(), addedMessage);
     }
 }

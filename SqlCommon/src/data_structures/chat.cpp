@@ -4,6 +4,7 @@
 #include <QVariant>
 #include <QDataStream>
 #include <QMap>
+#include <QDebug>
 
 Chat::Chat()
 {

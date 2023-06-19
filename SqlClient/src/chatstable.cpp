@@ -62,10 +62,12 @@ QList<Chat> ChatsTable::getAllChats()
     const QString query = readFullFile("./.sql/chats/get_all_chats.sql");
 
     QSqlQuery getAllChatsQuery{query};
+    getAllChatsQuery.setForwardOnly(true);
 
     if (!executeQuery(getAllChatsQuery, ErrorImportance::Critical)) {
         return QList<Chat>{};
     }
+
 
     QList<Chat> chats;
 

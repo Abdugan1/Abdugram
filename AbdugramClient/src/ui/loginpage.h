@@ -22,7 +22,7 @@ signals:
     void toRegisterPageClicked();
 
 private slots:
-    void sendLoginMessage();
+    void onNextButtonClicked();
 
     void onLineEditsChanged();
 

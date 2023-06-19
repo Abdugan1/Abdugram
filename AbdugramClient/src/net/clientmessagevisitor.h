@@ -11,11 +11,12 @@ public:
     explicit ClientMessageVisitor() = default;
     ~ClientMessageVisitor() {};
 
-    void visit(const RegisterStatusMessage    &message) override;
     void visit(const LoginStatusMessage       &message) override;
+    void visit(const RegisterStatusMessage    &message) override;
     void visit(const SearchUsersResultMessage &mesasge) override;
     void visit(const CreateChatResultMessage  &message) override;
     void visit(const SendMessageResultMessage &message) override;
+    void visit(const SyncUsersReply           &reply)   override;
 };
 
 #endif // CLIENTMESSAGEVISITOR_H

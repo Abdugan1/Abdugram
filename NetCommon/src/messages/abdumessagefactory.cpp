@@ -2,15 +2,18 @@
 
 #include "messages/loginmessage.h"
 #include "messages/registermessage.h"
-#include "messages/loginstatusmessage.h"
+#include "messages/syncusersmessage.h"
+#include "messages/syncchatsrequest.h"
 #include "messages/searchonservermessage.h"
 #include "messages/createchatmessage.h"
 #include "messages/sendmessagemessage.h"
 
+#include "messages/loginstatusmessage.h"
 #include "messages/registerstatusmessage.h"
 #include "messages/searchusersresultmessage.h"
 #include "messages/createchatresultmessage.h"
 #include "messages/sendmessageresultmessage.h"
+#include "messages/syncusersreply.h"
 
 #include <QDebug>
 
@@ -28,6 +31,12 @@ AbduMessagePtr AbduMessageFactory::fromData(const QByteArray &data)
         break;
     case AbduMessage::Type::Register:
         abduMessage = new RegisterMessage;
+        break;
+    case AbduMessage::Type::SyncUsersMessage:
+        abduMessage = new SyncUsersMessage;
+        break;
+    case AbduMessage::Type::SyncChatsRequest:
+        abduMessage = new SyncChatsRequest;
         break;
     case AbduMessage::Type::SearchOnServer:
         abduMessage = new SearchOnServerMessage;
@@ -53,6 +62,9 @@ AbduMessagePtr AbduMessageFactory::fromData(const QByteArray &data)
         break;
     case AbduMessage::Type::SendMessageResult:
         abduMessage = new SendMessageResultMessage;
+        break;
+    case AbduMessage::Type::SyncUsersReply:
+        abduMessage = new SyncUsersReply;
         break;
     }
 

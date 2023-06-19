@@ -2,10 +2,9 @@
 #define CREATECHATRESULTMESSAGE_H
 
 #include "abdumessage.h"
-#include <sql_common/data_structures/chat.h>
-#include <sql_common/data_structures/user.h>
 
-class ChatUser;
+#include <sql_common/data_structures/chatuser.h>
+#include <sql_common/data_structures/chat.h>
 
 class NETCOMMON_EXPORT CreateChatResultMessage : public AbduMessage
 {

@@ -30,11 +30,9 @@ bool UsersTable::addOrIgnoreUser(const User &user)
     addUserQuery.bindValue(":updated_at", user.updatedAt());
     addUserQuery.bindValue(":deleted_at", user.deletedAt());
 
-    bool success = executeQuery(addUserQuery, ErrorImportance::Critical);
+    const bool success = executeQuery(addUserQuery, ErrorImportance::Critical);
 
-    if (success)
-        lastInsertedId_ = addUserQuery.lastInsertId().toInt();
-
+    lastInsertedId_ = addUserQuery.lastInsertId().toInt();
     return success;
 }
 
@@ -56,4 +54,11 @@ User UsersTable::getUserById(int userId)
 int UsersTable::lastInsertedId()
 {
     return lastInsertedId_;
+}
+
+QDateTime UsersTable::getLastUpdatedAt()
+{
+    const QString query = readFullFile("./.sql/users/get_last_updated_at.sql");
+
+
 }

@@ -3,8 +3,6 @@
 
 #include "net/networkhandler.h"
 
-#include <net_common/messages/searchonservermessage.h>
-
 SearchLineEdit::SearchLineEdit(QWidget *parent)
     : LineEdit{parent}
     , searchServerTimer_{new QTimer}
@@ -26,10 +24,6 @@ SearchLineEdit::SearchLineEdit(QWidget *parent)
 
 void SearchLineEdit::searchOnServer()
 {
-    if (!networkHandler()->isConnected())
-        return;
-
-    AnyMessagePtr<SearchOnServerMessage> searchOnServerMessage{new SearchOnServerMessage{}};
-    searchOnServerMessage->setSearchText(text());
-    networkHandler()->sendToServer(static_cast<AbduMessagePtr>(searchOnServerMessage));
+    const QString searchText = text();
+    networkHandler()->sendSearchRequest(searchText);
 }

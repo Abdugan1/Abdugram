@@ -19,12 +19,16 @@ public:
 
     static Chat createPrivateChat(int user1, int user2);
 
-    static int addChat(const Chat &chat);
+    static bool addChat(const Chat &chat);
 
     static Chat getChatById(int chatId);
 
+    static int lastInsertedId();
+
 private:
     explicit ChatsTable() = default;
+
+    static int lastInsertedId_;
 };
 
 #endif // CHATSTABLE_H

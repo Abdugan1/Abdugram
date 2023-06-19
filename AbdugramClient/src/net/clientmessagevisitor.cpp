@@ -3,6 +3,7 @@
 
 #include <net_common/messages/loginstatusmessage.h>
 #include <net_common/messages/registerstatusmessage.h>
+#include <net_common/messages/syncusersreply.h>
 #include <net_common/messages/searchusersresultmessage.h>
 #include <net_common/messages/createchatresultmessage.h>
 #include <net_common/messages/sendmessageresultmessage.h>
@@ -18,11 +19,20 @@
 
 void ClientMessageVisitor::visit(const LoginStatusMessage &message)
 {
-    if (message.success()) {
-        networkHandler()->userId_ = message.user().id();
-        database()->addOrIgnoreUser(message.user());
-        networkHandler()->emitLoginSuccessfully();
+    qDebug() << "success login?" << message.success();
+
+    if (!message.success()) {
+        return;
     }
+
+    networkHandler()->userId_ = message.userId();
+
+    database()->connectToDatabase(networkHandler()->userId_);
+
+    const auto lastUpdatedAt = database()->getLastUpdatedAt(DatabaseClient::Tables::Users);
+    networkHandler()->sendSyncUsersRequest(lastUpdatedAt);
+
+    networkHandler()->emitLoginSuccessfully();
 }
 
 void ClientMessageVisitor::visit(const RegisterStatusMessage &message)
@@ -64,4 +74,12 @@ void ClientMessageVisitor::visit(const SendMessageResultMessage &message)
     const Message msg = message.message();
 
     database()->addMessage(msg);
+}
+
+void ClientMessageVisitor::visit(const SyncUsersReply &reply)
+{
+    const QList<User> unsyncUsers = reply.users();
+    for (const auto& user : unsyncUsers) {
+        database()->addOrIgnoreUser(user);
+    }
 }

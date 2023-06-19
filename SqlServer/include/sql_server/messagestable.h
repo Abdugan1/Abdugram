@@ -6,12 +6,16 @@ class Message;
 class MessagesTable
 {
 public:
-    static int addMessage(const Message &message);
+    static bool addMessage(const Message &message);
 
     static Message getMessageById(int id);
 
+    static int lastInsertedId();
+
 private:
     explicit MessagesTable() = default;
+
+    static int lastInsertedId_;
 };
 
 #endif // MESSAGESTABLE_H

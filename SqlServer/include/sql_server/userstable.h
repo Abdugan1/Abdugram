@@ -11,7 +11,7 @@ class UsersTable
 public:
     static bool isUsernameExists(const QString &username);
 
-    static void addUser(const User &user, const QString &password);
+    static bool addUser(const User &user, const QString &password);
 
     static bool isUserExists(const QString &username, const QString &password);
 
@@ -21,8 +21,14 @@ public:
 
     static User getUserById(int id);
 
+    static QList<User> getUpdatedUsersForUser(int userId, const QDateTime &lastUpdatedAt);
+
+    static int lastInsertedId();
+
 private:
     explicit UsersTable() = default;
+
+    static int lastInsertedId_;
 };
 
 #endif // USERSTABLE_H

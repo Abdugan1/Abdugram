@@ -7,6 +7,8 @@
 
 #include <QList>
 
+class QDateTime;
+
 class User;
 class Chat;
 

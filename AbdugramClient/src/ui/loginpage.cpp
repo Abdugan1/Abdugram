@@ -8,14 +8,12 @@
 
 #include <QBoxLayout>
 
-#include <net_common/messages/loginmessage.h>
-
 LoginPage::LoginPage(QWidget *parent)
     : QWidget{parent}
 {
     setupUi();
 
-    connect(nextButton_, &Button::clicked, this, &LoginPage::sendLoginMessage);
+    connect(nextButton_, &Button::clicked, this, &LoginPage::onNextButtonClicked);
 
     connect(backButton_, &ImageButton::clicked, this, &LoginPage::backButtonClicked);
 
@@ -27,16 +25,12 @@ LoginPage::LoginPage(QWidget *parent)
     connect(passwordEdit_, &FieldLineEdit::textChanged, this, &LoginPage::onLineEditsChanged);
 }
 
-void LoginPage::sendLoginMessage()
+void LoginPage::onNextButtonClicked()
 {
-    if (!networkHandler()->isConnected())
-        return;
+    const QString username = usernameEdit_->text();
+    const QString password = passwordEdit_->text();
 
-    AnyMessagePtr<LoginMessage> loginMessage{new LoginMessage};
-    loginMessage->setUsername(usernameEdit_->text());
-    loginMessage->setPassword(passwordEdit_->text());
-
-    networkHandler()->sendToServer(static_cast<AbduMessagePtr>(loginMessage));
+    networkHandler()->sendLoginRequest(username, password);
 }
 
 void LoginPage::onLineEditsChanged()

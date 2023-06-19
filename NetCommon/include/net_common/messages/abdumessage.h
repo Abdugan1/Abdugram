@@ -19,6 +19,7 @@ public:
         ClientSide = 0,
         Login      = ClientSide + 1,
         Register,
+        SyncUsersMessage,
         SyncChatsRequest,
         SearchOnServer,
         CreateChat,
@@ -29,7 +30,8 @@ public:
         RegisterStaus,
         SearchUsersResult,
         CreateChatResult,
-        SendMessageResult
+        SendMessageResult,
+        SyncUsersReply
     };
 
 public:
