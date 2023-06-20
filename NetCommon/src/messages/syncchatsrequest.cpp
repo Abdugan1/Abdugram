@@ -1,5 +1,4 @@
 #include "messages/syncchatsrequest.h"
-
 #include "messages/messagevisitor.h"
 
 SyncChatsRequest::SyncChatsRequest()
@@ -17,14 +16,14 @@ void SyncChatsRequest::setUserId(int newUserId)
     userId_ = newUserId;
 }
 
-QDateTime SyncChatsRequest::lastUpdate() const
+QDateTime SyncChatsRequest::chatsLastUpdatedAt() const
 {
-    return lastUpdate_;
+    return chatsLastUpdatedAt_;
 }
 
-void SyncChatsRequest::setLastUpdate(const QDateTime &newLastUpdate)
+void SyncChatsRequest::setChatsLastUpdatedAt(const QDateTime &newLastUpdate)
 {
-    lastUpdate_ = newLastUpdate;
+    chatsLastUpdatedAt_ = newLastUpdate;
 }
 
 void SyncChatsRequest::accept(MessageVisitor *visitor) const
@@ -34,11 +33,21 @@ void SyncChatsRequest::accept(MessageVisitor *visitor) const
 
 void SyncChatsRequest::getBodyData(DataStream *stream)
 {
-    *stream >> userId_ >> lastUpdate_;
+    *stream >> userId_ >> chatsLastUpdatedAt_ >> chatUsersLastUpdatedAt_;
 }
 
 void SyncChatsRequest::writeBodyData(DataStream *stream) const
 {
-    *stream << userId_ << lastUpdate_;
+    *stream << userId_ << chatsLastUpdatedAt_ << chatUsersLastUpdatedAt_;
+}
+
+QDateTime SyncChatsRequest::chatUsersLastUpdatedAt() const
+{
+    return chatUsersLastUpdatedAt_;
+}
+
+void SyncChatsRequest::setChatUsersLastUpdatedAt(const QDateTime &newChatUsersLastUpdatedAt)
+{
+    chatUsersLastUpdatedAt_ = newChatUsersLastUpdatedAt;
 }
 

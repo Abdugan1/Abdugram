@@ -31,21 +31,24 @@ public:
     int         getUserIdByUsername(const QString &username);
     User        getUserById(int userId);
     QList<User> getUsersByLikeSearch(const QString &likeSearch);
-    QList<User> getUpdatedUsersForUser(int userId, const QDateTime &lastUpdatedAt);
+    QList<User> getUnsyncUsers(int userId, const QDateTime &lastUpdatedAt);
 
 
     // Chats
-    bool addChat(const Chat &chat, const QList<ChatUser> &chatUsers);
-    Chat getChatById(int id);
+    bool        addChat(const Chat &chat, const QList<ChatUser> &chatUsers);
+    Chat        getChatById(int id);
+    QList<Chat> getUnsyncChats(int userId, const QDateTime &lastUpdatedAt);
 
 
     // ChatUsers
     QList<ChatUser> getChatUsers(int chatId);
+    QList<ChatUser> getUnsyncChatUsers(int userId, int chatId, const QDateTime &lastUpdatedAt);
 
 
     // Messages
-    bool addMessage(const Message &message);
-    Message getMessageById(int id);
+    bool           addMessage(const Message &message);
+    Message        getMessageById(int id);
+    QList<Message> getUnsyncMessages(int userId, const QDateTime &lastUpdatedAt);
 
     // Common
     int lastInsertedId(Tables table);

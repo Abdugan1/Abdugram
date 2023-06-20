@@ -21,7 +21,7 @@ public:
 
     static User getUserById(int id);
 
-    static QList<User> getUpdatedUsersForUser(int userId, const QDateTime &lastUpdatedAt);
+    static QList<User> getUnsyncUsers(int userId, const QDateTime &lastUpdatedAt);
 
     static int lastInsertedId();
 

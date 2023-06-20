@@ -34,7 +34,10 @@ HEADERS += \
     include/net_common/messages/searchusersresultmessage.h \
     include/net_common/messages/sendmessagemessage.h \
     include/net_common/messages/sendmessageresultmessage.h \
+    include/net_common/messages/syncchatsreply.h \
     include/net_common/messages/syncchatsrequest.h \
+    include/net_common/messages/syncmessagesreply.h \
+    include/net_common/messages/syncmessagesrequest.h \
     include/net_common/messages/syncusersmessage.h \
     include/net_common/messages/syncusersreply.h \
     include/net_common/tcpsession.h \
@@ -55,7 +58,10 @@ SOURCES += \
     src/messages/searchusersresultmessage.cpp \
     src/messages/sendmessagemessage.cpp \
     src/messages/sendmessageresultmessage.cpp \
+    src/messages/syncchatsreply.cpp \
     src/messages/syncchatsrequest.cpp \
+    src/messages/syncmessagesreply.cpp \
+    src/messages/syncmessagesrequest.cpp \
     src/messages/syncusersmessage.cpp \
     src/messages/syncusersreply.cpp \
     src/tcpsession.cpp

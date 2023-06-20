@@ -12,10 +12,13 @@ public:
     int userId() const;
     void setUserId(int newUserId);
 
-    QDateTime lastUpdate() const;
-    void setLastUpdate(const QDateTime &newLastUpdate);
+    QDateTime chatsLastUpdatedAt() const;
+    void setChatsLastUpdatedAt(const QDateTime &newLastUpdate);
 
     void accept(MessageVisitor *visitor) const override;
+
+    QDateTime chatUsersLastUpdatedAt() const;
+    void setChatUsersLastUpdatedAt(const QDateTime &newChatUsersLastUpdatedAt);
 
 protected:
     void getBodyData(DataStream *stream) override;
@@ -23,7 +26,8 @@ protected:
 
 private:
     int userId_ = -1;
-    QDateTime lastUpdate_;
+    QDateTime chatsLastUpdatedAt_;
+    QDateTime chatUsersLastUpdatedAt_;
 
 };
 

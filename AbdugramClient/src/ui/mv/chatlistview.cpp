@@ -15,7 +15,7 @@ ChatListView::ChatListView(QWidget *parent)
     , tempModel_{new ChatListModel{this}}
     , delegate_{new ChatListDelegate{this}}
 {
-    connect(database(), &DatabaseClient::connected, this, &ChatListView::initMainModel);
+    connect(networkHandler(), &NetworkHandler::syncFinished, this, &ChatListView::initMainModel);
 
     connect(this, &ChatListView::chatNameColorChanged, this, [this]() {
         delegate_->setChatNameColor(chatNameColor_);

@@ -3,12 +3,17 @@
 
 class Message;
 
+#include <QList>
+#include <QDateTime>
+
 class MessagesTable
 {
 public:
-    static bool addMessage(const Message &message);
+    static bool addOrUpdateMessage(const Message &message);
 
     static Message getMessageById(int id);
+
+    static QList<Message> getUnsyncMessages(int userId, const QDateTime &lastUpdatedAt);
 
     static int lastInsertedId();
 

@@ -73,15 +73,15 @@ QList<User> DatabaseServer::getUsersByLikeSearch(const QString &likeSearch)
     return UsersTable::getUsersByLikeSearch(likeSearch);
 }
 
-QList<User> DatabaseServer::getUpdatedUsersForUser(int userId, const QDateTime &lastUpdatedAt)
+QList<User> DatabaseServer::getUnsyncUsers(int userId, const QDateTime &lastUpdatedAt)
 {
-    return UsersTable::getUpdatedUsersForUser(userId, lastUpdatedAt);
+    return UsersTable::getUnsyncUsers(userId, lastUpdatedAt);
 }
 
 bool DatabaseServer::addChat(const Chat &chat, const QList<ChatUser> &chatUsers)
 {
     const bool success = executeTransaction([&]() {
-        if (!ChatsTable::addChat(chat)) {
+        if (!ChatsTable::addOrUpdateChat(chat)) {
             return false;
         }
         const int addedChatId = ChatsTable::lastInsertedId();
@@ -101,19 +101,34 @@ Chat DatabaseServer::getChatById(int id)
     return ChatsTable::getChatById(id);
 }
 
+QList<Chat> DatabaseServer::getUnsyncChats(int userId, const QDateTime &lastUpdatedAt)
+{
+    return ChatsTable::getUnsyncChats(userId, lastUpdatedAt);
+}
+
 QList<ChatUser> DatabaseServer::getChatUsers(int chatId)
 {
     return ChatUsersTable::getChatUsers(chatId);
 }
 
+QList<ChatUser> DatabaseServer::getUnsyncChatUsers(int userId, int chatId, const QDateTime &lastUpdatedAt)
+{
+    return ChatUsersTable::getUnsyncChatUsers(userId, chatId, lastUpdatedAt);
+}
+
 bool DatabaseServer::addMessage(const Message &message)
 {
-    return MessagesTable::addMessage(message);
+    return MessagesTable::addOrUpdateMessage(message);
 }
 
 Message DatabaseServer::getMessageById(int id)
 {
     return MessagesTable::getMessageById(id);
+}
+
+QList<Message> DatabaseServer::getUnsyncMessages(int userId, const QDateTime &lastUpdatedAt)
+{
+    return MessagesTable::getUnsyncMessages(userId, lastUpdatedAt);
 }
 
 int DatabaseServer::lastInsertedId(Tables table)

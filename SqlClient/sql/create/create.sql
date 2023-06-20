@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS chat_users (
   role TEXT CHECK (role IN('owner', 'admin', 'user')),
   joined_at DATETIME,
   left_at DATETIME,
+  updated_at DATETIME,
   PRIMARY KEY (chat_id, user_id),
   FOREIGN KEY (chat_id) REFERENCES chats(id) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE

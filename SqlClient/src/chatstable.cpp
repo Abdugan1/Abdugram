@@ -25,9 +25,9 @@ bool ChatsTable::isChatExist(const QString &chatName)
     return isChatExistQuery.value(0).toBool();
 }
 
-bool ChatsTable::addChat(const Chat &chat)
+bool ChatsTable::addOrUpdateChat(const Chat &chat)
 {
-    const QString query = readFullFile("./.sql/chats/add_chat.sql");
+    const QString query = readFullFile("./.sql/chats/add_or_update_chat.sql");
 
     QSqlQuery addChatQuery;
     addChatQuery.prepare(query);
@@ -71,9 +71,12 @@ QList<Chat> ChatsTable::getAllChats()
 
     QList<Chat> chats;
 
+    int size = 0;
     while (getAllChatsQuery.next()) {
+        size++;
         chats.append(Chat::fromSqlRecord(getAllChatsQuery.record()));
     }
+    qDebug() << "size:" << size;
 
     return chats;
 }

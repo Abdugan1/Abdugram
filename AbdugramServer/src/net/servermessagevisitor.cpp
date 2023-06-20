@@ -6,15 +6,11 @@
 #include <net_common/messages/loginmessage.h>
 #include <net_common/messages/registermessage.h>
 #include <net_common/messages/syncusersmessage.h>
+#include <net_common/messages/syncchatsrequest.h>
+#include <net_common/messages/syncmessagesrequest.h>
 #include <net_common/messages/searchonservermessage.h>
 #include <net_common/messages/createchatmessage.h>
 #include <net_common/messages/sendmessagemessage.h>
-
-#include <net_common/messages/loginstatusmessage.h>
-#include <net_common/messages/registerstatusmessage.h>
-#include <net_common/messages/searchusersresultmessage.h>
-#include <net_common/messages/createchatresultmessage.h>
-#include <net_common/messages/sendmessageresultmessage.h>
 
 #include <sql_common/data_structures/user.h>
 #include <sql_common/data_structures/chatuser.h>
@@ -23,6 +19,7 @@
 #include <sql_server/databaseserver.h>
 
 #include <QSqlDatabase>
+#include <QHash>
 #include <QDebug>
 
 ServerMessageVisitor::ServerMessageVisitor(NetworkHandler *networkHandler, TcpSession *client)
@@ -54,8 +51,8 @@ void ServerMessageVisitor::visit(const SyncUsersMessage &message)
 {
     const int       userId        = message.userId();
     const QDateTime lastUpdatedAt = message.lastUpdatedAt();
-    qDebug() << "date time:" << lastUpdatedAt << "is valid?" << lastUpdatedAt.isValid();
-    const QList<User> unsyncUsers = database()->getUpdatedUsersForUser(userId, lastUpdatedAt);
+
+    const QList<User> unsyncUsers = database()->getUnsyncUsers(userId, lastUpdatedAt);
 
     emit networkHandler_->requestSyncUsersReply(client_, unsyncUsers);
 }
@@ -64,8 +61,6 @@ void ServerMessageVisitor::visit(const LoginMessage &message)
 {
     const QString username = message.username();
     const QString password = message.password();
-    qDebug() << username;
-    qDebug() << password;
 
     const bool isUserExists = database()->isUserExists(username, password);
     int   userId = -1;
@@ -78,9 +73,30 @@ void ServerMessageVisitor::visit(const LoginMessage &message)
     emit networkHandler_->requestLoginReply(client_, isUserExists, userId);
 }
 
-void ServerMessageVisitor::visit(const SyncChatsRequest &message)
+void ServerMessageVisitor::visit(const SyncChatsRequest &request)
 {
+    const int       userId                 = request.userId();
+    const QDateTime chatsLastUpdatedAt     = request.chatsLastUpdatedAt();
+    const QDateTime chatUsersLastUpdatedAt = request.chatUsersLastUpdatedAt();
 
+    const QList<Chat> chats = database()->getUnsyncChats(userId, chatsLastUpdatedAt);
+
+    QHash<Chat, QList<ChatUser>> unsyncChats;
+    for (const auto &chat : chats) {
+        unsyncChats.insert(chat, database()->getUnsyncChatUsers(userId, chat.id(), chatsLastUpdatedAt));
+    }
+
+    emit networkHandler_->requestSyncChatsReply(client_, unsyncChats);
+}
+
+void ServerMessageVisitor::visit(const SyncMessagesRequest &request)
+{
+    const int       userId        = request.userId();
+    const QDateTime lastUpdatedAt = request.lastUpdatedAt();
+
+    const QList<Message> unsyncMessages = database()->getUnsyncMessages(userId, lastUpdatedAt);
+
+    emit networkHandler_->requestSyncMessagesReply(client_, unsyncMessages);
 }
 
 void ServerMessageVisitor::visit(const SearchOnServerMessage &message)

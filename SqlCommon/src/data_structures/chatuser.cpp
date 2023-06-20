@@ -60,6 +60,17 @@ void ChatUser::setLeftAt(const QDateTime &newLeftAt)
     leftAt_ = newLeftAt;
 }
 
+QDateTime ChatUser::updatedAt() const
+{
+    return updatedAt_;
+}
+
+void ChatUser::setUpdatedAt(const QDateTime &newUpdatedAt)
+{
+    updatedAt_ = newUpdatedAt;
+}
+
+
 bool ChatUser::isValid() const
 {
     return (chatId_ >= 0) && (userId_ >= 0);
@@ -98,6 +109,7 @@ ChatUser ChatUser::fromSqlRecord(const QSqlRecord &record)
     chatUser.setRole(ChatUser::stringToRole(record.value("role").toString()));
     chatUser.setJoinedAt(record.value("joined_at").toDateTime());
     chatUser.setLeftAt(record.value("left_at").toDateTime());
+    chatUser.setLeftAt(record.value("updated_at").toDateTime());
 
     return chatUser;
 }
@@ -105,13 +117,13 @@ ChatUser ChatUser::fromSqlRecord(const QSqlRecord &record)
 QDataStream &operator<<(QDataStream &out, const ChatUser &chatUser)
 {
     out << chatUser.chatId_   << chatUser.userId_ << chatUser.role_
-        << chatUser.joinedAt_ << chatUser.leftAt_;
+        << chatUser.joinedAt_ << chatUser.leftAt_ << chatUser.updatedAt_;
     return out;
 }
 
 QDataStream &operator>>(QDataStream &in, ChatUser &chatUser)
 {
     in >> chatUser.chatId_   >> chatUser.userId_ >> chatUser.role_
-       >> chatUser.joinedAt_ >> chatUser.leftAt_;
+       >> chatUser.joinedAt_ >> chatUser.leftAt_ >> chatUser.updatedAt_;
     return in;
 }

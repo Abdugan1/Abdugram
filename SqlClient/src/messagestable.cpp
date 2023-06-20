@@ -10,9 +10,9 @@
 
 int MessagesTable::lastInsertedId_ = -1;
 
-bool MessagesTable::addMessage(const Message &message)
+bool MessagesTable::addOrUpdateMessage(const Message &message)
 {
-    const QString query = readFullFile("./.sql/messages/add_message.sql");
+    const QString query = readFullFile("./.sql/messages/add_or_update_message.sql");
 
     QSqlQuery addMessageQuery;
     addMessageQuery.prepare(query);
@@ -34,9 +34,9 @@ bool MessagesTable::addMessage(const Message &message)
     return success;
 }
 
-QList<Message> MessagesTable::getMessages(int chatId)
+QList<Message> MessagesTable::getMessagesFromChat(int chatId)
 {
-    const QString query = readFullFile("./.sql/messages/get_messages.sql");
+    const QString query = readFullFile("./.sql/messages/get_messages_from_chat.sql");
 
     QSqlQuery getMessagesQuery;
     getMessagesQuery.prepare(query);

@@ -48,6 +48,10 @@ public:
     friend QDataStream &operator<<(QDataStream &out, const Chat &chat);
     friend QDataStream &operator>>(QDataStream &in, Chat &chat);
 
+    friend bool operator==(const Chat &chat1, const Chat &chat2);
+
+    friend uint qHash(const Chat& chat);
+
 private:
     int id_ = -1;
     QString name_;

@@ -4,9 +4,12 @@
 #include <net_common/messages/loginstatusmessage.h>
 #include <net_common/messages/registerstatusmessage.h>
 #include <net_common/messages/syncusersreply.h>
+#include <net_common/messages/syncchatsreply.h>
+#include <net_common/messages/syncmessagesreply.h>
 #include <net_common/messages/searchusersresultmessage.h>
 #include <net_common/messages/createchatresultmessage.h>
 #include <net_common/messages/sendmessageresultmessage.h>
+
 
 #include <sql_common/data_structures/user.h>
 #include <sql_common/data_structures/chatuser.h>
@@ -43,13 +46,56 @@ void ClientMessageVisitor::visit(const RegisterStatusMessage &message)
     }
 }
 
+void ClientMessageVisitor::visit(const SyncUsersReply &reply)
+{
+    const QList<User> unsyncUsers = reply.users();
+    for (const auto& user : unsyncUsers) {
+        database()->addOrUpdateUser(user);
+    }
+
+    const auto chatsLastUpdatedAt     = database()->getLastUpdatedAt(DatabaseClient::Tables::Chats);
+    const auto chatUsersLastUpdatedAt = database()->getLastUpdatedAt(DatabaseClient::Tables::ChatUsers);
+    networkHandler()->sendSyncChatsRequest(chatsLastUpdatedAt, chatUsersLastUpdatedAt);
+}
+
+void ClientMessageVisitor::visit(const SyncChatsReply &reply)
+{
+    qDebug() << "unsync chats";
+    const QHash<Chat, QList<ChatUser> > unsyncChats = reply.unsyncChats();
+    for (auto it = unsyncChats.begin(); it != unsyncChats.end(); ++it) {
+        const Chat &chat = it.key();
+        const QList<ChatUser> chatUsers = it.value();
+        qDebug() << "chat id:" << chat.id();
+        for (const auto &chatUser : chatUsers) {
+            qDebug() << "chat user chat id:" << chatUser.chatId() << "user id:" << chatUser.userId();
+        }
+
+        database()->addChat(chat, chatUsers, networkHandler()->userId());
+    }
+
+    const auto lastUpdatedAt = database()->getLastUpdatedAt(DatabaseClient::Tables::Messages);
+    networkHandler()->sendSyncMessagesRequest(lastUpdatedAt);
+}
+
+void ClientMessageVisitor::visit(const SyncMessagesReply &reply)
+{
+    qDebug() << "unsync messages";
+    const QList<Message> unsyncMessages = reply.unsyncMessages();
+    for (const auto &message : unsyncMessages) {
+        qDebug() << message.text();
+        database()->addOrUpdateMessage(message);
+    }
+
+    emit networkHandler()->syncFinished();
+}
+
 void ClientMessageVisitor::visit(const SearchUsersResultMessage &message)
 {
     const QList<User> users = message.users();
 
     bool success = executeTransaction([&]() {
         for (const auto& user : users) {
-            if (!database()->addOrIgnoreUser(user)) {
+            if (!database()->addOrUpdateUser(user)) {
                 return false;
             }
         }
@@ -73,13 +119,5 @@ void ClientMessageVisitor::visit(const SendMessageResultMessage &message)
 {
     const Message msg = message.message();
 
-    database()->addMessage(msg);
-}
-
-void ClientMessageVisitor::visit(const SyncUsersReply &reply)
-{
-    const QList<User> unsyncUsers = reply.users();
-    for (const auto& user : unsyncUsers) {
-        database()->addOrIgnoreUser(user);
-    }
+    database()->addOrUpdateMessage(msg);
 }

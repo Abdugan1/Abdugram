@@ -15,7 +15,8 @@ public:
     void visit(const LoginMessage          &message) override;
     void visit(const RegisterMessage       &message) override;
     void visit(const SyncUsersMessage      &message) override;
-    void visit(const SyncChatsRequest      &message) override;
+    void visit(const SyncChatsRequest      &request) override;
+    void visit(const SyncMessagesRequest   &request) override;
     void visit(const SearchOnServerMessage &message) override;
     void visit(const CreateChatMessage     &message) override;
     void visit(const SendMessageMessage    &message) override;
@@ -23,7 +24,6 @@ public:
 private:
     NetworkHandler *networkHandler_ = nullptr;
     TcpSession     *client_ = nullptr;
-
 };
 
 #endif // SERVERMESSAGEVISITOR_H

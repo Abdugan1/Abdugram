@@ -4,16 +4,19 @@
 #include "messages/registermessage.h"
 #include "messages/syncusersmessage.h"
 #include "messages/syncchatsrequest.h"
+#include "messages/syncmessagesrequest.h"
 #include "messages/searchonservermessage.h"
 #include "messages/createchatmessage.h"
 #include "messages/sendmessagemessage.h"
 
 #include "messages/loginstatusmessage.h"
 #include "messages/registerstatusmessage.h"
+#include "messages/syncusersreply.h"
+#include "messages/syncchatsreply.h"
+#include "messages/syncmessagesreply.h"
 #include "messages/searchusersresultmessage.h"
 #include "messages/createchatresultmessage.h"
 #include "messages/sendmessageresultmessage.h"
-#include "messages/syncusersreply.h"
 
 #include <QDebug>
 
@@ -38,6 +41,9 @@ AbduMessagePtr AbduMessageFactory::fromData(const QByteArray &data)
     case AbduMessage::Type::SyncChatsRequest:
         abduMessage = new SyncChatsRequest;
         break;
+    case AbduMessage::Type::SyncMessagesRequest:
+        abduMessage = new SyncMessagesRequest;
+        break;
     case AbduMessage::Type::SearchOnServer:
         abduMessage = new SearchOnServerMessage;
         break;
@@ -54,6 +60,15 @@ AbduMessagePtr AbduMessageFactory::fromData(const QByteArray &data)
     case AbduMessage::Type::RegisterStaus:
         abduMessage = new RegisterStatusMessage;
         break;
+    case AbduMessage::Type::SyncUsersReply:
+        abduMessage = new SyncUsersReply;
+        break;
+    case AbduMessage::Type::SyncChatsReply:
+        abduMessage = new SyncChatsReply;
+        break;
+    case AbduMessage::Type::SyncMessagesReply:
+        abduMessage = new SyncMessagesReply;
+        break;
     case AbduMessage::Type::SearchUsersResult:
         abduMessage = new SearchUsersResultMessage;
         break;
@@ -62,9 +77,6 @@ AbduMessagePtr AbduMessageFactory::fromData(const QByteArray &data)
         break;
     case AbduMessage::Type::SendMessageResult:
         abduMessage = new SendMessageResultMessage;
-        break;
-    case AbduMessage::Type::SyncUsersReply:
-        abduMessage = new SyncUsersReply;
         break;
     }
 

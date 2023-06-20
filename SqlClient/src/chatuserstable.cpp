@@ -8,17 +8,18 @@
 #include <QVariant>
 #include <QDebug>
 
-bool ChatUsersTable::addUserToChat(const ChatUser &chatUser, int chatId)
+bool ChatUsersTable::addOrUpdateChatUser(const ChatUser &chatUser)
 {
-    const QString query = readFullFile("./.sql/chat_users/add_user_to_chat.sql");
+    const QString query = readFullFile("./.sql/chat_users/add_or_update_chat_user.sql");
 
     QSqlQuery addUserToChatQuery;
     addUserToChatQuery.prepare(query);
-    addUserToChatQuery.bindValue(":chat_id", chatId);
+    addUserToChatQuery.bindValue(":chat_id", chatUser.chatId());
     addUserToChatQuery.bindValue(":user_id", chatUser.userId());
     addUserToChatQuery.bindValue(":role", ChatUser::roleToString(chatUser.role()));
     addUserToChatQuery.bindValue(":joined_at", chatUser.joinedAt());
     addUserToChatQuery.bindValue(":left_at", chatUser.leftAt());
+    addUserToChatQuery.bindValue(":updated_at", chatUser.updatedAt());
 
     return executeQuery(addUserToChatQuery, ErrorImportance::Critical);
 }

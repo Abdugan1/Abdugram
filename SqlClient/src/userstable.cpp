@@ -10,9 +10,9 @@
 
 int UsersTable::lastInsertedId_ = -1;
 
-bool UsersTable::addOrIgnoreUser(const User &user)
+bool UsersTable::addOrUpdateUser(const User &user)
 {
-    const QString query = readFullFile("./.sql/users/add_or_ignore_user.sql");
+    const QString query = readFullFile("./.sql/users/add_or_update_user.sql");
 
     QSqlQuery addUserQuery;
     addUserQuery.prepare(query);
@@ -56,9 +56,3 @@ int UsersTable::lastInsertedId()
     return lastInsertedId_;
 }
 
-QDateTime UsersTable::getLastUpdatedAt()
-{
-    const QString query = readFullFile("./.sql/users/get_last_updated_at.sql");
-
-
-}

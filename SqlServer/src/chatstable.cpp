@@ -31,7 +31,7 @@ QList<Chat> ChatsTable::getNewChatsWhereUserIsParticipiant(const QString &userna
     return chats;
 }
 
-bool ChatsTable::addChat(const Chat &chat)
+bool ChatsTable::addOrUpdateChat(const Chat &chat)
 {
     const QString query = readFullFile("./.sql/chats/add_chat.sql");
 
@@ -61,6 +61,28 @@ Chat ChatsTable::getChatById(int chatId)
 
     getChatByIdQuery.first();
     return Chat::fromSqlRecord(getChatByIdQuery.record());
+}
+
+QList<Chat> ChatsTable::getUnsyncChats(int userId, const QDateTime &lastUpdatedAt)
+{
+    const QString query = readFullFile("./.sql/chats/get_unsync_chats.sql");
+
+    QSqlQuery getUnsyncChatsQuery;
+    getUnsyncChatsQuery.setForwardOnly(true);
+    getUnsyncChatsQuery.prepare(query);
+    getUnsyncChatsQuery.bindValue(":user_id", userId);
+    getUnsyncChatsQuery.bindValue(":last_updated_at", lastUpdatedAt);
+
+    if (!executeQuery(getUnsyncChatsQuery, ErrorImportance::Critical)) {
+        return QList<Chat>{};
+    }
+
+    QList<Chat> unsyncChats;
+    while (getUnsyncChatsQuery.next()) {
+        unsyncChats.append(Chat::fromSqlRecord(getUnsyncChatsQuery.record()));
+    }
+
+    return unsyncChats;
 }
 
 int ChatsTable::lastInsertedId()

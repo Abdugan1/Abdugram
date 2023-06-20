@@ -8,6 +8,7 @@
 #include <sql_client/databaseclient.h>
 
 #include <QBoxLayout>
+#include <QDebug>
 
 SidePanel::SidePanel(QWidget *parent)
     : QWidget{parent}
@@ -23,7 +24,7 @@ SidePanel::SidePanel(QWidget *parent)
 }
 
 void SidePanel::addNewChatToView(const Chat &chat)
-{
+{    
     ChatItemPtr chatItem{new ChatItem};
     chatItem->setChatId(chat.id());
     chatItem->setChatName(chat.name());

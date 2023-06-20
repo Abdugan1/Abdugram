@@ -19,6 +19,8 @@ public:
 
     static QList<ChatUser> getChatUsers(int chatId);
 
+    static QList<ChatUser> getUnsyncChatUsers(int userId, int chatId, const QDateTime &lastUpdatedAt);
+
 private:
     explicit ChatUsersTable() = default;
 

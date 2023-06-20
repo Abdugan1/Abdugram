@@ -135,3 +135,13 @@ QDataStream &operator>>(QDataStream &in, Chat &chat)
        >> chat.deletedAt_;
     return in;
 }
+
+bool operator==(const Chat &chat1, const Chat &chat2)
+{
+    return chat1.id_ == chat2.id_;
+}
+
+uint qHash(const Chat& chat)
+{
+    return qHash(chat.id()) ^ qHash(chat.name()) ^ qHash(chat.description()) ^ qHash(chat.type());
+}

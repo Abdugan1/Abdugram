@@ -29,15 +29,19 @@ public:
     QDateTime getLastUpdatedAt(Tables table);
 
     // Users
-    bool addOrIgnoreUser(const User &user);
+    bool addOrUpdateUser(const User &user);
 
     // Chats
+    bool addOrUpdateChat(const Chat &chat);
     bool addChat(Chat chat, const QList<ChatUser> &chatUsers, int ownUserId);
     QList<Chat> getAllChats();
 
     // Messages
-    bool addMessage(const Message &message);
+    bool addOrUpdateMessage(const Message &message);
     QList<Message> getMessages(int chatId);
+
+    // ChatUsers
+    bool addOrUpdateChatUser(const ChatUser &chatUser);
 
 signals:
     void connected();

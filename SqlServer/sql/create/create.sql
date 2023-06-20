@@ -32,6 +32,7 @@ CREATE TABLE IF NOT EXISTS chat_users (
     role ENUM('owner', 'admin', 'user'),
     joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     left_at TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT pk_chat_users PRIMARY KEY (user_id, chat_id),
     CONSTRAINT fk_chat_users_user_id FOREIGN KEY (user_id) REFERENCES users(id),
     CONSTRAINT fk_chat_users_chat_id FOREIGN KEY (chat_id) REFERENCES chats(id)

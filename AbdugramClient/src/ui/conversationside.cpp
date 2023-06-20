@@ -39,7 +39,7 @@ void ConversationSide::setCurrentChatItem(const ChatItemPtr &chat)
 
 void ConversationSide::checkCurrentChatItem(const ChatItemPtr &chat)
 {
-    if (chat->chatName() == currentChatItem_->chatName()) {
+    if (currentChatItem_ && currentChatItem_->chatName() == chat->chatName()) {
         setCurrentChatItem(chat);
     }
 }

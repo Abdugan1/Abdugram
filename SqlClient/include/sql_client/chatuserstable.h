@@ -10,7 +10,7 @@ class ChatUser;
 class SQLCLIENT_EXPORT ChatUsersTable
 {
 public:
-    static bool addUserToChat(const ChatUser &chatUser, int chatId);
+    static bool addOrUpdateChatUser(const ChatUser &chatUser);
 private:
     explicit ChatUsersTable() = default;
 };

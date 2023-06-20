@@ -17,7 +17,7 @@ class SQLCLIENT_EXPORT ChatsTable
 public:
     static bool isChatExist(const QString &chatName);
 
-    static bool addChat(const Chat &chat);
+    static bool addOrUpdateChat(const Chat &chat);
 
     static Chat getChatById(int chatId);
 

@@ -70,3 +70,27 @@ QList<ChatUser> ChatUsersTable::getChatUsers(int chatId)
 
     return chatUsers;
 }
+
+QList<ChatUser> ChatUsersTable::getUnsyncChatUsers(int userId, int chatId, const QDateTime &lastUpdatedAt)
+{
+    const QString query = readFullFile("./.sql/chat_users/get_unsync_chat_users.sql");
+
+    QSqlQuery getUnsyncChatUsersQuery;
+    getUnsyncChatUsersQuery.setForwardOnly(true);
+    getUnsyncChatUsersQuery.prepare(query);
+    getUnsyncChatUsersQuery.bindValue(":user_id", userId);
+    getUnsyncChatUsersQuery.bindValue(":chat_id", chatId);
+    getUnsyncChatUsersQuery.bindValue(":last_updated_at", lastUpdatedAt);
+
+    if (!executeQuery(getUnsyncChatUsersQuery, ErrorImportance::Critical)) {
+        return QList<ChatUser>{};
+    }
+
+    QList<ChatUser> unsyncChatUsers;
+
+    while (getUnsyncChatUsersQuery.next()) {
+        unsyncChatUsers.append(ChatUser::fromSqlRecord(getUnsyncChatUsersQuery.record()));
+    }
+
+    return unsyncChatUsers;
+}

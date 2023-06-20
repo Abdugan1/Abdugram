@@ -18,10 +18,12 @@ public:
                                                           const QDateTime &lastUpdate);
 
     static Chat createPrivateChat(int user1, int user2);
-
-    static bool addChat(const Chat &chat);
+    
+    static bool addOrUpdateChat(const Chat &chat);
 
     static Chat getChatById(int chatId);
+
+    static QList<Chat> getUnsyncChats(int userId, const QDateTime &lastUpdatedAt);
 
     static int lastInsertedId();
 

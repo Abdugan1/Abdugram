@@ -58,15 +58,26 @@ QDateTime DatabaseClient::getLastUpdatedAt(Tables table)
     return getLastUpdatedAtQuery.value(0).toDateTime();
 }
 
-bool DatabaseClient::addOrIgnoreUser(const User &user)
+bool DatabaseClient::addOrUpdateUser(const User &user)
 {
-    bool success = UsersTable::addOrIgnoreUser(user);
+    bool success = UsersTable::addOrUpdateUser(user);
 
     if (success)
         emit userAdded(user);
 
     return success;
 }
+
+bool DatabaseClient::addOrUpdateChat(const Chat &chat)
+{
+    const bool success = ChatsTable::addOrUpdateChat(chat);
+
+    if (success)
+        emit chatAdded(chat);
+
+    return success;
+}
+
 bool DatabaseClient::addChat(Chat chat, const QList<ChatUser> &chatUsers, int ownUserId)
 {
     bool success = executeTransaction([&]() {
@@ -76,12 +87,12 @@ bool DatabaseClient::addChat(Chat chat, const QList<ChatUser> &chatUsers, int ow
             });
             chat.setName(UsersTable::getUserById(it->userId()).username());
         }
-
-        if (!ChatsTable::addChat(chat))
+        
+        if (!ChatsTable::addOrUpdateChat(chat))
             return false;
 
         for (const auto &chatUser : chatUsers) {
-            if (!ChatUsersTable::addUserToChat(chatUser, chat.id()))
+            if (!ChatUsersTable::addOrUpdateChatUser(chatUser))
                 return false;
         }
 
@@ -99,9 +110,9 @@ QList<Chat> DatabaseClient::getAllChats()
     return ChatsTable::getAllChats();
 }
 
-bool DatabaseClient::addMessage(const Message &message)
+bool DatabaseClient::addOrUpdateMessage(const Message &message)
 {
-    bool success = MessagesTable::addMessage(message);
+    bool success = MessagesTable::addOrUpdateMessage(message);
 
     if (success)
         emit messageAdded(message);
@@ -111,7 +122,12 @@ bool DatabaseClient::addMessage(const Message &message)
 
 QList<Message> DatabaseClient::getMessages(int chatId)
 {
-    return MessagesTable::getMessages(chatId);
+    return MessagesTable::getMessagesFromChat(chatId);
+}
+
+bool DatabaseClient::addOrUpdateChatUser(const ChatUser &chatUser)
+{
+    return ChatUsersTable::addOrUpdateChatUser(chatUser);
 }
 
 void DatabaseClient::createTables()

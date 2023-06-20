@@ -39,6 +39,9 @@ QVariant ChatListModel::data(const QModelIndex &index, int role) const
 
 void ChatListModel::addChatItem(const ChatItemPtr &item)
 {
+    if (isChatItemExists(item))
+        return;
+
     const int row = chatItems_.count();
     beginInsertRows(QModelIndex(), row, row);
     chatItems_.append(item);
@@ -55,4 +58,11 @@ void ChatListModel::setChatItems(const ChatItems &chatItems)
     int oldSize = chatItems_.size();
     chatItems_ = chatItems;
     emit dataChanged(index(0, 0), index(oldSize, 0));
+}
+
+bool ChatListModel::isChatItemExists(const ChatItemPtr &chatItem) const
+{
+    return std::find_if(chatItems_.begin(), chatItems_.end(), [chatItem](const ChatItemPtr &item) {
+               return (item->chatId() == chatItem->chatId());
+           }) != chatItems_.end();
 }

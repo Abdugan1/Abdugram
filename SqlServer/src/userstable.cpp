@@ -108,9 +108,9 @@ User UsersTable::getUserById(int id)
     return User::fromSqlRecord(getUserByIdQuery.record());
 }
 
-QList<User> UsersTable::getUpdatedUsersForUser(int userId, const QDateTime &lastUpdatedAt)
+QList<User> UsersTable::getUnsyncUsers(int userId, const QDateTime &lastUpdatedAt)
 {
-    const QString query = readFullFile("./.sql/users/get_updated_users_for_user.sql");
+    const QString query = readFullFile("./.sql/users/get_unsync_users.sql");
 
     QSqlQuery getUsersQuery;
     getUsersQuery.setForwardOnly(true);

@@ -10,13 +10,11 @@ class User;
 class SQLCLIENT_EXPORT UsersTable
 {
 public:
-    static bool addOrIgnoreUser(const User &user);
+    static bool addOrUpdateUser(const User &user);
 
     static User getUserById(int userId);
 
     static int lastInsertedId();
-
-    static QDateTime getLastUpdatedAt();
 
 private:
     explicit UsersTable() = default;

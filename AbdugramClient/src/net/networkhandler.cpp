@@ -6,6 +6,7 @@
 #include <net_common/messages/registermessage.h>
 #include <net_common/messages/syncusersmessage.h>
 #include <net_common/messages/syncchatsrequest.h>
+#include <net_common/messages/syncmessagesrequest.h>
 #include <net_common/messages/searchonservermessage.h>
 #include <net_common/messages/createchatmessage.h>
 #include <net_common/messages/sendmessagemessage.h>
@@ -117,22 +118,32 @@ void NetworkHandler::sendSendMessageRequest(const Message &message)
     sendToServer(static_cast<AbduMessagePtr>(sendMessage));
 }
 
-void NetworkHandler::sendSyncUsersRequest(const QDateTime &lastUpdate)
+void NetworkHandler::sendSyncUsersRequest(const QDateTime &chatsLastUpdatedAt)
 {
     AnyMessagePtr<SyncUsersMessage> syncUsers{new SyncUsersMessage};
-    syncUsers->setUserId(networkHandler()->userId());
-    syncUsers->setLastUpdatedAt(lastUpdate.isValid() ? lastUpdate : QDateTime{QDate{0, 0, 0}, QTime{0, 0}});
+    syncUsers->setUserId(userId());
+    syncUsers->setLastUpdatedAt(chatsLastUpdatedAt.isValid() ? chatsLastUpdatedAt : QDateTime{QDate{0, 0, 0}, QTime{0, 0}});
 
     sendToServer(static_cast<AbduMessagePtr>(syncUsers));
 }
 
-void NetworkHandler::sendSyncChatsRequest(const QDateTime &lastUpdate)
+void NetworkHandler::sendSyncChatsRequest(const QDateTime &chatsLastUpdate, const QDateTime &chatUsersLastUpdate)
 {
-    AnyMessagePtr<SyncChatsRequest> syncMessage{new SyncChatsRequest};
-    syncMessage->setUserId(userId());
-    syncMessage->setLastUpdate(lastUpdate);
+    AnyMessagePtr<SyncChatsRequest> syncChats{new SyncChatsRequest};
+    syncChats->setUserId(userId());
+    syncChats->setChatsLastUpdatedAt(chatsLastUpdate.isValid() ? chatsLastUpdate : QDateTime{QDate{0, 0, 0}, QTime{0, 0}});
+    syncChats->setChatUsersLastUpdatedAt(chatUsersLastUpdate.isValid() ? chatsLastUpdate : QDateTime{QDate{0, 0, 0}, QTime{0, 0}});
 
-    sendToServer(static_cast<AbduMessagePtr>(syncMessage));
+    sendToServer(static_cast<AbduMessagePtr>(syncChats));
+}
+
+void NetworkHandler::sendSyncMessagesRequest(const QDateTime &lastUpdate)
+{
+    AnyMessagePtr<SyncMessagesRequest> syncMessages{new SyncMessagesRequest};
+    syncMessages->setUserId(userId());
+    syncMessages->setLastUpdatedAt(lastUpdate.isValid() ? lastUpdate : QDateTime{QDate{0, 0, 0}, QTime{0, 0}});
+
+    sendToServer(static_cast<AbduMessagePtr>(syncMessages));
 }
 
 void NetworkHandler::sendRegisterRequest(const QString &firstName,

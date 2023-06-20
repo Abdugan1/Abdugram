@@ -42,11 +42,15 @@ public:
 
     void sendSyncUsersRequest(const QDateTime &lastUpdate);
 
-    void sendSyncChatsRequest(const QDateTime &lastUpdate);
+    void sendSyncChatsRequest(const QDateTime &chatsLastUpdate, const QDateTime &chatUsersLastUpdate);
+
+    void sendSyncMessagesRequest(const QDateTime &lastUpdate);
 
 signals:
     void connectedSucessfully();
     void connectionError();
+
+    void syncFinished();
 
     void loginSuccessfully();
     void registerSuccessfully();

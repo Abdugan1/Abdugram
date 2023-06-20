@@ -33,6 +33,8 @@ public:
     QDateTime leftAt() const;
     void setLeftAt(const QDateTime &newLeftAt);
 
+    QDateTime updatedAt() const;
+    void setUpdatedAt(const QDateTime &newUpdatedAt);
 
     bool isValid() const;
 
@@ -44,12 +46,14 @@ public:
     friend QDataStream &operator<<(QDataStream &out, const ChatUser &chatUser);
     friend QDataStream &operator>>(QDataStream &in, ChatUser &chatUser);
 
+
 private:
     int chatId_ = -1;
     int userId_ = -1;
     Role role_  = User;
     QDateTime joinedAt_;
     QDateTime leftAt_;
+    QDateTime updatedAt_;
 };
 
 #endif // CHATUSER_H

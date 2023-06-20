@@ -8,9 +8,9 @@ class Message;
 class SQLCLIENT_EXPORT MessagesTable
 {
 public:
-    static bool addMessage(const Message &message);
+    static bool addOrUpdateMessage(const Message &message);
 
-    static QList<Message> getMessages(int chatId);
+    static QList<Message> getMessagesFromChat(int chatId);
 
     static int lastInsertedId();
 

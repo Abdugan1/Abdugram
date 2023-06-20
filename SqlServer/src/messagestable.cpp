@@ -9,7 +9,7 @@
 
 int MessagesTable::lastInsertedId_ = -1;
 
-bool MessagesTable::addMessage(const Message &message)
+bool MessagesTable::addOrUpdateMessage(const Message &message)
 {
     const QString query = readFullFile("./.sql/messages/add_message.sql");
 
@@ -42,6 +42,28 @@ Message MessagesTable::getMessageById(int id)
 
     getMessageByIdQuery.first();
     return Message::fromSqlRecord(getMessageByIdQuery.record());
+}
+
+QList<Message> MessagesTable::getUnsyncMessages(int userId, const QDateTime &lastUpdatedAt)
+{
+    const QString query = readFullFile("./.sql/messages/get_unsync_messages.sql");
+
+    QSqlQuery getUnsyncMessagesQuery;
+    getUnsyncMessagesQuery.setForwardOnly(true);
+    getUnsyncMessagesQuery.prepare(query);
+    getUnsyncMessagesQuery.bindValue(":user_id", userId);
+    getUnsyncMessagesQuery.bindValue(":last_updated_at", lastUpdatedAt);
+
+    if (!executeQuery(getUnsyncMessagesQuery, ErrorImportance::Critical)) {
+        return QList<Message>{};
+    }
+
+    QList<Message> unsyncMessages;
+    while (getUnsyncMessagesQuery.next()) {
+        unsyncMessages.append(Message::fromSqlRecord(getUnsyncMessagesQuery.record()));
+    }
+
+    return unsyncMessages;
 }
 
 int MessagesTable::lastInsertedId()

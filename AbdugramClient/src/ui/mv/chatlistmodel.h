@@ -35,6 +35,8 @@ public:
 
     void setChatItems(const ChatItems &chatItems);
 
+    bool isChatItemExists(const ChatItemPtr &chatItem) const;
+
 private:
     ChatItems chatItems_;
 };

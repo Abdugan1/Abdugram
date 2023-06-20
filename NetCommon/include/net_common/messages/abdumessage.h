@@ -21,6 +21,8 @@ public:
         Register,
         SyncUsersMessage,
         SyncChatsRequest,
+        SyncChatUsersRequest,
+        SyncMessagesRequest,
         SearchOnServer,
         CreateChat,
         SendMessage,
@@ -28,10 +30,13 @@ public:
         ServerSide = 1000000000,
         LoginStatus = ServerSide + 1,
         RegisterStaus,
+        SyncUsersReply,
+        SyncChatsReply,
+        SyncChatUsersReply,
+        SyncMessagesReply,
         SearchUsersResult,
         CreateChatResult,
         SendMessageResult,
-        SyncUsersReply
     };
 
 public:
