@@ -1,5 +1,5 @@
-#include "servermessagevisitor.h"
-#include "networkhandler.h"
+#include "net/servermessagevisitor.h"
+#include "net/networkhandler.h"
 
 #include <net_common/tcpsession.h>
 

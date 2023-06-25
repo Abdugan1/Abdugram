@@ -1,4 +1,4 @@
-#include "cursedwindow.h"
+#include "ui/cursedwindow.h"
 
 #include <cassert>
 #include <string>

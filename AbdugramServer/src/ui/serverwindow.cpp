@@ -1,6 +1,6 @@
-#include "serverwindow.h"
-#include "mainmenupage.h"
-#include "logsviewpage.h"
+#include "ui/serverwindow.h"
+#include "ui/mainmenupage.h"
+#include "ui/logsviewpage.h"
 
 #include <QCoreApplication>
 #include <QDebug>

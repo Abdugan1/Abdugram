@@ -1,13 +1,11 @@
-#include "server.h"
-
-#include "networkhandler.h"
+#include "net/server.h"
+#include "net/networkhandler.h"
+#include "net/servermessagevisitor.h"
 
 #include <net_common/consts.h>
 #include <net_common/tcpsession.h>
 
 #include <sql_server/databaseserver.h>
-
-#include "servermessagevisitor.h"
 
 #include <QHostAddress>
 #include <QDebug>

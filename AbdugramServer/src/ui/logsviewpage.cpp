@@ -1,4 +1,4 @@
-#include "logsviewpage.h"
+#include "ui/logsviewpage.h"
 
 #include <QDebug>
 

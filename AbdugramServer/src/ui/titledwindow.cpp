@@ -1,5 +1,5 @@
-#include "titledwindow.h"
-#include "cursedwindow.h"
+#include "ui/titledwindow.h"
+#include "ui/cursedwindow.h"
 
 #include <cstring>
 

@@ -1,8 +1,8 @@
-#include "mainmenupage.h"
-#include "titledwindow.h"
-#include "cursedwindow.h"
+#include "ui/mainmenupage.h"
+#include "ui/titledwindow.h"
+#include "ui/cursedwindow.h"
 
-#include "net_common/consts.h"
+#include <net_common/consts.h>
 
 #include <QCoreApplication>
 
