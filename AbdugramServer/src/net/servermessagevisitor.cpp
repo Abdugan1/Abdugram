@@ -1,7 +1,6 @@
 #include "net/servermessagevisitor.h"
 #include "net/networkhandler.h"
-
-#include <net_common/tcpsession.h>
+#include "net/session.h"
 
 #include <net_common/messages/loginrequest.h>
 #include <net_common/messages/registerrequest.h>
@@ -22,17 +21,17 @@
 #include <QHash>
 #include <QDebug>
 
-ServerMessageVisitor::ServerMessageVisitor(NetworkHandler *networkHandler, TcpSession *client)
+ServerMessageVisitor::ServerMessageVisitor(NetworkHandler *networkHandler, Session *client)
     : networkHandler_{networkHandler}
     , client_{client}
 {
 
 }
 
-void ServerMessageVisitor::visit(const LoginRequest &message)
+void ServerMessageVisitor::visit(const LoginRequest &request)
 {
-    const QString username = message.username();
-    const QString password = message.password();
+    const QString username = request.username();
+    const QString password = request.password();
 
     const bool isUserExists = database()->isUserExists(username, password);
     User user;
@@ -46,28 +45,33 @@ void ServerMessageVisitor::visit(const LoginRequest &message)
 }
 
 
-void ServerMessageVisitor::visit(const RegisterRequest &message)
+void ServerMessageVisitor::visit(const RegisterRequest &request)
 {
-    const bool isUsernameExists = database()->isUsernameExists(message.username());
+    const bool isUsernameExists = database()->isUsernameExists(request.username());
     User user;
 
     if (!isUsernameExists) {
-        user.setUsername(message.username());
-        user.setFirstName(message.firstName());
-        user.setLastName(message.lastName());
-        user.setEmail(message.email());
-        user.setPhone(message.phone());
+        user.setUsername(request.username());
+        user.setFirstName(request.firstName());
+        user.setEmail(request.email());
+        user.setPhone(request.phone());
 
-        database()->addUser(user, message.password());
+        database()->addUser(user, request.password());
     }
+
+    const int addedUserId = database()->lastInsertedId(DatabaseServer::Tables::Users);
+
+    networkHandler_->addSession(addedUserId, client_);
+
+    user = database()->getUserById(addedUserId);
 
     emit networkHandler_->requestRegisterReply(client_, !isUsernameExists, user);
 }
 
-void ServerMessageVisitor::visit(const SyncUsersRequest &message)
+void ServerMessageVisitor::visit(const SyncUsersRequest &request)
 {
-    const int       userId        = message.userId();
-    const QDateTime lastUpdatedAt = message.lastUpdatedAt();
+    const int       userId        = request.userId();
+    const QDateTime lastUpdatedAt = request.lastUpdatedAt();
 
     const QList<User> unsyncUsers = database()->getUnsyncUsers(userId, lastUpdatedAt);
 
@@ -100,9 +104,9 @@ void ServerMessageVisitor::visit(const SyncMessagesRequest &request)
     emit networkHandler_->requestSyncMessagesReply(client_, unsyncMessages);
 }
 
-void ServerMessageVisitor::visit(const SearchRequest &message)
+void ServerMessageVisitor::visit(const SearchRequest &request)
 {
-    const QString searchText = message.searchText();
+    const QString searchText = request.searchText();
 
     const QList<User> foundUsers = database()->getUsersByLikeSearch("%" + searchText + "%");
 
@@ -124,22 +128,27 @@ void ServerMessageVisitor::visit(const CreateChatRequest &message)
     const Chat            addedChat      = database()->getChatById(addedChatId);
     const QList<ChatUser> addedChatUsers = database()->getChatUsers(addedChatId);
 
+    QList<User> users;
     for (const auto &chatUser : addedChatUsers) {
-        emit networkHandler_->requestCreateChatReply(chatUser.userId(), addedChat, addedChatUsers);
+        users.append(database()->getUserById(chatUser.userId()));
+    }
+
+    for (const auto &chatUser : addedChatUsers) {
+        emit networkHandler_->requestCreateChatReply(chatUser.userId(), addedChat, users, addedChatUsers);
     }
 }
 
-void ServerMessageVisitor::visit(const SendMessageRequest &message)
+void ServerMessageVisitor::visit(const SendMessageRequest &request)
 {
-    const Message msg = message.message();
+    const Message message = request.message();
 
-    if (!database()->addMessage(msg))
+    if (!database()->addMessage(message))
         return;
 
     const int addedMessageId = database()->lastInsertedId(DatabaseServer::Tables::Messages);
     const Message addedMessage = database()->getMessageById(addedMessageId);
 
-    const QList<ChatUser> chatUsers = database()->getChatUsers(msg.chatId());
+    const QList<ChatUser> chatUsers = database()->getChatUsers(message.chatId());
 
     for (const auto &chatUser : chatUsers) {
         emit networkHandler_->requestSendMessageReply(chatUser.userId(), addedMessage);

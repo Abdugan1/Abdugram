@@ -21,9 +21,6 @@ public:
     QString firstName() const;
     void setFirstName(const QString &newFirstName);
 
-    QString lastName() const;
-    void setLastName(const QString &newLastName);
-
     QString email() const;
     void setEmail(const QString &newEmail);
 
@@ -61,7 +58,6 @@ private:
 
     QString   username_;
     QString   firstName_;
-    QString   lastName_;
     QString   email_;
     QString   phone_;
     QString   avatarUrl_;

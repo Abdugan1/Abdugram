@@ -1,6 +1,5 @@
 #include "net/networkhandler.h"
-
-#include <net_common/tcpsession.h>
+#include "net/session.h"
 
 #include <net_common/messages/loginreply.h>
 #include <net_common/messages/registerreply.h>
@@ -26,12 +25,18 @@ NetworkHandler::NetworkHandler(QObject *parent)
     connect(this, &NetworkHandler::requestSendMessageReply, this, &NetworkHandler::sendSendMessageReply);
 }
 
-void NetworkHandler::addSession(int userId, TcpSession *session)
+void NetworkHandler::addSession(int userId, Session *session)
 {
+    session->setUserId(userId);
     sessions_.insert(userId, session);
 }
 
-void NetworkHandler::sendLoginReply(TcpSession* session, bool success, User user)
+void NetworkHandler::removeSession(int userId)
+{
+    sessions_.remove(userId);
+}
+
+void NetworkHandler::sendLoginReply(Session* session, bool success, const User &user)
 {
     AnyMessagePtr<LoginReply> loginReply{new LoginReply};
     loginReply->setSuccess(success);
@@ -40,7 +45,7 @@ void NetworkHandler::sendLoginReply(TcpSession* session, bool success, User user
     send(session, static_cast<AbduMessagePtr>(loginReply));
 }
 
-void NetworkHandler::sendRegisterReply(TcpSession* session, bool success, const User &user)
+void NetworkHandler::sendRegisterReply(Session* session, bool success, const User &user)
 {
     AnyMessagePtr<RegisterReply> registerReply{new RegisterReply};
     registerReply->setSuccess(success);
@@ -49,7 +54,7 @@ void NetworkHandler::sendRegisterReply(TcpSession* session, bool success, const 
     send(session, static_cast<AbduMessagePtr>(registerReply));
 }
 
-void NetworkHandler::sendSyncUsersReply(TcpSession* session, const QList<User> &users)
+void NetworkHandler::sendSyncUsersReply(Session* session, const QList<User> &users)
 {
     AnyMessagePtr<SyncUsersReply> syncUsersReply{new SyncUsersReply};
     syncUsersReply->setUsers(users);
@@ -57,7 +62,7 @@ void NetworkHandler::sendSyncUsersReply(TcpSession* session, const QList<User> &
     send(session, static_cast<AbduMessagePtr>(syncUsersReply));
 }
 
-void NetworkHandler::sendSyncChatsReply(TcpSession *session, const QHash<Chat, QList<ChatUser> > &unsyncChats)
+void NetworkHandler::sendSyncChatsReply(Session *session, const QHash<Chat, QList<ChatUser> > &unsyncChats)
 {
     AnyMessagePtr<SyncChatsReply> syncChatsReply{new SyncChatsReply};
     syncChatsReply->setUnsyncChats(unsyncChats);
@@ -65,7 +70,7 @@ void NetworkHandler::sendSyncChatsReply(TcpSession *session, const QHash<Chat, Q
     send(session, static_cast<AbduMessagePtr>(syncChatsReply));
 }
 
-void NetworkHandler::sendSyncMessagesReply(TcpSession *session, const QList<Message> &unsyncMessages)
+void NetworkHandler::sendSyncMessagesReply(Session *session, const QList<Message> &unsyncMessages)
 {
     AnyMessagePtr<SyncMessagesReply> syncMessagesReply{new SyncMessagesReply};
     syncMessagesReply->setUnsyncMessages(unsyncMessages);
@@ -73,7 +78,7 @@ void NetworkHandler::sendSyncMessagesReply(TcpSession *session, const QList<Mess
     send(session, static_cast<AbduMessagePtr>(syncMessagesReply));
 }
 
-void NetworkHandler::sendSearchReply(TcpSession* session, const QList<User> &foundUsers)
+void NetworkHandler::sendSearchReply(Session* session, const QList<User> &foundUsers)
 {
     AnyMessagePtr<SearchUsersReply> searchReply{new SearchUsersReply};
     searchReply->setUsers(foundUsers);
@@ -81,10 +86,11 @@ void NetworkHandler::sendSearchReply(TcpSession* session, const QList<User> &fou
     send(session, static_cast<AbduMessagePtr>(searchReply));
 }
 
-void NetworkHandler::sendCreateChatReply(int userId, const Chat &chat, const QList<ChatUser> &chatUsers)
+void NetworkHandler::sendCreateChatReply(int userId, const Chat &chat, const QList<User> &users, const QList<ChatUser> &chatUsers)
 {
     AnyMessagePtr<CreateChatReply> createChatReply{new CreateChatReply};
     createChatReply->setChat(chat);
+    createChatReply->setUsers(users);
     createChatReply->setChatUsers(chatUsers);
 
     send(userId, static_cast<AbduMessagePtr>(createChatReply));
@@ -106,7 +112,7 @@ void NetworkHandler::send(int userId, const AbduMessagePtr &message)
     sessions_[userId]->send(message);
 }
 
-void NetworkHandler::send(TcpSession *session, const AbduMessagePtr &message)
+void NetworkHandler::send(Session *session, const AbduMessagePtr &message)
 {
     session->send(message);
 }

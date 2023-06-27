@@ -12,15 +12,14 @@ int UsersTable::lastInsertedId_ = -1;
 
 bool UsersTable::addOrUpdateUser(const User &user)
 {
-    const QString query = "INSERT OR REPLACE INTO users(id, username, first_name, last_name, email, phone, avatar_url, is_online, last_time_online, url_to_profile, created_at, updated_at, deleted_at) "
-                          "VALUES(:id, :username, :first_name, :last_name, :email, :phone, :avatar_url, :is_online, :last_time_online, :url_to_profile, :created_at, :updated_at, :deleted_at);";
+    const QString query = "INSERT OR REPLACE INTO users(id, username, first_name, email, phone, avatar_url, is_online, last_time_online, url_to_profile, created_at, updated_at, deleted_at) "
+                          "VALUES(:id, :username, :first_name, :email, :phone, :avatar_url, :is_online, :last_time_online, :url_to_profile, :created_at, :updated_at, :deleted_at);";
 
     QSqlQuery addUserQuery;
     addUserQuery.prepare(query);
     addUserQuery.bindValue(":id", user.id());
     addUserQuery.bindValue(":username", user.username());
     addUserQuery.bindValue(":first_name", user.firstName());
-    addUserQuery.bindValue(":last_name", user.lastName());
     addUserQuery.bindValue(":email", user.email());
     addUserQuery.bindValue(":phone", user.phone());
     addUserQuery.bindValue(":avatar_url", user.avatarUrl());

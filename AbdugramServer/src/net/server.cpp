@@ -1,9 +1,9 @@
 #include "net/server.h"
 #include "net/networkhandler.h"
 #include "net/servermessagevisitor.h"
+#include "net/session.h"
 
 #include <net_common/consts.h>
-#include <net_common/tcpsession.h>
 
 #include <sql_server/databaseserver.h>
 
@@ -66,11 +66,20 @@ void Server::toggle()
 
 void Server::processMessage(const AbduMessagePtr &message)
 {
-    auto client = qobject_cast<TcpSession *>(sender());
+    auto client = qobject_cast<Session *>(sender());
     ServerMessageVisitor messageVisitor_{networkHandler_, client};
     message->accept(&messageVisitor_);
 
     emit logCreated(QString::fromUtf8(message->toData()));
+}
+
+void Server::onClientDisconected()
+{
+    auto session = qobject_cast<Session *>(sender());
+    if (session->userId() > 0) {
+        networkHandler_->removeSession(session->userId());
+    }
+    session->deleteLater();
 }
 
 void Server::incomingConnection(qintptr socketDescriptor)
@@ -89,16 +98,16 @@ void Server::incomingConnection(qintptr socketDescriptor)
     emit logCreated(log);
 }
 
-TcpSession *Server::createSession()
+Session *Server::createSession()
 {
-    TcpSession *session = new TcpSession;
+    Session *session = new Session;
     threadPool_->moveObjectToLeastLoadedThread(session);
 
-    connect(session, &TcpSession::received, this, &Server::processMessage);
+    connect(session, &Session::received, this, &Server::processMessage);
 
     // cleaning
-    connect(this,    &Server::aboutToStop,      session, &TcpSession::closeSession);
-    connect(session, &TcpSession::disconnected, session, &TcpSession::deleteLater);
+    connect(this,    &Server::aboutToStop,   session, &TcpSession::closeSession);
+    connect(session, &Session::disconnected, this,    &Server::onClientDisconected);
 
     return session;
 }

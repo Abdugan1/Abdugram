@@ -6,9 +6,7 @@
 
 #include <net_common/messages/messagesforwarddeclaration.h>
 
-#include <sql_common/data_structures/user.h>
-
-class TcpSession;
+class Session;
 
 class User;
 class Chat;
@@ -21,34 +19,35 @@ class NetworkHandler : public QObject
 public:
     explicit NetworkHandler(QObject *parent = nullptr);
 
-    void addSession(int userId, TcpSession *session);
+    void addSession(int userId, Session *session);
+    void removeSession(int userId);
 
 signals:
-    void requestLoginReply(TcpSession *session, bool success, User user);
-    void requestRegisterReply(TcpSession *session, bool success, const User &user);
-    void requestSyncUsersReply(TcpSession *session, const QList<User> &unsyncUsers);
-    void requestSyncChatsReply(TcpSession *session, const QHash<Chat, QList<ChatUser>> &unsyncChats);
-    void requestSyncMessagesReply(TcpSession *session, const QList<Message> &unsyncMessages);
-    void requestSearchReply(TcpSession* session, const QList<User> &foundUsers);
-    void requestCreateChatReply(int userId, const Chat &chat, const QList<ChatUser> &chatUsers);
+    void requestLoginReply(Session *session, bool success, const User &user);
+    void requestRegisterReply(Session *session, bool success, const User &user);
+    void requestSyncUsersReply(Session *session, const QList<User> &unsyncUsers);
+    void requestSyncChatsReply(Session *session, const QHash<Chat, QList<ChatUser>> &unsyncChats);
+    void requestSyncMessagesReply(Session *session, const QList<Message> &unsyncMessages);
+    void requestSearchReply(Session* session, const QList<User> &foundUsers);
+    void requestCreateChatReply(int userId, const Chat &chat, const QList<User> &users, const QList<ChatUser> &chatUsers);
     void requestSendMessageReply(int userId, const Message &message);
 
 private slots:
-    void sendLoginReply(TcpSession *session, bool success, User user);
-    void sendRegisterReply(TcpSession *session, bool success, const User &user);
-    void sendSyncUsersReply(TcpSession *session, const QList<User> &unsyncUsers);
-    void sendSyncChatsReply(TcpSession *session, const QHash<Chat, QList<ChatUser>> &unsyncChats);
-    void sendSyncMessagesReply(TcpSession *session, const QList<Message> &unsyncMessages);
-    void sendSearchReply(TcpSession* session, const QList<User> &foundUsers);
-    void sendCreateChatReply(int userId, const Chat &chat, const QList<ChatUser> &chatUsers);
+    void sendLoginReply(Session *session, bool success, const User &user);
+    void sendRegisterReply(Session *session, bool success, const User &user);
+    void sendSyncUsersReply(Session *session, const QList<User> &unsyncUsers);
+    void sendSyncChatsReply(Session *session, const QHash<Chat, QList<ChatUser>> &unsyncChats);
+    void sendSyncMessagesReply(Session *session, const QList<Message> &unsyncMessages);
+    void sendSearchReply(Session* session, const QList<User> &foundUsers);
+    void sendCreateChatReply(int userId, const Chat &chat, const QList<User> &users, const QList<ChatUser> &chatUsers);
     void sendSendMessageReply(int userId, const Message &message);
 
 private:
     void send(int userId, const AbduMessagePtr &message);
-    void send(TcpSession* session, const AbduMessagePtr &message);
+    void send(Session* session, const AbduMessagePtr &message);
 
 private:
-    QHash<int, TcpSession *> sessions_;
+    QHash<int, Session *> sessions_;
 
 };
 

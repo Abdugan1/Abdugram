@@ -39,7 +39,6 @@ private:
     SecondaryLabel *pageInfo_         = nullptr;
     
     FieldLineEdit    *firstNameEdit_       = nullptr;
-    FieldLineEdit    *lastNameEdit_        = nullptr;
     FieldLineEdit    *usernameEdit_        = nullptr;
     FieldLineEdit    *emailEdit_           = nullptr;
     PhoneLineEdit    *phoneNumberEdit_     = nullptr;

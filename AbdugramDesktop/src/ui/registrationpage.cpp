@@ -33,9 +33,6 @@ RegistrationPage::RegistrationPage(QWidget *parent)
     connect(firstNameEdit_,       &FieldLineEdit::textChanged,
             this,                 &RegistrationPage::onLineEditsChanged);
 
-    connect(lastNameEdit_,        &FieldLineEdit::textChanged,
-            this,                 &RegistrationPage::onLineEditsChanged);
-
     connect(usernameEdit_,        &FieldLineEdit::textChanged,
             this,                 &RegistrationPage::onLineEditsChanged);
 
@@ -55,21 +52,18 @@ RegistrationPage::RegistrationPage(QWidget *parent)
 void RegistrationPage::sendRegisterMessage()
 {
     const QString firstName = firstNameEdit_->text();
-    const QString lastName  = lastNameEdit_->text();
     const QString username  = usernameEdit_->text();
     const QString email     = emailEdit_->text();
     const QString phone     = phoneNumberEdit_->getPhone();
     const QString password  = passwordEdit_->text();
 
-    networkHandler()->sendRegisterRequest(firstName, lastName,
-                                          username,  email,
+    networkHandler()->sendRegisterRequest(firstName, username,  email,
                                           phone,     password);
 }
 
 void RegistrationPage::onLineEditsChanged()
 {
     nextButton_->setEnabled(firstNameEdit_->hasAcceptableInput()
-                            && lastNameEdit_->hasAcceptableInput()
                             && usernameEdit_->hasAcceptableInput()
                             && emailEdit_->hasAcceptableInput()
                             && phoneNumberEdit_->hasAcceptableInput()
@@ -104,9 +98,6 @@ void RegistrationPage::setupUi()
     firstNameEdit_ = new FieldLineEdit{tr("First Name")};
     firstNameEdit_->setValidator(new QRegularExpressionValidator{ui::regex::NameRegex});
 
-    lastNameEdit_ = new FieldLineEdit{tr("Last Name")};
-    lastNameEdit_->setValidator(new QRegularExpressionValidator{ui::regex::NameRegex});
-
     usernameEdit_ = new FieldLineEdit{tr("Username")};
     usernameEdit_->setValidator(new QRegularExpressionValidator{ui::regex::UsernameRegex});
 
@@ -125,8 +116,7 @@ void RegistrationPage::setupUi()
     gLayout->setHorizontalSpacing(23);
 
     gLayout->addWidget(firstNameEdit_,       0, 0);
-    gLayout->addWidget(lastNameEdit_,        0, 1);
-    gLayout->addWidget(usernameEdit_,        1, 0, 1, 2);
+    gLayout->addWidget(usernameEdit_,        0, 1);
     gLayout->addWidget(emailEdit_,           2, 0, 1, 2);
     gLayout->addWidget(phoneNumberEdit_,     3, 0, 1, 2);
     gLayout->addWidget(passwordEdit_,        4, 0);

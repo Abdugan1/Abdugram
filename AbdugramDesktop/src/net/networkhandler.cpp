@@ -147,7 +147,6 @@ void NetworkHandler::sendSyncMessagesRequest(const QDateTime &lastUpdate)
 }
 
 void NetworkHandler::sendRegisterRequest(const QString &firstName,
-                                         const QString &lastName,
                                          const QString &username,
                                          const QString &email,
                                          const QString &phone,
@@ -155,7 +154,6 @@ void NetworkHandler::sendRegisterRequest(const QString &firstName,
 {
     AnyMessagePtr<RegisterRequest> registerMessage{new RegisterRequest};
     registerMessage->setFirstName(firstName);
-    registerMessage->setLastName(lastName);
     registerMessage->setUsername(username);
     registerMessage->setEmail(email);
     registerMessage->setPhone(phone);

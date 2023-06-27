@@ -28,7 +28,6 @@ public:
     void sendLoginRequest(const QString &username, const QString &password);
 
     void sendRegisterRequest(const QString &firstName,
-                             const QString &lastName,
                              const QString &username,
                              const QString &email,
                              const QString &phone,

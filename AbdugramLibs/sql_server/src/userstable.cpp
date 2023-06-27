@@ -26,13 +26,12 @@ bool UsersTable::isUsernameExists(const QString &username)
 
 bool UsersTable::addUser(const User &user, const QString &password)
 {
-    const QString query = "INSERT INTO users(first_name, last_name, username, password, email, phone) "
-                          "VALUES(:first_name, :last_name, :username, :password, :email, :phone);";
+    const QString query = "INSERT INTO users(first_name, username, password, email, phone) "
+                          "VALUES(:first_name, :username, :password, :email, :phone);";
 
     QSqlQuery addUserQuery;
     addUserQuery.prepare(query);
     addUserQuery.bindValue(":first_name",   user.firstName());
-    addUserQuery.bindValue(":last_name",    user.lastName() );
     addUserQuery.bindValue(":username",     user.username() );
     addUserQuery.bindValue(":email",        user.email()    );
     addUserQuery.bindValue(":phone",        user.phone()    );

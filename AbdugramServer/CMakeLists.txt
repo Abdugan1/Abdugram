@@ -22,6 +22,7 @@ set(HEADERS
     ${HEADERS_DIR}/net/server.h
     ${HEADERS_DIR}/net/servermessagevisitor.h
     ${HEADERS_DIR}/net/threadpool.h
+    ${HEADERS_DIR}/net/session.h
     ${HEADERS_DIR}/ui/cursedwindow.h
     ${HEADERS_DIR}/ui/logsviewpage.h
     ${HEADERS_DIR}/ui/mainmenupage.h
@@ -36,6 +37,7 @@ set(SOURCES
     ${SOURCES_DIR}/net/server.cpp
     ${SOURCES_DIR}/net/servermessagevisitor.cpp
     ${SOURCES_DIR}/net/threadpool.cpp
+    ${SOURCES_DIR}/net/session.cpp
     ${SOURCES_DIR}/ui/cursedwindow.cpp
     ${SOURCES_DIR}/ui/logsviewpage.cpp
     ${SOURCES_DIR}/ui/mainmenupage.cpp

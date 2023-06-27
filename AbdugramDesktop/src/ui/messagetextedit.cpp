@@ -18,8 +18,13 @@ MessageTextEdit::MessageTextEdit(QWidget *parent)
 
 void MessageTextEdit::sendMessage()
 {
-    emit sendMessageRequest(document()->toPlainText());
+    const QString text = document()->toPlainText().simplified();
     clear();
+
+    if (text.isEmpty())
+        return;
+
+    emit sendMessageRequest(text);
 }
 
 void MessageTextEdit::setAppropriateSize()

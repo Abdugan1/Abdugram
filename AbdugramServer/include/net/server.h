@@ -8,7 +8,7 @@
 
 #include "threadpool.h"
 
-class TcpSession;
+class Session;
 class NetworkHandler;
 class ServerMessageVisitor;
 
@@ -36,11 +36,13 @@ public slots:
 private slots:
     void processMessage(const AbduMessagePtr &message);
 
+    void onClientDisconected();
+
 protected:
     void incomingConnection(qintptr handle) override;
 
 private:
-    TcpSession *createSession();
+    Session *createSession();
 
 private:
     ThreadPool *threadPool_ = nullptr;

@@ -11,9 +11,6 @@ public:
     QString firstName() const;
     void setFirstName(const QString &newFirstName);
 
-    QString lastName() const;
-    void setLastName(const QString &newLastName);
-
     QString username() const;
     void setUsername(const QString &newUsername);
 
@@ -34,7 +31,6 @@ protected:
 
 private:
     QString firstName_;
-    QString lastName_;
     QString username_;
     QString password_;
     QString phone_;

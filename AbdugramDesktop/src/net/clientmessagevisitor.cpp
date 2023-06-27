@@ -20,17 +20,17 @@
 
 #include <QDebug>
 
-void ClientMessageVisitor::visit(const LoginReply &message)
+void ClientMessageVisitor::visit(const LoginReply &reply)
 {
-    if (!message.success()) {
+    if (!reply.success()) {
         return;
     }
 
-    const User user = message.user();
+    const User user = reply.user();
 
     networkHandler()->userId_ = user.id();
 
-    database()->connectToDatabase(networkHandler()->userId_);
+    database()->connectToDatabase(user.id());
     database()->addOrUpdateUser(user);
 
     const auto lastUpdatedAt = database()->getLastUpdatedAt(DatabaseClient::Tables::Users);
@@ -39,12 +39,20 @@ void ClientMessageVisitor::visit(const LoginReply &message)
     networkHandler()->emitLoginSuccessfully();
 }
 
-void ClientMessageVisitor::visit(const RegisterReply &message)
+void ClientMessageVisitor::visit(const RegisterReply &reply)
 {
-    qDebug() << "success registration?" << message.success();
-    if (message.success()) {
-        networkHandler()->emitRegisterSuccessfully();
+    if (!reply.success()) {
+        return;
     }
+
+    const User user = reply.user();
+
+    networkHandler()->userId_ = user.id();
+
+    database()->connectToDatabase(user.id());
+    database()->addOrUpdateUser(user);
+
+    networkHandler()->emitRegisterSuccessfully();
 }
 
 void ClientMessageVisitor::visit(const SyncUsersReply &reply)
@@ -90,9 +98,9 @@ void ClientMessageVisitor::visit(const SyncMessagesReply &reply)
     emit networkHandler()->syncFinished();
 }
 
-void ClientMessageVisitor::visit(const SearchUsersReply &message)
+void ClientMessageVisitor::visit(const SearchUsersReply &reply)
 {
-    const QList<User> users = message.users();
+    const QList<User> users = reply.users();
 
     bool success = executeTransaction([&]() {
         for (const auto& user : users) {
@@ -108,17 +116,21 @@ void ClientMessageVisitor::visit(const SearchUsersReply &message)
 }
 
 
-void ClientMessageVisitor::visit(const CreateChatReply &message)
+void ClientMessageVisitor::visit(const CreateChatReply &reply)
 {
-    Chat                  chat      = message.chat();
-    const QList<ChatUser> chatUsers = message.chatUsers();
+    const Chat            chat      = reply.chat();
+    const QList<User>     users     = reply.users();
+    const QList<ChatUser> chatUsers = reply.chatUsers();
 
+    for (const auto& user : users) {
+        database()->addOrUpdateUser(user);
+    }
     database()->addChat(chat, chatUsers, networkHandler()->userId());
 }
 
-void ClientMessageVisitor::visit(const SendMessageReply &message)
+void ClientMessageVisitor::visit(const SendMessageReply &reply)
 {
-    const Message msg = message.message();
+    const Message msg = reply.message();
 
     database()->addOrUpdateMessage(msg);
 }

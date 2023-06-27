@@ -3,7 +3,6 @@ CREATE TABLE IF NOT EXISTS users (
     username VARCHAR(40) NOT NULL,
     password VARCHAR(40) NOT NULL,
     first_name VARCHAR(40),
-    last_name VARCHAR(40),
     email VARCHAR(255),
     phone VARCHAR(16),
     avatar_url TEXT,

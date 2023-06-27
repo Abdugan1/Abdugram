@@ -144,4 +144,6 @@ void MainWindow::connectTcpLogic()
     connect(connectionProblem_, &ProblemWidget::reconnectNowClicked, this, &MainWindow::connectToServer);
 
     connect(networkHandler(), &NetworkHandler::loginSuccessfully, this, &MainWindow::toMainPage);
+
+    connect(networkHandler(), &NetworkHandler::registerSuccessfully, this, &MainWindow::toMainPage);
 }

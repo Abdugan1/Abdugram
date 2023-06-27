@@ -3,6 +3,7 @@
 
 #include "abdumessage.h"
 
+#include <sql_common/data_structures/user.h>
 #include <sql_common/data_structures/chatuser.h>
 #include <sql_common/data_structures/chat.h>
 
@@ -19,12 +20,16 @@ public:
     QList<ChatUser> chatUsers() const;
     void setChatUsers(const QList<ChatUser> &newChatUsers);
 
+    QList<User> users() const;
+    void setUsers(const QList<User> &newUsers);
+
 protected:
     void getBodyData(DataStream *stream) override;
     void writeBodyData(DataStream *stream) const override;
 
 private:
     Chat chat_;
+    QList<User> users_;
     QList<ChatUser> chatUsers_;
 };
 

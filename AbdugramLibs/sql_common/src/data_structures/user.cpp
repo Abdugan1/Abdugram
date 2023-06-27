@@ -39,16 +39,6 @@ void User::setFirstName(const QString &newFirstName)
     firstName_ = newFirstName;
 }
 
-QString User::lastName() const
-{
-    return lastName_;
-}
-
-void User::setLastName(const QString &newLastName)
-{
-    lastName_ = newLastName;
-}
-
 QString User::email() const
 {
     return email_;
@@ -126,7 +116,6 @@ User User::fromSqlRecord(const QSqlRecord &record)
     user.setId(record.value("id").toInt());
     user.setUsername(record.value("username").toString());
     user.setFirstName(record.value("first_name").toString());
-    user.setLastName(record.value("last_name").toString());
     user.setEmail(record.value("email").toString());
     user.setPhone(record.value("phone").toString());
     user.setAvatarUrl(record.value("avatar_url").toString());
@@ -162,20 +151,18 @@ void User::setUrlToProfile(const QString &newUrlToProfile)
 
 QDataStream &operator<<(QDataStream &out, const User &user)
 {
-    out << user.id_             << user.username_  << user.firstName_
-        << user.lastName_       << user.email_     << user.phone_
-        << user.avatarUrl_      << user.isOnline_  << user.lastTimeOnline_
-        << user.urlToProfile_   << user.createdAt_ << user.updatedAt_
-        << user.deletedAt_;
+    out << user.id_        << user.username_       << user.firstName_
+        << user.email_     << user.phone_          << user.avatarUrl_
+        << user.isOnline_  << user.lastTimeOnline_ << user.urlToProfile_
+        << user.createdAt_ << user.updatedAt_      << user.deletedAt_;
     return out;
 }
 
 QDataStream &operator>>(QDataStream &in, User &user)
 {
-    in >> user.id_             >> user.username_  >> user.firstName_
-       >> user.lastName_       >> user.email_     >> user.phone_
-       >> user.avatarUrl_      >> user.isOnline_  >> user.lastTimeOnline_
-       >> user.urlToProfile_   >> user.createdAt_ >> user.updatedAt_
-       >> user.deletedAt_;
+    in >> user.id_        >> user.username_       >> user.firstName_
+       >> user.email_     >> user.phone_          >> user.avatarUrl_
+       >> user.isOnline_  >> user.lastTimeOnline_ >> user.urlToProfile_
+       >> user.createdAt_ >> user.updatedAt_      >> user.deletedAt_;
     return in;
 }

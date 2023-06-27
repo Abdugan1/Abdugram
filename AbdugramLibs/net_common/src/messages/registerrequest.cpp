@@ -19,16 +19,6 @@ void RegisterRequest::setFirstName(const QString &newFirstName)
     firstName_ = newFirstName;
 }
 
-QString RegisterRequest::lastName() const
-{
-    return lastName_;
-}
-
-void RegisterRequest::setLastName(const QString &newLastName)
-{
-    lastName_ = newLastName;
-}
-
 QString RegisterRequest::username() const
 {
     return username_;
@@ -77,7 +67,6 @@ void RegisterRequest::accept(MessageVisitor *visitor) const
 void RegisterRequest::getBodyData(DataStream *stream)
 {
     *stream >> firstName_
-            >> lastName_
             >> username_
             >> password_
             >> phone_
@@ -87,7 +76,6 @@ void RegisterRequest::getBodyData(DataStream *stream)
 void RegisterRequest::writeBodyData(DataStream *stream) const
 {
     *stream << firstName_
-            << lastName_
             << username_
             << password_
             << phone_
