@@ -1,9 +1,11 @@
 #ifndef DATASTREAM_H
 #define DATASTREAM_H
 
+#include "NetCommon_global.h"
+
 #include <QDataStream>
 
-class DataStream : public QDataStream
+class NETCOMMON_EXPORT DataStream : public QDataStream
 {
 public:
     DataStream();

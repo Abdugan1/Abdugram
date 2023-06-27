@@ -50,8 +50,8 @@ public:
 
     static User fromSqlRecord(const QSqlRecord &record);
 
-    friend QDataStream &operator<<(QDataStream &out, const User &user);
-    friend QDataStream &operator>>(QDataStream &in, User &user);
+    SQLCOMMON_EXPORT friend QDataStream &operator<<(QDataStream &out, const User &user);
+    SQLCOMMON_EXPORT friend QDataStream &operator>>(QDataStream &in, User &user);
 
 private:
     int       id_ = -1;

@@ -46,7 +46,8 @@ target_link_libraries(${LIBRARY_NAME} PRIVATE
 target_include_directories(${LIBRARY_NAME} INTERFACE ${INCLUDE_DIR})
 target_include_directories(${LIBRARY_NAME} PRIVATE ${HEADERS_DIR})
 
-# Set the output directories
+target_compile_definitions(${LIBRARY_NAME} PRIVATE SQLCOMMON_LIBRARY)
+
 set_target_properties(${LIBRARY_NAME}
     PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY ${LIB_DIR}

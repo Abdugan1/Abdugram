@@ -3,10 +3,12 @@
 
 class Message;
 
+#include "SqlServer_global.h"
+
 #include <QList>
 #include <QDateTime>
 
-class MessagesTable
+class SQLSERVER_EXPORT MessagesTable
 {
 public:
     static bool addMessage(const Message &message);

@@ -38,8 +38,8 @@ public:
 
     static Message fromSqlRecord(const QSqlRecord &record);
 
-    friend QDataStream &operator<<(QDataStream &out, const Message &message);
-    friend QDataStream &operator>>(QDataStream &in, Message &message);
+    SQLCOMMON_EXPORT friend QDataStream &operator<<(QDataStream &out, const Message &message);
+    SQLCOMMON_EXPORT friend QDataStream &operator>>(QDataStream &in, Message &message);
 
 private:
     int id_ = -1;

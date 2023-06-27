@@ -1,10 +1,12 @@
 #ifndef CONSTS_H
 #define CONSTS_H
 
+#include "NetCommon_global.h"
+
 #include <QString>
 
-#define CONST_STR extern const QString
-#define CONST_INT extern const int
+#define CONST_STR NETCOMMON_EXPORT extern const QString
+#define CONST_INT NETCOMMON_EXPORT extern const int
 
 namespace consts {
 

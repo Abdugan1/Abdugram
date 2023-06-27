@@ -45,12 +45,12 @@ public:
 
     static Chat fromSqlRecord(const QSqlRecord &record);
 
-    friend QDataStream &operator<<(QDataStream &out, const Chat &chat);
-    friend QDataStream &operator>>(QDataStream &in, Chat &chat);
+    SQLCOMMON_EXPORT friend QDataStream &operator<<(QDataStream &out, const Chat &chat);
+    SQLCOMMON_EXPORT friend QDataStream &operator>>(QDataStream &in, Chat &chat);
 
-    friend bool operator==(const Chat &chat1, const Chat &chat2);
+    SQLCOMMON_EXPORT friend bool operator==(const Chat &chat1, const Chat &chat2);
 
-    friend uint qHash(const Chat& chat);
+    SQLCOMMON_EXPORT friend uint qHash(const Chat& chat);
 
 private:
     int id_ = -1;

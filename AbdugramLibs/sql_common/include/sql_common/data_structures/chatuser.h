@@ -43,8 +43,8 @@ public:
 
     static ChatUser fromSqlRecord(const QSqlRecord &record);
 
-    friend QDataStream &operator<<(QDataStream &out, const ChatUser &chatUser);
-    friend QDataStream &operator>>(QDataStream &in, ChatUser &chatUser);
+    SQLCOMMON_EXPORT friend QDataStream &operator<<(QDataStream &out, const ChatUser &chatUser);
+    SQLCOMMON_EXPORT friend QDataStream &operator>>(QDataStream &in, ChatUser &chatUser);
 
 
 private:

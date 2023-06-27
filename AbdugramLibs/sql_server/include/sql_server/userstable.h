@@ -1,12 +1,14 @@
 #ifndef USERSTABLE_H
 #define USERSTABLE_H
 
+#include "SqlServer_global.h"
+
 #include <QString>
 #include <QDateTime>
 
 class User;
 
-class UsersTable
+class SQLSERVER_EXPORT UsersTable
 {
 public:
     static bool isUsernameExists(const QString &username);

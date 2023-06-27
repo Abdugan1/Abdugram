@@ -43,6 +43,8 @@ target_sources(${LIBRARY_NAME} PRIVATE ${HEADERS} ${SOURCES})
 target_include_directories(${LIBRARY_NAME} INTERFACE ${INCLUDE_DIR})
 target_include_directories(${LIBRARY_NAME} PRIVATE   ${HEADERS_DIR})
 
+target_compile_definitions(${LIBRARY_NAME} PRIVATE SQLSERVER_LIBRARY)
+
 target_link_libraries(${LIBRARY_NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::Core
     Qt${QT_VERSION_MAJOR}::Sql
