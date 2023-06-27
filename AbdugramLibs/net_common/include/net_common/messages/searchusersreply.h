@@ -1,14 +1,14 @@
-#ifndef SEARCHUSERSRESULTMESSAGE_H
-#define SEARCHUSERSRESULTMESSAGE_H
+#ifndef SEARCHUSERSREPLY_H
+#define SEARCHUSERSREPLY_H
 
 #include "abdumessage.h"
 
 class User;
 
-class NETCOMMON_EXPORT SearchUsersResultMessage : public AbduMessage
+class NETCOMMON_EXPORT SearchUsersReply : public AbduMessage
 {
 public:
-    explicit SearchUsersResultMessage();
+    explicit SearchUsersReply();
 
     void accept(MessageVisitor *visitor) const override;
 
@@ -23,4 +23,4 @@ private:
     QList<User> users_;
 };
 
-#endif // SEARCHUSERSRESULTMESSAGE_H
+#endif // SEARCHUSERSREPLY_H

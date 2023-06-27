@@ -1,14 +1,14 @@
-#ifndef REGISTERSTATUSMESSAGE_H
-#define REGISTERSTATUSMESSAGE_H
+#ifndef REGISTERREPLY_H
+#define REGISTERREPLY_H
 
 #include "abdumessage.h"
 
 #include <sql_common/data_structures/user.h>
 
-class NETCOMMON_EXPORT RegisterStatusMessage : public AbduMessage
+class NETCOMMON_EXPORT RegisterReply : public AbduMessage
 {
 public:
-    explicit RegisterStatusMessage();
+    explicit RegisterReply();
 
     bool success() const;
     void setSuccess(bool newSuccess);
@@ -28,4 +28,4 @@ private:
 
 };
 
-#endif // REGISTERSTATUSMESSAGE_H
+#endif // REGISTERREPLY_H

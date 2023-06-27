@@ -1,14 +1,14 @@
 #include "net/clientmessagevisitor.h"
 #include "net/networkhandler.h"
 
-#include <net_common/messages/loginstatusmessage.h>
-#include <net_common/messages/registerstatusmessage.h>
+#include <net_common/messages/loginreply.h>
+#include <net_common/messages/registerreply.h>
 #include <net_common/messages/syncusersreply.h>
 #include <net_common/messages/syncchatsreply.h>
 #include <net_common/messages/syncmessagesreply.h>
-#include <net_common/messages/searchusersresultmessage.h>
-#include <net_common/messages/createchatresultmessage.h>
-#include <net_common/messages/sendmessageresultmessage.h>
+#include <net_common/messages/searchusersreply.h>
+#include <net_common/messages/createchatreply.h>
+#include <net_common/messages/sendmessagereply.h>
 
 
 #include <sql_common/data_structures/user.h>
@@ -20,17 +20,18 @@
 
 #include <QDebug>
 
-void ClientMessageVisitor::visit(const LoginStatusMessage &message)
+void ClientMessageVisitor::visit(const LoginReply &message)
 {
-    qDebug() << "success login?" << message.success();
-
     if (!message.success()) {
         return;
     }
 
-    networkHandler()->userId_ = message.userId();
+    const User user = message.user();
+
+    networkHandler()->userId_ = user.id();
 
     database()->connectToDatabase(networkHandler()->userId_);
+    database()->addOrUpdateUser(user);
 
     const auto lastUpdatedAt = database()->getLastUpdatedAt(DatabaseClient::Tables::Users);
     networkHandler()->sendSyncUsersRequest(lastUpdatedAt);
@@ -38,7 +39,7 @@ void ClientMessageVisitor::visit(const LoginStatusMessage &message)
     networkHandler()->emitLoginSuccessfully();
 }
 
-void ClientMessageVisitor::visit(const RegisterStatusMessage &message)
+void ClientMessageVisitor::visit(const RegisterReply &message)
 {
     qDebug() << "success registration?" << message.success();
     if (message.success()) {
@@ -89,7 +90,7 @@ void ClientMessageVisitor::visit(const SyncMessagesReply &reply)
     emit networkHandler()->syncFinished();
 }
 
-void ClientMessageVisitor::visit(const SearchUsersResultMessage &message)
+void ClientMessageVisitor::visit(const SearchUsersReply &message)
 {
     const QList<User> users = message.users();
 
@@ -107,7 +108,7 @@ void ClientMessageVisitor::visit(const SearchUsersResultMessage &message)
 }
 
 
-void ClientMessageVisitor::visit(const CreateChatResultMessage &message)
+void ClientMessageVisitor::visit(const CreateChatReply &message)
 {
     Chat                  chat      = message.chat();
     const QList<ChatUser> chatUsers = message.chatUsers();
@@ -115,7 +116,7 @@ void ClientMessageVisitor::visit(const CreateChatResultMessage &message)
     database()->addChat(chat, chatUsers, networkHandler()->userId());
 }
 
-void ClientMessageVisitor::visit(const SendMessageResultMessage &message)
+void ClientMessageVisitor::visit(const SendMessageReply &message)
 {
     const Message msg = message.message();
 

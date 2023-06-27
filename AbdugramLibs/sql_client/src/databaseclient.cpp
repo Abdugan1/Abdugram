@@ -27,7 +27,7 @@ DatabaseClient *DatabaseClient::instance()
 void DatabaseClient::connectToDatabase(int ownId)
 {
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName(".sql/" + DbName + "_" +QString::number(ownId));
+    db.setDatabaseName(".sql/" + DbName + "_" + QString::number(ownId));
 
     if (!db.open()) {
         qFatal(qPrintable("Couldn't open database!" + db.lastError().text()));

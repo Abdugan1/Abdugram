@@ -10,7 +10,8 @@
 
 bool ChatUsersTable::addOrUpdateChatUser(const ChatUser &chatUser)
 {
-    const QString query = readFullFile("./.sql/chat_users/add_or_update_chat_user.sql");
+    const QString query = "INSERT OR REPLACE INTO chat_users(chat_id, user_id, role, joined_at, left_at, updated_at) "
+                          "VALUES (:chat_id, :user_id, :role, :joined_at, :left_at, :updated_at);";
 
     QSqlQuery addUserToChatQuery;
     addUserToChatQuery.prepare(query);

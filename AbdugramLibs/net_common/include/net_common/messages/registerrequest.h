@@ -1,12 +1,12 @@
-#ifndef REGISTERMESSAGE_H
-#define REGISTERMESSAGE_H
+#ifndef REGISTERREQUEST_H
+#define REGISTERREQUEST_H
 
 #include "abdumessage.h"
 
-class NETCOMMON_EXPORT RegisterMessage : public AbduMessage
+class NETCOMMON_EXPORT RegisterRequest : public AbduMessage
 {
 public:
-    explicit RegisterMessage();
+    explicit RegisterRequest();
 
     QString firstName() const;
     void setFirstName(const QString &newFirstName);
@@ -42,4 +42,4 @@ private:
 
 };
 
-#endif // REGISTERMESSAGE_H
+#endif // REGISTERREQUEST_H

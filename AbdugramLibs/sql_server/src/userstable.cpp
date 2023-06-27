@@ -13,7 +13,7 @@ int UsersTable::lastInsertedId_ = -1;
 
 bool UsersTable::isUsernameExists(const QString &username)
 {
-    const QString query = readFullFile("./.sql/users/count_of_username.sql");
+    const QString query = "SELECT COUNT(*) FROM users WHERE username = :username;";
 
     QSqlQuery usernameCountQuery;
     usernameCountQuery.prepare(query.trimmed());
@@ -26,7 +26,8 @@ bool UsersTable::isUsernameExists(const QString &username)
 
 bool UsersTable::addUser(const User &user, const QString &password)
 {
-    const QString query = readFullFile("./.sql/users/add_user.sql");
+    const QString query = "INSERT INTO users(first_name, last_name, username, password, email, phone) "
+                          "VALUES(:first_name, :last_name, :username, :password, :email, :phone);";
 
     QSqlQuery addUserQuery;
     addUserQuery.prepare(query);
@@ -45,7 +46,7 @@ bool UsersTable::addUser(const User &user, const QString &password)
 
 bool UsersTable::isUserExists(const QString &username, const QString &password)
 {
-    const QString query = readFullFile("./.sql/users/is_user_exists.sql");
+    const QString query = "SELECT COUNT(*) FROM users WHERE (username=:username AND password=:password);";
 
     QSqlQuery isUserExistsQuery;
     isUserExistsQuery.prepare(query);
@@ -59,7 +60,7 @@ bool UsersTable::isUserExists(const QString &username, const QString &password)
 
 QList<User> UsersTable::getUsersByLikeSearch(const QString &likeSearch)
 {
-    const QString query = readFullFile("./.sql/users/search.sql");
+    const QString query = "SELECT * FROM users WHERE username LIKE :like_search OR first_name LIKE :like_search;";
 
     QSqlQuery searchUsersQuery;
     searchUsersQuery.prepare(query);
@@ -78,7 +79,7 @@ QList<User> UsersTable::getUsersByLikeSearch(const QString &likeSearch)
 
 int UsersTable::getUserIdByUsername(const QString &username)
 {
-    const QString query = readFullFile("./.sql/users/get_user_id_by_username.sql");
+    const QString query = "SELECT id FROM users WHERE username = :username;";
 
     QSqlQuery getUserIdQuery;
     getUserIdQuery.prepare(query);
@@ -94,7 +95,7 @@ int UsersTable::getUserIdByUsername(const QString &username)
 
 User UsersTable::getUserById(int id)
 {
-    const QString query = readFullFile("./.sql/users/get_user_by_id.sql");
+    const QString query = "SELECT * FROM users WHERE id = :user_id;";
 
     QSqlQuery getUserByIdQuery;
     getUserByIdQuery.prepare(query);
@@ -110,7 +111,16 @@ User UsersTable::getUserById(int id)
 
 QList<User> UsersTable::getUnsyncUsers(int userId, const QDateTime &lastUpdatedAt)
 {
-    const QString query = readFullFile("./.sql/users/get_unsync_users.sql");
+    const QString query = "SELECT u.* "
+                          "FROM users u "
+                          "JOIN chat_users cu ON cu.user_id = u.id "
+                          "JOIN chats c ON c.id = cu.chat_id "
+                          "WHERE c.id IN ( "
+                          "SELECT chat_id "
+                          "FROM chat_users "
+                          "WHERE user_id = :user_id "
+                          ") "
+                          "AND u.updated_at >= :last_updated_at;";
 
     QSqlQuery getUsersQuery;
     getUsersQuery.setForwardOnly(true);

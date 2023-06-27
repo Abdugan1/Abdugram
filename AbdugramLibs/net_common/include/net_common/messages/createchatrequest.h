@@ -1,5 +1,5 @@
-#ifndef CREATECHATMESSAGE_H
-#define CREATECHATMESSAGE_H
+#ifndef CREATECHATREQUEST_H
+#define CREATECHATREQUEST_H
 
 #include "abdumessage.h"
 
@@ -7,10 +7,10 @@
 
 class ChatUser;
 
-class NETCOMMON_EXPORT CreateChatMessage : public AbduMessage
+class NETCOMMON_EXPORT CreateChatRequest : public AbduMessage
 {
 public:
-    explicit CreateChatMessage();
+    explicit CreateChatRequest();
 
     void accept(MessageVisitor *visitor) const override;
 
@@ -29,4 +29,4 @@ private:
     QList<ChatUser> chatUsers_;
 };
 
-#endif // CREATECHATMESSAGE_H
+#endif // CREATECHATREQUEST_H

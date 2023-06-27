@@ -1,12 +1,12 @@
-#ifndef LOGINMESSAGE_H
-#define LOGINMESSAGE_H
+#ifndef LOGINREQUEST_H
+#define LOGINREQUEST_H
 
 #include "abdumessage.h"
 
-class NETCOMMON_EXPORT LoginMessage : public AbduMessage
+class NETCOMMON_EXPORT LoginRequest : public AbduMessage
 {
 public:
-    explicit LoginMessage();
+    explicit LoginRequest();
 
     QString username() const;
     void setUsername(const QString &newUsername);
@@ -26,4 +26,4 @@ private:
 
 };
 
-#endif // LOGINMESSAGE_H
+#endif // LOGINREQUEST_H

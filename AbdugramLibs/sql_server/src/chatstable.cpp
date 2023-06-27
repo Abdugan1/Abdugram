@@ -13,7 +13,10 @@ int ChatsTable::lastInsertedId_ = -1;
 
 QList<Chat> ChatsTable::getNewChatsWhereUserIsParticipiant(const QString &username, const QDateTime &lastUpdate)
 {
-    const QString query = readFullFile("./.sql/chats/get_new_chats_where_username_is_participiant.sql");
+    const QString query = "SELECT * FROM chats "
+                          "JOIN participants ON chats.id = participants.chat_id "
+                          "JOIN users ON participants.user_id = users.id "
+                          "WHERE users.username = :username AND chats.updated_at > :last_update;";
 
     QSqlQuery getChatsQuery;
     getChatsQuery.setForwardOnly(true);
@@ -31,9 +34,10 @@ QList<Chat> ChatsTable::getNewChatsWhereUserIsParticipiant(const QString &userna
     return chats;
 }
 
-bool ChatsTable::addOrUpdateChat(const Chat &chat)
+bool ChatsTable::addChat(const Chat &chat)
 {
-    const QString query = readFullFile("./.sql/chats/add_chat.sql");
+    const QString query = "INSERT INTO chats(name, description, type) "
+                          "VALUES(:name, :description, :type);";
 
     QSqlQuery addChatQuery;
     addChatQuery.prepare(query);
@@ -49,7 +53,7 @@ bool ChatsTable::addOrUpdateChat(const Chat &chat)
 
 Chat ChatsTable::getChatById(int chatId)
 {
-    const QString query = readFullFile("./.sql/chats/get_chat_by_id.sql");
+    const QString query = "SELECT * FROM chats WHERE id = :chat_id;";
 
     QSqlQuery getChatByIdQuery;
     getChatByIdQuery.prepare(query);
@@ -65,7 +69,11 @@ Chat ChatsTable::getChatById(int chatId)
 
 QList<Chat> ChatsTable::getUnsyncChats(int userId, const QDateTime &lastUpdatedAt)
 {
-    const QString query = readFullFile("./.sql/chats/get_unsync_chats.sql");
+    const QString query = "SELECT c.* "
+                          "FROM chats c "
+                          "JOIN chat_users cu ON c.id = cu.chat_id "
+                          "WHERE  cu.user_id = :user_id "
+                          "AND c.updated_at >= :last_updated_at;";
 
     QSqlQuery getUnsyncChatsQuery;
     getUnsyncChatsQuery.setForwardOnly(true);

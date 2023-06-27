@@ -2,14 +2,14 @@
 
 #include <net_common/tcpsession.h>
 
-#include <net_common/messages/loginstatusmessage.h>
-#include <net_common/messages/registerstatusmessage.h>
+#include <net_common/messages/loginreply.h>
+#include <net_common/messages/registerreply.h>
 #include <net_common/messages/syncusersreply.h>
 #include <net_common/messages/syncchatsreply.h>
 #include <net_common/messages/syncmessagesreply.h>
-#include <net_common/messages/searchusersresultmessage.h>
-#include <net_common/messages/createchatresultmessage.h>
-#include <net_common/messages/sendmessageresultmessage.h>
+#include <net_common/messages/searchusersreply.h>
+#include <net_common/messages/createchatreply.h>
+#include <net_common/messages/sendmessagereply.h>
 
 #include <QDebug>
 
@@ -31,18 +31,18 @@ void NetworkHandler::addSession(int userId, TcpSession *session)
     sessions_.insert(userId, session);
 }
 
-void NetworkHandler::sendLoginReply(TcpSession* session, bool success, int userId)
+void NetworkHandler::sendLoginReply(TcpSession* session, bool success, User user)
 {
-    AnyMessagePtr<LoginStatusMessage> loginReply{new LoginStatusMessage};
+    AnyMessagePtr<LoginReply> loginReply{new LoginReply};
     loginReply->setSuccess(success);
-    loginReply->setUserId(userId);
+    loginReply->setUser(user);
 
     send(session, static_cast<AbduMessagePtr>(loginReply));
 }
 
 void NetworkHandler::sendRegisterReply(TcpSession* session, bool success, const User &user)
 {
-    AnyMessagePtr<RegisterStatusMessage> registerReply{new RegisterStatusMessage};
+    AnyMessagePtr<RegisterReply> registerReply{new RegisterReply};
     registerReply->setSuccess(success);
     registerReply->setUser(user);
 
@@ -75,7 +75,7 @@ void NetworkHandler::sendSyncMessagesReply(TcpSession *session, const QList<Mess
 
 void NetworkHandler::sendSearchReply(TcpSession* session, const QList<User> &foundUsers)
 {
-    AnyMessagePtr<SearchUsersResultMessage> searchReply{new SearchUsersResultMessage};
+    AnyMessagePtr<SearchUsersReply> searchReply{new SearchUsersReply};
     searchReply->setUsers(foundUsers);
 
     send(session, static_cast<AbduMessagePtr>(searchReply));
@@ -83,7 +83,7 @@ void NetworkHandler::sendSearchReply(TcpSession* session, const QList<User> &fou
 
 void NetworkHandler::sendCreateChatReply(int userId, const Chat &chat, const QList<ChatUser> &chatUsers)
 {
-    AnyMessagePtr<CreateChatResultMessage> createChatReply{new CreateChatResultMessage};
+    AnyMessagePtr<CreateChatReply> createChatReply{new CreateChatReply};
     createChatReply->setChat(chat);
     createChatReply->setChatUsers(chatUsers);
 
@@ -92,7 +92,7 @@ void NetworkHandler::sendCreateChatReply(int userId, const Chat &chat, const QLi
 
 void NetworkHandler::sendSendMessageReply(int userId, const Message &message)
 {
-    AnyMessagePtr<SendMessageResultMessage> sendMessageReply{new SendMessageResultMessage};
+    AnyMessagePtr<SendMessageReply> sendMessageReply{new SendMessageReply};
     sendMessageReply->setMessage(message);
 
     send(userId, static_cast<AbduMessagePtr>(sendMessageReply));

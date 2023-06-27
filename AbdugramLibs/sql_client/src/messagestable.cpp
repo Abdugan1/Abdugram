@@ -12,7 +12,8 @@ int MessagesTable::lastInsertedId_ = -1;
 
 bool MessagesTable::addOrUpdateMessage(const Message &message)
 {
-    const QString query = readFullFile("./.sql/messages/add_or_update_message.sql");
+    const QString query = "INSERT OR REPLACE INTO messages(id, chat_id, sender_id, reply_to_id, text, is_edited, created_at, updated_at) "
+                          "VALUES (:id, :chat_id, :sender_id, :reply_to_id, :text, :is_edited, :created_at, :updated_at);";
 
     QSqlQuery addMessageQuery;
     addMessageQuery.prepare(query);
@@ -36,7 +37,7 @@ bool MessagesTable::addOrUpdateMessage(const Message &message)
 
 QList<Message> MessagesTable::getMessagesFromChat(int chatId)
 {
-    const QString query = readFullFile("./.sql/messages/get_messages_from_chat.sql");
+    const QString query = "SELECT * FROM messages WHERE chat_id = :chat_id;";
 
     QSqlQuery getMessagesQuery;
     getMessagesQuery.prepare(query);

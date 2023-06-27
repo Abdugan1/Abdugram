@@ -1,14 +1,14 @@
-#ifndef SENDMESSAGERESULTMESSAGE_H
-#define SENDMESSAGERESULTMESSAGE_H
+#ifndef SENDMESSAGEREPLY_H
+#define SENDMESSAGEREPLY_H
 
 #include "abdumessage.h"
 
 #include <sql_common/data_structures/message.h>
 
-class NETCOMMON_EXPORT SendMessageResultMessage : public AbduMessage
+class NETCOMMON_EXPORT SendMessageReply : public AbduMessage
 {
 public:
-    explicit SendMessageResultMessage();
+    explicit SendMessageReply();
 
     Message message() const;
     void setMessage(const Message &newMessage);
@@ -23,4 +23,4 @@ private:
     Message message_;
 };
 
-#endif // SENDMESSAGERESULTMESSAGE_H
+#endif // SENDMESSAGEREPLY_H

@@ -19,7 +19,7 @@ public:
 
     static Chat createPrivateChat(int user1, int user2);
     
-    static bool addOrUpdateChat(const Chat &chat);
+    static bool addChat(const Chat &chat);
 
     static Chat getChatById(int chatId);
 

@@ -9,9 +9,10 @@
 
 int MessagesTable::lastInsertedId_ = -1;
 
-bool MessagesTable::addOrUpdateMessage(const Message &message)
+bool MessagesTable::addMessage(const Message &message)
 {
-    const QString query = readFullFile("./.sql/messages/add_message.sql");
+    const QString query = "INSERT INTO messages(chat_id, sender_id, reply_to_id, text) "
+                          "VALUES(:chat_id, :sender_id, :reply_to_id, :text);";
 
     QSqlQuery addMessageQuery;
     addMessageQuery.prepare(query);
@@ -31,7 +32,7 @@ bool MessagesTable::addOrUpdateMessage(const Message &message)
 
 Message MessagesTable::getMessageById(int id)
 {
-    const QString query = readFullFile("./.sql/messages/get_message_by_id.sql");
+    const QString query = "SELECT * FROM messages WHERE id = :id;";
 
     QSqlQuery getMessageByIdQuery;
     getMessageByIdQuery.prepare(query);
@@ -46,7 +47,14 @@ Message MessagesTable::getMessageById(int id)
 
 QList<Message> MessagesTable::getUnsyncMessages(int userId, const QDateTime &lastUpdatedAt)
 {
-    const QString query = readFullFile("./.sql/messages/get_unsync_messages.sql");
+    const QString query = "SELECT m.* "
+                          "FROM messages m "
+                          "WHERE m.chat_id IN ( "
+                          "SELECT cu.chat_id "
+                          "FROM chat_users cu "
+                          "WHERE cu.user_id = :user_id "
+                          ") "
+                          "AND m.updated_at >= :last_updated_at;";
 
     QSqlQuery getUnsyncMessagesQuery;
     getUnsyncMessagesQuery.setForwardOnly(true);

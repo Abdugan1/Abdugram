@@ -12,7 +12,8 @@ int UsersTable::lastInsertedId_ = -1;
 
 bool UsersTable::addOrUpdateUser(const User &user)
 {
-    const QString query = readFullFile("./.sql/users/add_or_update_user.sql");
+    const QString query = "INSERT OR REPLACE INTO users(id, username, first_name, last_name, email, phone, avatar_url, is_online, last_time_online, url_to_profile, created_at, updated_at, deleted_at) "
+                          "VALUES(:id, :username, :first_name, :last_name, :email, :phone, :avatar_url, :is_online, :last_time_online, :url_to_profile, :created_at, :updated_at, :deleted_at);";
 
     QSqlQuery addUserQuery;
     addUserQuery.prepare(query);
@@ -38,7 +39,7 @@ bool UsersTable::addOrUpdateUser(const User &user)
 
 User UsersTable::getUserById(int userId)
 {
-    const QString query = readFullFile("./.sql/users/get_user_by_id.sql");
+    const QString query = "SELECT * FROM users WHERE id = :id;";
 
     QSqlQuery getUserByIdQuery;
     getUserByIdQuery.prepare(query);

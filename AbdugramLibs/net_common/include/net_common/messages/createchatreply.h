@@ -1,15 +1,15 @@
-#ifndef CREATECHATRESULTMESSAGE_H
-#define CREATECHATRESULTMESSAGE_H
+#ifndef CREATECHATREPLY_H
+#define CREATECHATREPLY_H
 
 #include "abdumessage.h"
 
 #include <sql_common/data_structures/chatuser.h>
 #include <sql_common/data_structures/chat.h>
 
-class NETCOMMON_EXPORT CreateChatResultMessage : public AbduMessage
+class NETCOMMON_EXPORT CreateChatReply : public AbduMessage
 {
 public:
-    explicit CreateChatResultMessage();
+    explicit CreateChatReply();
 
     void accept(MessageVisitor *visitor) const override;
 
@@ -28,4 +28,4 @@ private:
     QList<ChatUser> chatUsers_;
 };
 
-#endif // CREATECHATRESULTMESSAGE_H
+#endif // CREATECHATREPLY_H

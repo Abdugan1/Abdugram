@@ -3,14 +3,14 @@
 
 #include <net_common/tcpsession.h>
 
-#include <net_common/messages/loginmessage.h>
-#include <net_common/messages/registermessage.h>
-#include <net_common/messages/syncusersmessage.h>
+#include <net_common/messages/loginrequest.h>
+#include <net_common/messages/registerrequest.h>
+#include <net_common/messages/syncusersrequest.h>
 #include <net_common/messages/syncchatsrequest.h>
 #include <net_common/messages/syncmessagesrequest.h>
-#include <net_common/messages/searchonservermessage.h>
-#include <net_common/messages/createchatmessage.h>
-#include <net_common/messages/sendmessagemessage.h>
+#include <net_common/messages/searchrequest.h>
+#include <net_common/messages/createchatrequest.h>
+#include <net_common/messages/sendmessagerequest.h>
 
 #include <sql_common/data_structures/user.h>
 #include <sql_common/data_structures/chatuser.h>
@@ -29,7 +29,24 @@ ServerMessageVisitor::ServerMessageVisitor(NetworkHandler *networkHandler, TcpSe
 
 }
 
-void ServerMessageVisitor::visit(const RegisterMessage &message)
+void ServerMessageVisitor::visit(const LoginRequest &message)
+{
+    const QString username = message.username();
+    const QString password = message.password();
+
+    const bool isUserExists = database()->isUserExists(username, password);
+    User user;
+
+    if (isUserExists) {
+        user = database()->getUserById(database()->getUserIdByUsername(username));
+        networkHandler_->addSession(user.id(), client_);
+    }
+
+    emit networkHandler_->requestLoginReply(client_, isUserExists, user);
+}
+
+
+void ServerMessageVisitor::visit(const RegisterRequest &message)
 {
     const bool isUsernameExists = database()->isUsernameExists(message.username());
     User user;
@@ -47,7 +64,7 @@ void ServerMessageVisitor::visit(const RegisterMessage &message)
     emit networkHandler_->requestRegisterReply(client_, !isUsernameExists, user);
 }
 
-void ServerMessageVisitor::visit(const SyncUsersMessage &message)
+void ServerMessageVisitor::visit(const SyncUsersRequest &message)
 {
     const int       userId        = message.userId();
     const QDateTime lastUpdatedAt = message.lastUpdatedAt();
@@ -55,22 +72,6 @@ void ServerMessageVisitor::visit(const SyncUsersMessage &message)
     const QList<User> unsyncUsers = database()->getUnsyncUsers(userId, lastUpdatedAt);
 
     emit networkHandler_->requestSyncUsersReply(client_, unsyncUsers);
-}
-
-void ServerMessageVisitor::visit(const LoginMessage &message)
-{
-    const QString username = message.username();
-    const QString password = message.password();
-
-    const bool isUserExists = database()->isUserExists(username, password);
-    int   userId = -1;
-
-    if (isUserExists) {
-        userId = database()->getUserIdByUsername(username);
-        networkHandler_->addSession(userId, client_);
-    }
-
-    emit networkHandler_->requestLoginReply(client_, isUserExists, userId);
 }
 
 void ServerMessageVisitor::visit(const SyncChatsRequest &request)
@@ -99,7 +100,7 @@ void ServerMessageVisitor::visit(const SyncMessagesRequest &request)
     emit networkHandler_->requestSyncMessagesReply(client_, unsyncMessages);
 }
 
-void ServerMessageVisitor::visit(const SearchOnServerMessage &message)
+void ServerMessageVisitor::visit(const SearchRequest &message)
 {
     const QString searchText = message.searchText();
 
@@ -108,7 +109,7 @@ void ServerMessageVisitor::visit(const SearchOnServerMessage &message)
     emit networkHandler_->requestSearchReply(client_, foundUsers);
 }
 
-void ServerMessageVisitor::visit(const CreateChatMessage &message)
+void ServerMessageVisitor::visit(const CreateChatRequest &message)
 {
     const Chat            chat      = message.chat();
     const QList<ChatUser> chatUsers = message.chatUsers();
@@ -128,7 +129,7 @@ void ServerMessageVisitor::visit(const CreateChatMessage &message)
     }
 }
 
-void ServerMessageVisitor::visit(const SendMessageMessage &message)
+void ServerMessageVisitor::visit(const SendMessageRequest &message)
 {
     const Message msg = message.message();
 

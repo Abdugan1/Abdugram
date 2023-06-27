@@ -6,6 +6,8 @@
 
 #include <net_common/messages/messagesforwarddeclaration.h>
 
+#include <sql_common/data_structures/user.h>
+
 class TcpSession;
 
 class User;
@@ -22,7 +24,7 @@ public:
     void addSession(int userId, TcpSession *session);
 
 signals:
-    void requestLoginReply(TcpSession *session, bool success, int userId);
+    void requestLoginReply(TcpSession *session, bool success, User user);
     void requestRegisterReply(TcpSession *session, bool success, const User &user);
     void requestSyncUsersReply(TcpSession *session, const QList<User> &unsyncUsers);
     void requestSyncChatsReply(TcpSession *session, const QHash<Chat, QList<ChatUser>> &unsyncChats);
@@ -32,7 +34,7 @@ signals:
     void requestSendMessageReply(int userId, const Message &message);
 
 private slots:
-    void sendLoginReply(TcpSession *session, bool success, int userId);
+    void sendLoginReply(TcpSession *session, bool success, User user);
     void sendRegisterReply(TcpSession *session, bool success, const User &user);
     void sendSyncUsersReply(TcpSession *session, const QList<User> &unsyncUsers);
     void sendSyncChatsReply(TcpSession *session, const QHash<Chat, QList<ChatUser>> &unsyncChats);

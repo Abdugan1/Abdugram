@@ -5,24 +5,24 @@
 
 class AbduMessage;
 
-class LoginMessage;
-class RegisterMessage;
-class SyncUsersMessage;
+class LoginRequest;
+class RegisterRequest;
+class SyncUsersRequest;
 class SyncChatsRequest;
 class SyncMessagesRequest;
-class SearchOnServerMessage;
-class CreateChatMessage;
-class SendMessageMessage;
+class SearchRequest;
+class CreateChatRequest;
+class SendMessageRequest;
 
 
-class LoginStatusMessage;
-class RegisterStatusMessage;
+class LoginReply;
+class RegisterReply;
 class SyncUsersReply;
 class SyncChatsReply;
 class SyncMessagesReply;
-class SearchUsersResultMessage;
-class CreateChatResultMessage;
-class SendMessageResultMessage;
+class SearchUsersReply;
+class CreateChatReply;
+class SendMessageReply;
 
 
 using AbduMessagePtr = QSharedDataPointer<AbduMessage>;

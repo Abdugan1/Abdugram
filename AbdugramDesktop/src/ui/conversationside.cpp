@@ -6,8 +6,8 @@
 
 #include "net/networkhandler.h"
 
-#include <net_common/messages/createchatmessage.h>
-#include <net_common/messages/sendmessagemessage.h>
+#include <net_common/messages/createchatrequest.h>
+#include <net_common/messages/sendmessagerequest.h>
 
 #include <sql_common/data_structures/chat.h>
 #include <sql_common/data_structures/chatuser.h>

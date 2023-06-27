@@ -9,7 +9,7 @@ class Message;
 class MessagesTable
 {
 public:
-    static bool addOrUpdateMessage(const Message &message);
+    static bool addMessage(const Message &message);
 
     static Message getMessageById(int id);
 

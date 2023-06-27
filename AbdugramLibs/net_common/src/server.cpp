@@ -2,7 +2,7 @@
 #include "consts.h"
 #include "tcpsession.h"
 
-#include <messages/registermessage.h>
+#include <messages/registerrequest.h>
 
 #include <QHostAddress>
 #include <QDebug>

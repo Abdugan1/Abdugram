@@ -12,7 +12,8 @@
 
 bool ChatsTable::isChatExist(const QString &chatName)
 {
-    const QString query = readFullFile("./.sql/chats/is_chat_exist.sql");
+    const QString query = "SELECT COUNT(*) FROM chats WHERE name = :chat_name;";
+
     QSqlQuery isChatExistQuery;
     isChatExistQuery.prepare(query);
     isChatExistQuery.bindValue(":chat_name", chatName);
@@ -27,7 +28,8 @@ bool ChatsTable::isChatExist(const QString &chatName)
 
 bool ChatsTable::addOrUpdateChat(const Chat &chat)
 {
-    const QString query = readFullFile("./.sql/chats/add_or_update_chat.sql");
+    const QString query = "INSERT OR REPLACE INTO chats(id, name, description, type, created_at, updated_at, deleted_at) "
+                          "VALUES(:id, :name, :description, :type, :created_at, :updated_at, :deleted_at);";
 
     QSqlQuery addChatQuery;
     addChatQuery.prepare(query);
@@ -44,7 +46,7 @@ bool ChatsTable::addOrUpdateChat(const Chat &chat)
 
 Chat ChatsTable::getChatById(int chatId)
 {
-    const QString query = readFullFile("./.sql/chats/get_chat_by_id.sql");
+    const QString query = "SELECT * FROM chats WHERE id = :id;";
 
     QSqlQuery getChatByIdQuery;
     getChatByIdQuery.prepare(query);
@@ -59,7 +61,7 @@ Chat ChatsTable::getChatById(int chatId)
 
 QList<Chat> ChatsTable::getAllChats()
 {
-    const QString query = readFullFile("./.sql/chats/get_all_chats.sql");
+    const QString query = "SELECT * FROM chats;";
 
     QSqlQuery getAllChatsQuery{query};
     getAllChatsQuery.setForwardOnly(true);

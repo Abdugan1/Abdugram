@@ -9,7 +9,8 @@
 
 bool ChatUsersTable::addUserToChat(int chatId, int userId, ChatUser::Role role)
 {
-    const QString query = readFullFile("./.sql/chat_users/add_user_to_chat.sql");
+    const QString query = "INSERT INTO chat_users(user_id, chat_id, role) "
+                          "VALUES(:user_id, :chat_id, :role);";
 
     QSqlQuery addUserToChatQuery;
     addUserToChatQuery.prepare(query);
@@ -20,7 +21,7 @@ bool ChatUsersTable::addUserToChat(int chatId, int userId, ChatUser::Role role)
     return executeQuery(addUserToChatQuery, ErrorImportance::Critical);
 }
 
-bool ChatUsersTable::addUsersToChat(int chatId, QList<ChatUser> chatUsers)
+bool ChatUsersTable::addUsersToChat(int chatId, const QList<ChatUser> &chatUsers)
 {
     for (const auto &chatUser : chatUsers) {
         if (!addUserToChat(chatId, chatUser.userId(), chatUser.role()))
@@ -31,7 +32,7 @@ bool ChatUsersTable::addUsersToChat(int chatId, QList<ChatUser> chatUsers)
 
 ChatUser ChatUsersTable::getChatUser(int chatId, int userId)
 {
-    const QString query = readFullFile("./.sql/chat_users/get_chat_user.sql");
+    const QString query = "SELECT * FROM chat_users WHERE chat_id = :chat_id AND user_id = :user_id";
 
     QSqlQuery getChatUserQuery;
     getChatUserQuery.prepare(query);
@@ -52,7 +53,7 @@ ChatUser ChatUsersTable::getChatUser(int chatId, int userId)
 
 QList<ChatUser> ChatUsersTable::getChatUsers(int chatId)
 {
-    const QString query = readFullFile("./.sql/chat_users/get_chat_users.sql");
+    const QString query = "SELECT * FROM chat_users WHERE chat_id = :chat_id;";
 
     QSqlQuery getChatUsersQuery;
     getChatUsersQuery.prepare(query);
@@ -73,7 +74,15 @@ QList<ChatUser> ChatUsersTable::getChatUsers(int chatId)
 
 QList<ChatUser> ChatUsersTable::getUnsyncChatUsers(int userId, int chatId, const QDateTime &lastUpdatedAt)
 {
-    const QString query = readFullFile("./.sql/chat_users/get_unsync_chat_users.sql");
+    const QString query = "SELECT cu.* "
+                          "FROM chat_users cu "
+                          "WHERE cu.chat_id IN ( "
+                          "SELECT chat_id "
+                          "FROM chat_users "
+                          "WHERE user_id = :user_id "
+                          ") "
+                          "AND cu.chat_id = :chat_id "
+                          "AND cu.updated_at >= :last_updated_at;";
 
     QSqlQuery getUnsyncChatUsersQuery;
     getUnsyncChatUsersQuery.setForwardOnly(true);

@@ -13,7 +13,7 @@ public:
     static bool addUserToChat(int chatId, int userId, ChatUser::Role role);
 
     //! In chat users parameter, we only need user id and user role in chat
-    static bool addUsersToChat(int chatId, QList<ChatUser> chatUsers);
+    static bool addUsersToChat(int chatId, const QList<ChatUser> &chatUsers);
 
     static ChatUser getChatUser(int chatId, int userId);
 

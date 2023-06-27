@@ -81,11 +81,10 @@ QList<User> DatabaseServer::getUnsyncUsers(int userId, const QDateTime &lastUpda
 bool DatabaseServer::addChat(const Chat &chat, const QList<ChatUser> &chatUsers)
 {
     const bool success = executeTransaction([&]() {
-        if (!ChatsTable::addOrUpdateChat(chat)) {
+        if (!ChatsTable::addChat(chat)) {
             return false;
         }
         const int addedChatId = ChatsTable::lastInsertedId();
-        qDebug() << "addedChatId in DatabaseServer:" << addedChatId;
         if (!ChatUsersTable::addUsersToChat(addedChatId, chatUsers)) {
             return false;
         }
@@ -118,7 +117,7 @@ QList<ChatUser> DatabaseServer::getUnsyncChatUsers(int userId, int chatId, const
 
 bool DatabaseServer::addMessage(const Message &message)
 {
-    return MessagesTable::addOrUpdateMessage(message);
+    return MessagesTable::addMessage(message);
 }
 
 Message DatabaseServer::getMessageById(int id)

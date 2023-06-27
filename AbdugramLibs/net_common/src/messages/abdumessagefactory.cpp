@@ -1,22 +1,22 @@
 #include "messages/abdumessagefactory.h"
 
-#include "messages/loginmessage.h"
-#include "messages/registermessage.h"
-#include "messages/syncusersmessage.h"
+#include "messages/loginrequest.h"
+#include "messages/registerrequest.h"
+#include "messages/syncusersrequest.h"
 #include "messages/syncchatsrequest.h"
 #include "messages/syncmessagesrequest.h"
-#include "messages/searchonservermessage.h"
-#include "messages/createchatmessage.h"
-#include "messages/sendmessagemessage.h"
+#include "messages/searchrequest.h"
+#include "messages/createchatrequest.h"
+#include "messages/sendmessagerequest.h"
 
-#include "messages/loginstatusmessage.h"
-#include "messages/registerstatusmessage.h"
+#include "messages/loginreply.h"
+#include "messages/registerreply.h"
 #include "messages/syncusersreply.h"
 #include "messages/syncchatsreply.h"
 #include "messages/syncmessagesreply.h"
-#include "messages/searchusersresultmessage.h"
-#include "messages/createchatresultmessage.h"
-#include "messages/sendmessageresultmessage.h"
+#include "messages/searchusersreply.h"
+#include "messages/createchatreply.h"
+#include "messages/sendmessagereply.h"
 
 #include <QDebug>
 
@@ -30,13 +30,13 @@ AbduMessagePtr AbduMessageFactory::fromData(const QByteArray &data)
 
     switch (static_cast<AbduMessage::Type>(type)) {
     case AbduMessage::Type::Login:
-        abduMessage = new LoginMessage;
+        abduMessage = new LoginRequest;
         break;
     case AbduMessage::Type::Register:
-        abduMessage = new RegisterMessage;
+        abduMessage = new RegisterRequest;
         break;
     case AbduMessage::Type::SyncUsersMessage:
-        abduMessage = new SyncUsersMessage;
+        abduMessage = new SyncUsersRequest;
         break;
     case AbduMessage::Type::SyncChatsRequest:
         abduMessage = new SyncChatsRequest;
@@ -45,20 +45,20 @@ AbduMessagePtr AbduMessageFactory::fromData(const QByteArray &data)
         abduMessage = new SyncMessagesRequest;
         break;
     case AbduMessage::Type::SearchOnServer:
-        abduMessage = new SearchOnServerMessage;
+        abduMessage = new SearchRequest;
         break;
     case AbduMessage::Type::CreateChat:
-        abduMessage = new CreateChatMessage;
+        abduMessage = new CreateChatRequest;
         break;
     case AbduMessage::Type::SendMessage:
-        abduMessage = new SendMessageMessage;
+        abduMessage = new SendMessageRequest;
         break;
 
     case AbduMessage::Type::LoginStatus:
-        abduMessage = new LoginStatusMessage;
+        abduMessage = new LoginReply;
         break;
     case AbduMessage::Type::RegisterStaus:
-        abduMessage = new RegisterStatusMessage;
+        abduMessage = new RegisterReply;
         break;
     case AbduMessage::Type::SyncUsersReply:
         abduMessage = new SyncUsersReply;
@@ -70,13 +70,13 @@ AbduMessagePtr AbduMessageFactory::fromData(const QByteArray &data)
         abduMessage = new SyncMessagesReply;
         break;
     case AbduMessage::Type::SearchUsersResult:
-        abduMessage = new SearchUsersResultMessage;
+        abduMessage = new SearchUsersReply;
         break;
     case AbduMessage::Type::CreateChatResult:
-        abduMessage = new CreateChatResultMessage;
+        abduMessage = new CreateChatReply;
         break;
     case AbduMessage::Type::SendMessageResult:
-        abduMessage = new SendMessageResultMessage;
+        abduMessage = new SendMessageReply;
         break;
     }
 

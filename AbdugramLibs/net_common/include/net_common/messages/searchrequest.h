@@ -1,12 +1,12 @@
-#ifndef SEARCHONSERVERMESSAGE_H
-#define SEARCHONSERVERMESSAGE_H
+#ifndef SEARCHREQUEST_H
+#define SEARCHREQUEST_H
 
 #include "abdumessage.h"
 
-class NETCOMMON_EXPORT SearchOnServerMessage : public AbduMessage
+class NETCOMMON_EXPORT SearchRequest : public AbduMessage
 {
 public:
-    explicit SearchOnServerMessage();
+    explicit SearchRequest();
 
     void accept(MessageVisitor *visitor) const override;
 
@@ -21,4 +21,4 @@ private:
     QString searchText_;
 };
 
-#endif // SEARCHONSERVERMESSAGE_H
+#endif // SEARCHREQUEST_H

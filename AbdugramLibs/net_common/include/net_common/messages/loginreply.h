@@ -1,22 +1,22 @@
-#ifndef LOGINSTATUSMESSAGE_H
-#define LOGINSTATUSMESSAGE_H
+#ifndef LOGINREPLY_H
+#define LOGINREPLY_H
 
 #include "abdumessage.h"
 
 #include <sql_common/data_structures/user.h>
 
-class NETCOMMON_EXPORT LoginStatusMessage : public AbduMessage
+class NETCOMMON_EXPORT LoginReply : public AbduMessage
 {
 public:
-    explicit LoginStatusMessage();
+    explicit LoginReply();
 
     bool success() const;
     void setSuccess(bool newSuccess);
 
-    int userId() const;
-    void setUserId(int newUserId);
-
     void accept(MessageVisitor *visitor) const override;
+
+    User user() const;
+    void setUser(const User &newUser);
 
 protected:
     void getBodyData(DataStream *stream) override;
@@ -24,8 +24,7 @@ protected:
 
 private:
     bool success_ = false;
-    int userId_ = -1;
-
+    User user_;
 };
 
-#endif // LOGINSTATUSMESSAGE_H
+#endif // LOGINREPLY_H

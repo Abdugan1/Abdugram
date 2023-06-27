@@ -1,14 +1,14 @@
-#ifndef SYNCUSERSMESSAGE_H
-#define SYNCUSERSMESSAGE_H
+#ifndef SYNCUSERSREQUEST_H
+#define SYNCUSERSREQUEST_H
 
 #include "abdumessage.h"
 
 #include <QDateTime>
 
-class NETCOMMON_EXPORT SyncUsersMessage : public AbduMessage
+class NETCOMMON_EXPORT SyncUsersRequest : public AbduMessage
 {
 public:
-    explicit SyncUsersMessage();
+    explicit SyncUsersRequest();
 
     void accept(MessageVisitor *visitor) const override;
 
@@ -27,4 +27,4 @@ private:
     QDateTime lastUpdatedAt_;
 };
 
-#endif // SYNCUSERSMESSAGE_H
+#endif // SYNCUSERSREQUEST_H

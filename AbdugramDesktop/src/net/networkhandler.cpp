@@ -2,14 +2,14 @@
 #include "net/clientmessagevisitor.h"
 
 #include <net_common/messages/abdumessage.h>
-#include <net_common/messages/loginmessage.h>
-#include <net_common/messages/registermessage.h>
-#include <net_common/messages/syncusersmessage.h>
+#include <net_common/messages/loginrequest.h>
+#include <net_common/messages/registerrequest.h>
+#include <net_common/messages/syncusersrequest.h>
 #include <net_common/messages/syncchatsrequest.h>
 #include <net_common/messages/syncmessagesrequest.h>
-#include <net_common/messages/searchonservermessage.h>
-#include <net_common/messages/createchatmessage.h>
-#include <net_common/messages/sendmessagemessage.h>
+#include <net_common/messages/searchrequest.h>
+#include <net_common/messages/createchatrequest.h>
+#include <net_common/messages/sendmessagerequest.h>
 
 #include <net_common/consts.h>
 
@@ -87,7 +87,7 @@ int NetworkHandler::userId() const
 
 void NetworkHandler::sendLoginRequest(const QString &username, const QString &password)
 {
-    AnyMessagePtr<LoginMessage> loginMessage{new LoginMessage};
+    AnyMessagePtr<LoginRequest> loginMessage{new LoginRequest};
     loginMessage->setUsername(username);
     loginMessage->setPassword(password);
 
@@ -96,14 +96,14 @@ void NetworkHandler::sendLoginRequest(const QString &username, const QString &pa
 
 void NetworkHandler::sendSearchRequest(const QString &searchText)
 {
-    AnyMessagePtr<SearchOnServerMessage> searchOnServerMessage{new SearchOnServerMessage{}};
+    AnyMessagePtr<SearchRequest> searchOnServerMessage{new SearchRequest{}};
     searchOnServerMessage->setSearchText(searchText);
     sendToServer(static_cast<AbduMessagePtr>(searchOnServerMessage));
 }
 
 void NetworkHandler::sendCreateChatRequest(const Chat &chat, const QList<ChatUser> &chatUsers)
 {
-    AnyMessagePtr<CreateChatMessage> createPrivateChat{new CreateChatMessage};
+    AnyMessagePtr<CreateChatRequest> createPrivateChat{new CreateChatRequest};
     createPrivateChat->setChat(chat);
     createPrivateChat->setChatUsers(chatUsers);
 
@@ -112,7 +112,7 @@ void NetworkHandler::sendCreateChatRequest(const Chat &chat, const QList<ChatUse
 
 void NetworkHandler::sendSendMessageRequest(const Message &message)
 {
-    AnyMessagePtr<SendMessageMessage> sendMessage{new SendMessageMessage};
+    AnyMessagePtr<SendMessageRequest> sendMessage{new SendMessageRequest};
     sendMessage->setMessage(message);
 
     sendToServer(static_cast<AbduMessagePtr>(sendMessage));
@@ -120,7 +120,7 @@ void NetworkHandler::sendSendMessageRequest(const Message &message)
 
 void NetworkHandler::sendSyncUsersRequest(const QDateTime &chatsLastUpdatedAt)
 {
-    AnyMessagePtr<SyncUsersMessage> syncUsers{new SyncUsersMessage};
+    AnyMessagePtr<SyncUsersRequest> syncUsers{new SyncUsersRequest};
     syncUsers->setUserId(userId());
     syncUsers->setLastUpdatedAt(chatsLastUpdatedAt.isValid() ? chatsLastUpdatedAt : QDateTime{QDate{0, 0, 0}, QTime{0, 0}});
 
@@ -153,7 +153,7 @@ void NetworkHandler::sendRegisterRequest(const QString &firstName,
                                          const QString &phone,
                                          const QString &password)
 {
-    AnyMessagePtr<RegisterMessage> registerMessage{new RegisterMessage};
+    AnyMessagePtr<RegisterRequest> registerMessage{new RegisterRequest};
     registerMessage->setFirstName(firstName);
     registerMessage->setLastName(lastName);
     registerMessage->setUsername(username);
