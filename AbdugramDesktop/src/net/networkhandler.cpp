@@ -44,6 +44,8 @@ NetworkHandler *NetworkHandler::instance()
 
 void NetworkHandler::connectToServer()
 {
+    if (tcpSession_->state() == QAbstractSocket::ConnectingState)
+        tcpSession_->abort();
     tcpSession_->connectToHost(consts::server::Address, consts::server::Port);
 }
 

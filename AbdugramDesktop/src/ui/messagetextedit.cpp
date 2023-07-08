@@ -18,7 +18,7 @@ MessageTextEdit::MessageTextEdit(QWidget *parent)
 
 void MessageTextEdit::sendMessage()
 {
-    const QString text = document()->toPlainText().simplified();
+    const QString text = document()->toPlainText().trimmed();
     clear();
 
     if (text.isEmpty())

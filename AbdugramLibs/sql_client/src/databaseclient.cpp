@@ -46,7 +46,8 @@ QDateTime DatabaseClient::getLastUpdatedAt(Tables table)
         {Tables::Messages, "messages"},
     };
 
-    const QString query = readFullFile("./.sql/common/get_last_updated_at.sql").arg(tableToString[table]);
+    const QString query = QString{"SELECT MAX(DATETIME(updated_at)) AS last_updated_at FROM %1;"}
+                              .arg(tableToString[table]);
 
     QSqlQuery getLastUpdatedAtQuery{query};
 

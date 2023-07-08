@@ -25,7 +25,7 @@ private:
     void setPainterOrigin(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
     void drawBackground(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-    void drawText(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    void drawMessageText(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     void drawTime(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
     static QRect getBackgroundRect(const QStyleOptionViewItem &option, const QModelIndex &index);
@@ -35,14 +35,6 @@ private:
     QColor backgroundColor_ = Qt::black;
     QColor textColor_       = Qt::black;
     QColor timeColor_       = Qt::black;
-
-    static const int MaxWidth_;
-    static const int Radius_;
-
-    static const int HMargin_;
-    static const int VMargin_;
-
-    static const QMargins BackgroundPaddings_;
 };
 
 #endif // MESSAGELISTDELEGATE_H

@@ -7,7 +7,7 @@ namespace consts {
 
 namespace server {
 
-    CONST_STR Address = "127.0.0.1";
+    CONST_STR Address = "domofon-abdu.ddns.net";
     CONST_INT Port    = 2002;
 };
 
