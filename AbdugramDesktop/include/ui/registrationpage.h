@@ -8,7 +8,7 @@
 class HeaderLabel;
 class SecondaryLabel;
 class FieldLineEdit;
-class Button;
+class WelcomeButton;
 class ImageButton;
 class PhoneLineEdit;
 class PasswordLineEdit;
@@ -44,8 +44,8 @@ private:
     PhoneLineEdit    *phoneNumberEdit_     = nullptr;
     PasswordLineEdit *passwordEdit_        = nullptr;
     FieldLineEdit    *confirmPasswordEdit_ = nullptr;
-
-    Button      *nextButton_ = nullptr;
+    
+    WelcomeButton      *nextButton_ = nullptr;
     ImageButton *backButton_ = nullptr;
 
     SecondaryLabel *toLoginPageLabel_ = nullptr;

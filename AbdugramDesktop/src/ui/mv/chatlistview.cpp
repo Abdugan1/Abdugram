@@ -34,7 +34,10 @@ ChatListView::ChatListView(QWidget *parent)
 
     setModel(mainModel_);
     setItemDelegate(delegate_);
+
     setSelectionMode(QAbstractItemView::SingleSelection);
+    setSelectionBehavior(QAbstractItemView::SelectRows);
+
     setVerticalScrollMode(QListView::ScrollPerPixel);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 

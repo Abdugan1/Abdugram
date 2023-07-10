@@ -1,23 +1,27 @@
 #ifndef SIDEPANEL_H
 #define SIDEPANEL_H
 
-#include <QWidget>
+#include <QFrame>
 
 #include <net_common/messages/abdumessage.h>
 
 #include "mv/chatitem.h"
 
+class QFrame;
+
 class ImageButton;
 class SearchLineEdit;
 class ChatListView;
 
-class SidePanel : public QWidget
+class SidePanel : public QFrame
 {
     Q_OBJECT
 public:
     explicit SidePanel(QWidget *parent = nullptr);
 
 signals:
+    void sideMenuRequested();
+
     void selectionWasChanged(const ChatItemPtr &selectedChat);
 
     void newChatItemAdded(const ChatItemPtr &chatItem);
@@ -29,7 +33,7 @@ private:
     void setupUi();
 
 private:
-    ImageButton    *openDrawer_     = nullptr;
+    ImageButton    *sideMenuButton_ = nullptr;
     SearchLineEdit *searchLineEdit_ = nullptr;
     ChatListView   *chatListView_   = nullptr;
 };

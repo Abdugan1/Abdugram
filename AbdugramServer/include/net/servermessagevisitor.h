@@ -20,10 +20,12 @@ public:
     void visit(const SearchRequest       &request) override;
     void visit(const CreateChatRequest   &request) override;
     void visit(const SendMessageRequest  &request) override;
+    void visit(const LogoutRequest       &request) override;
 
 private:
     NetworkHandler *networkHandler_ = nullptr;
     Session        *client_ = nullptr;
+
 };
 
 #endif // SERVERMESSAGEVISITOR_H

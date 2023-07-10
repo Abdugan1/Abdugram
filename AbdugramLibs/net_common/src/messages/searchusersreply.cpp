@@ -4,7 +4,7 @@
 #include <sql_common/data_structures/user.h>
 
 SearchUsersReply::SearchUsersReply()
-    : AbduMessage{Type::SearchUsersResult}
+    : AbduMessage{Type::SearchUsersReply}
 {
 
 }

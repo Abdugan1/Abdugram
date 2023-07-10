@@ -17,26 +17,28 @@ public:
         Unknown = -1,
 
         ClientSide = 0,
-        Login      = ClientSide + 1,
-        Register,
-        SyncUsersMessage,
+        LoginRequest = ClientSide + 1,
+        RegisterRequest,
+        SyncUsersRequest,
         SyncChatsRequest,
         SyncChatUsersRequest,
         SyncMessagesRequest,
-        SearchOnServer,
-        CreateChat,
-        SendMessage,
+        SearchOnServerRequest,
+        CreateChatRequest,
+        SendMessageRequest,
+        LogoutRequest,
 
         ServerSide = 1000000000,
-        LoginStatus = ServerSide + 1,
-        RegisterStaus,
+        LoginReply = ServerSide + 1,
+        RegisterReply,
         SyncUsersReply,
         SyncChatsReply,
         SyncChatUsersReply,
         SyncMessagesReply,
-        SearchUsersResult,
+        SearchUsersReply,
         CreateChatResult,
         SendMessageResult,
+        LogoutReply
     };
 
 public:

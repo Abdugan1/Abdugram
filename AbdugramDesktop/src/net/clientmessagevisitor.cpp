@@ -23,10 +23,14 @@
 void ClientMessageVisitor::visit(const LoginReply &reply)
 {
     if (!reply.success()) {
+        emit networkHandler()->loginResult(false);
         return;
     }
 
-    const User user = reply.user();
+    User user = reply.user();
+    user.setCreatedAt(QDateTime{});
+    user.setUpdatedAt(QDateTime{});
+    user.setDeletedAt(QDateTime{});
 
     networkHandler()->userId_ = user.id();
 
@@ -36,12 +40,13 @@ void ClientMessageVisitor::visit(const LoginReply &reply)
     const auto lastUpdatedAt = database()->getLastUpdatedAt(DatabaseClient::Tables::Users);
     networkHandler()->sendSyncUsersRequest(lastUpdatedAt);
 
-    networkHandler()->emitLoginSuccessfully();
+    emit networkHandler()->loginResult(true);
 }
 
 void ClientMessageVisitor::visit(const RegisterReply &reply)
 {
     if (!reply.success()) {
+        emit networkHandler()->registerResult(false);
         return;
     }
 
@@ -52,7 +57,7 @@ void ClientMessageVisitor::visit(const RegisterReply &reply)
     database()->connectToDatabase(user.id());
     database()->addOrUpdateUser(user);
 
-    networkHandler()->emitRegisterSuccessfully();
+    emit networkHandler()->registerResult(true);
 }
 
 void ClientMessageVisitor::visit(const SyncUsersReply &reply)
@@ -69,16 +74,10 @@ void ClientMessageVisitor::visit(const SyncUsersReply &reply)
 
 void ClientMessageVisitor::visit(const SyncChatsReply &reply)
 {
-    qDebug() << "unsync chats";
     const QHash<Chat, QList<ChatUser> > unsyncChats = reply.unsyncChats();
     for (auto it = unsyncChats.begin(); it != unsyncChats.end(); ++it) {
         const Chat &chat = it.key();
         const QList<ChatUser> chatUsers = it.value();
-        qDebug() << "chat id:" << chat.id();
-        for (const auto &chatUser : chatUsers) {
-            qDebug() << "chat user chat id:" << chatUser.chatId() << "user id:" << chatUser.userId();
-        }
-
         database()->addChat(chat, chatUsers, networkHandler()->userId());
     }
 
@@ -88,10 +87,8 @@ void ClientMessageVisitor::visit(const SyncChatsReply &reply)
 
 void ClientMessageVisitor::visit(const SyncMessagesReply &reply)
 {
-    qDebug() << "unsync messages";
     const QList<Message> unsyncMessages = reply.unsyncMessages();
     for (const auto &message : unsyncMessages) {
-        qDebug() << message.text();
         database()->addOrUpdateMessage(message);
     }
 
@@ -112,7 +109,7 @@ void ClientMessageVisitor::visit(const SearchUsersReply &reply)
     });
 
     if (success)
-        networkHandler()->emitSearchResult(users);
+        emit networkHandler()->searchResult(users);
 }
 
 
@@ -133,4 +130,12 @@ void ClientMessageVisitor::visit(const SendMessageReply &reply)
     const Message msg = reply.message();
 
     database()->addOrUpdateMessage(msg);
+}
+
+void ClientMessageVisitor::visit(const LogoutReply &reply)
+{
+    qDebug() << "logout...";
+    networkHandler()->userId_ = -1;
+
+    emit networkHandler()->loggedOut();
 }

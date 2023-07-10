@@ -6,7 +6,7 @@
 class HeaderLabel;
 class SecondaryLabel;
 class FieldLineEdit;
-class Button;
+class WelcomeButton;
 class ImageButton;
 
 #include <net_common/messages/abdumessage.h>
@@ -36,7 +36,7 @@ private:
     HeaderLabel *header_ = nullptr;
     FieldLineEdit *usernameEdit_ = nullptr;
     FieldLineEdit *passwordEdit_ = nullptr;
-    Button   *nextButton_   = nullptr;
+    WelcomeButton   *nextButton_   = nullptr;
     SecondaryLabel *toRegisterPage_ = nullptr;
 
     ImageButton *backButton_ = nullptr;

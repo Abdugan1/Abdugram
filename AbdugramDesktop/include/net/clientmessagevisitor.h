@@ -19,6 +19,7 @@ public:
     void visit(const SearchUsersReply  &reply) override;
     void visit(const CreateChatReply   &reply) override;
     void visit(const SendMessageReply  &reply) override;
+    void visit(const LogoutReply &reply) override;
 };
 
 #endif // CLIENTMESSAGEVISITOR_H

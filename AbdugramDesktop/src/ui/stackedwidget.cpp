@@ -50,10 +50,9 @@ void StackedWidget::startAnimation(const QPoint &currentBegin, const QPoint &cur
     animations->addAnimation(currentAnim);
     animations->addAnimation(toSlideAnim);
 
-    connect(animations, &QParallelAnimationGroup::finished,
-            this,       [this]() {
-
+    connect(animations, &QParallelAnimationGroup::finished, this, [this]() {
         setCurrentWidget(toSlideWidget_);
+        emit slideFinished();
     });
 
     animations->start(QAbstractAnimation::DeleteWhenStopped);

@@ -2,7 +2,7 @@
 #include "messages/messagevisitor.h"
 
 LoginRequest::LoginRequest()
-    : AbduMessage{Type::Login}
+    : AbduMessage{Type::LoginRequest}
 {
 
 }

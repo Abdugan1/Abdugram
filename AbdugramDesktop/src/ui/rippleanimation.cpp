@@ -47,6 +47,13 @@ RippleAnimation::RippleAnimation(QWidget *parent)
 
     if (match.hasMatch())
         borderRadius_ = match.captured(1).toInt();
+
+    setAppearTime(400);
+    setDisappearTime(400);
+    setEndOpacity(0.15);
+
+    connect(this, &RippleAnimation::opacityChanged, widget_, QOverload<>::of(&QWidget::update));
+    widget_->installEventFilter(this);
 }
 
 void RippleAnimation::start()

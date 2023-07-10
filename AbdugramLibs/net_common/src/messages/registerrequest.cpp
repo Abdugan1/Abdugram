@@ -4,7 +4,7 @@
 #include <QDebug>
 
 RegisterRequest::RegisterRequest()
-    : AbduMessage{Type::Register}
+    : AbduMessage{Type::RegisterRequest}
 {
 
 }

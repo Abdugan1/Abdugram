@@ -8,6 +8,7 @@
 #include "messages/searchrequest.h"
 #include "messages/createchatrequest.h"
 #include "messages/sendmessagerequest.h"
+#include "messages/logoutrequest.h"
 
 #include "messages/loginreply.h"
 #include "messages/registerreply.h"
@@ -17,6 +18,7 @@
 #include "messages/searchusersreply.h"
 #include "messages/createchatreply.h"
 #include "messages/sendmessagereply.h"
+#include "messages/logoutreply.h"
 
 #include <QDebug>
 
@@ -29,13 +31,13 @@ AbduMessagePtr AbduMessageFactory::fromData(const QByteArray &data)
     stream >> type;
 
     switch (static_cast<AbduMessage::Type>(type)) {
-    case AbduMessage::Type::Login:
+    case AbduMessage::Type::LoginRequest:
         abduMessage = new LoginRequest;
         break;
-    case AbduMessage::Type::Register:
+    case AbduMessage::Type::RegisterRequest:
         abduMessage = new RegisterRequest;
         break;
-    case AbduMessage::Type::SyncUsersMessage:
+    case AbduMessage::Type::SyncUsersRequest:
         abduMessage = new SyncUsersRequest;
         break;
     case AbduMessage::Type::SyncChatsRequest:
@@ -44,20 +46,23 @@ AbduMessagePtr AbduMessageFactory::fromData(const QByteArray &data)
     case AbduMessage::Type::SyncMessagesRequest:
         abduMessage = new SyncMessagesRequest;
         break;
-    case AbduMessage::Type::SearchOnServer:
+    case AbduMessage::Type::SearchOnServerRequest:
         abduMessage = new SearchRequest;
         break;
-    case AbduMessage::Type::CreateChat:
+    case AbduMessage::Type::CreateChatRequest:
         abduMessage = new CreateChatRequest;
         break;
-    case AbduMessage::Type::SendMessage:
+    case AbduMessage::Type::SendMessageRequest:
         abduMessage = new SendMessageRequest;
         break;
-
-    case AbduMessage::Type::LoginStatus:
+    case AbduMessage::Type::LogoutRequest:
+        abduMessage = new LogoutRequest;
+        break;
+        
+    case AbduMessage::Type::LoginReply:
         abduMessage = new LoginReply;
         break;
-    case AbduMessage::Type::RegisterStaus:
+    case AbduMessage::Type::RegisterReply:
         abduMessage = new RegisterReply;
         break;
     case AbduMessage::Type::SyncUsersReply:
@@ -69,7 +74,7 @@ AbduMessagePtr AbduMessageFactory::fromData(const QByteArray &data)
     case AbduMessage::Type::SyncMessagesReply:
         abduMessage = new SyncMessagesReply;
         break;
-    case AbduMessage::Type::SearchUsersResult:
+    case AbduMessage::Type::SearchUsersReply:
         abduMessage = new SearchUsersReply;
         break;
     case AbduMessage::Type::CreateChatResult:
@@ -77,6 +82,9 @@ AbduMessagePtr AbduMessageFactory::fromData(const QByteArray &data)
         break;
     case AbduMessage::Type::SendMessageResult:
         abduMessage = new SendMessageReply;
+        break;
+    case AbduMessage::Type::LogoutReply:
+        abduMessage = new LogoutReply;
         break;
     }
 

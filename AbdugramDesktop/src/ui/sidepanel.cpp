@@ -12,7 +12,7 @@
 #include <QDebug>
 
 SidePanel::SidePanel(QWidget *parent)
-    : QWidget{parent}
+    : QFrame{parent}
 {
     setupUi();
 
@@ -38,7 +38,9 @@ void SidePanel::addNewChatToView(const Chat &chat)
 
 void SidePanel::setupUi()
 {
-    openDrawer_ = new ImageButton{QPixmap{":/images/drawer_button.png"}};
+    sideMenuButton_ = new ImageButton{QPixmap{":/images/drawer_button.png"}};
+    connect(sideMenuButton_, &ImageButton::clicked, this, &SidePanel::sideMenuRequested);
+
     searchLineEdit_ = new SearchLineEdit;
     searchLineEdit_->setPlaceholderText(tr("Search"));
 
@@ -46,7 +48,7 @@ void SidePanel::setupUi()
     const int m = 8;
     hLayout->setContentsMargins(m, m, m, m);
     hLayout->setSpacing(m);
-    hLayout->addWidget(openDrawer_);
+    hLayout->addWidget(sideMenuButton_);
     hLayout->addWidget(searchLineEdit_);
 
     chatListView_ = new ChatListView;

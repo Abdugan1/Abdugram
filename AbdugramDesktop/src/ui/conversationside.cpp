@@ -2,7 +2,7 @@
 #include "ui/chatheader.h"
 #include "ui/mv/messagelistview.h"
 #include "ui/mv/founduserchatitem.h"
-#include "ui/messageside.h"
+#include "ui/messagetextedit.h"
 
 #include "net/networkhandler.h"
 
@@ -22,7 +22,7 @@ ConversationSide::ConversationSide(QWidget *parent)
 {
     setupUi();
 
-    connect(messageSide_, &MessageSide::sendMessageRequest, this, &ConversationSide::onSendMessageRequested);
+    connect(messageEdit_, &MessageTextEdit::sendMessageRequest, this, &ConversationSide::onSendMessageRequested);
 }
 
 ChatItem ConversationSide::currentChat() const
@@ -85,14 +85,14 @@ void ConversationSide::setupUi()
 {
     chatHeader_  = new ChatHeader;
     messageView_ = new MessageListView;
-    messageSide_ = new MessageSide;
+    messageEdit_ = new MessageTextEdit;
 
     QVBoxLayout *vLayout = new QVBoxLayout;
     vLayout->setContentsMargins(0, 0, 0, 0);
     vLayout->setSpacing(0);
     vLayout->addWidget(chatHeader_);
     vLayout->addWidget(messageView_, 1);
-    vLayout->addWidget(messageSide_);
+    vLayout->addWidget(messageEdit_);
 
     setLayout(vLayout);
 }

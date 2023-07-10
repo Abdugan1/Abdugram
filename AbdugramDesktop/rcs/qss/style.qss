@@ -9,9 +9,15 @@ StackedWidget {
     background-color: @backgroundColor;
 }
 
+/* SidePanel */
+SidePanel {
+    background-color: @backgroundLighter3Color;
+}
+
 /* ChatListView */
 ChatListView {
-    background-color: @backgroundColor;
+    background-color: @backgroundLighter3Color;
+    border: none;
 
     /* For ChatListModel */
     qproperty-chatNameColor: @mainLabelColor;
@@ -35,6 +41,23 @@ MessageListView {
 /* MainPage */
 MainPage::handle {
     background-color: black;
+}
+
+/* SideMenu */
+SideMenu {
+    background-color: @backgroundLighter5Color;
+}
+
+/* SideMenuButton */
+SideMenuButton {
+    background-color: @backgroundLighter5Color;
+    color: @mainLabelColor;
+    font-size: 11pt;
+    font-weight: bold;
+    border: none;
+
+    width: 270px;
+    height: 37px;
 }
 
 /* SearchLineEdit */
@@ -64,24 +87,19 @@ ChatHeader {
     padding-bottom: 3px;
 }
 
-/* MessageSide */
-MessageSide {
-    border-top: 1px solid black;
-    padding: 7px;
-}
-
 /* MessageTextEdit */
 MessageTextEdit {
     background-color: @backgroundColor;
     selection-background-color: @decorationColor;
-    border: none;
+    border-top: 1px solid black;
+    padding: 7px;
 
     qproperty-textColor: @mainLabelColor;
     qproperty-placeholderColor: @secondaryLabelColor;
 }
 
-/* Button */
-Button {
+/* WelcomeButton */
+WelcomeButton {
     /* Background */
     background-color: @decorationColor;
 
@@ -96,11 +114,11 @@ Button {
     color: #FFFFFF;
 }
 
-Button::!enabled {
+WelcomeButton::!enabled {
     background-color: gray;
 }
 
-Button:hover {
+WelcomeButton:hover {
     /* Background */
     background-color: #b05e97
 }
@@ -139,16 +157,13 @@ QFrame#toolTipFrame {
 MainLabel {
     /* Text color */
     color: @mainLabelColor;
+    font-size: 11pt;
 }
 
 /* SecondaryLabel */
 SecondaryLabel {
     /* Text color */
     color: @secondaryLabelColor;
-}
-
-SecondaryLabel#small-font {
-    /* Text color */
     font-size: 11pt;
 }
 

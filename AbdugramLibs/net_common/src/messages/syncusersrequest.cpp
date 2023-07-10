@@ -2,7 +2,7 @@
 #include "messages/messagevisitor.h"
 
 SyncUsersRequest::SyncUsersRequest()
-    : AbduMessage{Type::SyncUsersMessage}
+    : AbduMessage{Type::SyncUsersRequest}
 {
 
 }

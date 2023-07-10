@@ -10,6 +10,7 @@
 #include <net_common/messages/searchrequest.h>
 #include <net_common/messages/createchatrequest.h>
 #include <net_common/messages/sendmessagerequest.h>
+#include <net_common/messages/logoutrequest.h>
 
 #include <net_common/consts.h>
 
@@ -67,28 +68,26 @@ void NetworkHandler::onMessageReceived(const AbduMessagePtr &message)
     message->accept(&visitor);
 }
 
-void NetworkHandler::emitLoginSuccessfully()
-{
-    emit loginSuccessfully();
-}
-
-void NetworkHandler::emitRegisterSuccessfully()
-{
-    emit registerSuccessfully();
-}
-
-void NetworkHandler::emitSearchResult(const QList<User> &usersSearchResult)
-{
-    emit searchResult(usersSearchResult);
-}
-
 int NetworkHandler::userId() const
 {
     return userId_;
 }
 
+QString NetworkHandler::lastUsername() const
+{
+    return lastUsername_;
+}
+
+QString NetworkHandler::lastPassword() const
+{
+    return lastPassword_;
+}
+
 void NetworkHandler::sendLoginRequest(const QString &username, const QString &password)
 {
+    lastUsername_ = username;
+    lastPassword_ = password;
+
     AnyMessagePtr<LoginRequest> loginMessage{new LoginRequest};
     loginMessage->setUsername(username);
     loginMessage->setPassword(password);
@@ -146,6 +145,14 @@ void NetworkHandler::sendSyncMessagesRequest(const QDateTime &lastUpdate)
     syncMessages->setLastUpdatedAt(lastUpdate.isValid() ? lastUpdate : QDateTime{QDate{0, 0, 0}, QTime{0, 0}});
 
     sendToServer(static_cast<AbduMessagePtr>(syncMessages));
+}
+
+void NetworkHandler::sendLogoutRequest()
+{
+    qDebug() << "sending logout";
+    AnyMessagePtr<LogoutRequest> logoutRequest{new LogoutRequest};
+
+    sendToServer(static_cast<AbduMessagePtr>(logoutRequest));
 }
 
 void NetworkHandler::sendRegisterRequest(const QString &firstName,

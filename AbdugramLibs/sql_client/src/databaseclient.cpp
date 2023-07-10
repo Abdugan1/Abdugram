@@ -69,6 +69,11 @@ bool DatabaseClient::addOrUpdateUser(const User &user)
     return success;
 }
 
+User DatabaseClient::getUserById(int userId)
+{
+    return UsersTable::getUserById(userId);
+}
+
 bool DatabaseClient::addOrUpdateChat(const Chat &chat)
 {
     const bool success = ChatsTable::addOrUpdateChat(chat);

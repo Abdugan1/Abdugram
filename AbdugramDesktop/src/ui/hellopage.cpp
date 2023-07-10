@@ -1,5 +1,5 @@
 #include "ui/hellopage.h"
-#include "ui/button.h"
+#include "ui/welcomebutton.h"
 #include "ui/mainlabel.h"
 #include "ui/secondarylabel.h"
 
@@ -19,8 +19,8 @@ HelloPage::HelloPage(QWidget *parent)
     : QWidget{parent}
 {
     setupUi();
-
-    connect(startButton_, &Button::clicked,
+    
+    connect(startButton_, &WelcomeButton::clicked,
             this,         &HelloPage::startMessagingClicked);
 }
 
@@ -32,8 +32,8 @@ void HelloPage::setupUi()
     welcomeLabel_ = new SecondaryLabel{tr("Welcome to the official Abdugram Desktop app.\n"
                                           "It's fast and secure.")};
     welcomeLabel_->setAlignment(Qt::AlignCenter);
-
-    startButton_ = new Button{tr("Start Messaging")};
+    
+    startButton_ = new WelcomeButton{tr("Start Messaging")};
     startButton_->setShortcut(QKeySequence{Qt::Key_Return});
 
     QVBoxLayout *vLayout = new QVBoxLayout;

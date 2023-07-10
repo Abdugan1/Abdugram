@@ -19,6 +19,7 @@ public:
     virtual void visit(const SearchRequest       &request) { Q_UNUSED(request); }
     virtual void visit(const CreateChatRequest   &request) { Q_UNUSED(request); }
     virtual void visit(const SendMessageRequest  &request) { Q_UNUSED(request); }
+    virtual void visit(const LogoutRequest       &request) { Q_UNUSED(request); }
     
     virtual void visit(const LoginReply        &reply) { Q_UNUSED(reply); }
     virtual void visit(const RegisterReply     &reply) { Q_UNUSED(reply); }
@@ -28,6 +29,7 @@ public:
     virtual void visit(const SearchUsersReply  &reply) { Q_UNUSED(reply); }
     virtual void visit(const CreateChatReply   &reply) { Q_UNUSED(reply); }
     virtual void visit(const SendMessageReply  &reply) { Q_UNUSED(reply); }
+    virtual void visit(const LogoutReply       &reply) { Q_UNUSED(reply); }
 
 };
 

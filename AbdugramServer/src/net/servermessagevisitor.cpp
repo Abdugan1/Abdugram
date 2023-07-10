@@ -10,6 +10,7 @@
 #include <net_common/messages/searchrequest.h>
 #include <net_common/messages/createchatrequest.h>
 #include <net_common/messages/sendmessagerequest.h>
+#include <net_common/messages/logoutrequest.h>
 
 #include <sql_common/data_structures/user.h>
 #include <sql_common/data_structures/chatuser.h>
@@ -153,4 +154,11 @@ void ServerMessageVisitor::visit(const SendMessageRequest &request)
     for (const auto &chatUser : chatUsers) {
         emit networkHandler_->requestSendMessageReply(chatUser.userId(), addedMessage);
     }
+}
+
+void ServerMessageVisitor::visit(const LogoutRequest &request)
+{
+    networkHandler_->removeSession(client_->userId());
+
+    emit networkHandler_->requestLogoutReply(client_);
 }

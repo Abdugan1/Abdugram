@@ -31,6 +31,7 @@ signals:
     void requestSearchReply(Session* session, const QList<User> &foundUsers);
     void requestCreateChatReply(int userId, const Chat &chat, const QList<User> &users, const QList<ChatUser> &chatUsers);
     void requestSendMessageReply(int userId, const Message &message);
+    void requestLogoutReply(Session *session);
 
 private slots:
     void sendLoginReply(Session *session, bool success, const User &user);
@@ -41,6 +42,7 @@ private slots:
     void sendSearchReply(Session* session, const QList<User> &foundUsers);
     void sendCreateChatReply(int userId, const Chat &chat, const QList<User> &users, const QList<ChatUser> &chatUsers);
     void sendSendMessageReply(int userId, const Message &message);
+    void sendLogoutReply(Session *session);
 
 private:
     void send(int userId, const AbduMessagePtr &message);

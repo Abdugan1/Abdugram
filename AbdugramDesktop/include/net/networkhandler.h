@@ -25,6 +25,9 @@ public:
 
     int userId() const;
 
+    QString lastUsername() const;
+    QString lastPassword() const;
+
     void sendLoginRequest(const QString &username, const QString &password);
 
     void sendRegisterRequest(const QString &firstName,
@@ -45,14 +48,18 @@ public:
 
     void sendSyncMessagesRequest(const QDateTime &lastUpdate);
 
+    void sendLogoutRequest();
+
 signals:
     void connectedSucessfully();
     void connectionError();
 
     void syncFinished();
 
-    void loginSuccessfully();
-    void registerSuccessfully();
+    void loginResult(bool success);
+    void registerResult(bool success);
+    void loggedOut();
+
     void searchResult(const QList<User> &usersSearchResult);
 
 public slots:
@@ -67,13 +74,12 @@ private:
 
     void sendToServer(const AbduMessagePtr &message);
 
-    void emitLoginSuccessfully();
-    void emitRegisterSuccessfully();
-    void emitSearchResult(const QList<User> &usersSearchResult);
-
 private:
     TcpSession *tcpSession_ = nullptr;
     int userId_ = 0;
+
+    QString lastUsername_;
+    QString lastPassword_;
 
     friend class ClientMessageVisitor;
 };

@@ -9,6 +9,7 @@
 #include <net_common/messages/searchusersreply.h>
 #include <net_common/messages/createchatreply.h>
 #include <net_common/messages/sendmessagereply.h>
+#include <net_common/messages/logoutreply.h>
 
 #include <QDebug>
 
@@ -23,6 +24,7 @@ NetworkHandler::NetworkHandler(QObject *parent)
     connect(this, &NetworkHandler::requestSearchReply, this, &NetworkHandler::sendSearchReply);
     connect(this, &NetworkHandler::requestCreateChatReply, this, &NetworkHandler::sendCreateChatReply);
     connect(this, &NetworkHandler::requestSendMessageReply, this, &NetworkHandler::sendSendMessageReply);
+    connect(this, &NetworkHandler::requestLogoutReply, this, &NetworkHandler::sendLogoutReply);
 }
 
 void NetworkHandler::addSession(int userId, Session *session)
@@ -102,6 +104,13 @@ void NetworkHandler::sendSendMessageReply(int userId, const Message &message)
     sendMessageReply->setMessage(message);
 
     send(userId, static_cast<AbduMessagePtr>(sendMessageReply));
+}
+
+void NetworkHandler::sendLogoutReply(Session *session)
+{
+    AnyMessagePtr<LogoutReply> logoutReply{new LogoutReply};
+
+    send(session, static_cast<AbduMessagePtr>(logoutReply));
 }
 
 void NetworkHandler::send(int userId, const AbduMessagePtr &message)

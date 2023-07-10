@@ -1,4 +1,6 @@
-#include <QApplication>
+#include "application.h"
+#include "ui/mainwindow.h"
+
 #include <QFile>
 #include <QFontDatabase>
 #include <QRegularExpression>
@@ -10,8 +12,6 @@
 #include <sql_client/databaseclient.h>
 
 #include <logger/logger.h>
-
-#include "ui/mainwindow.h"
 
 void setupStyleSheet(const QString &qssFileName)
 {
@@ -50,24 +50,9 @@ void setupStyleSheet(const QString &qssFileName)
 
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
-
     qRegisterMetaType<AbduMessagePtr>("AbduMessagePtr");
 
-    // Setup logger
-    Logger::init();
-    Logger::setEchoMode(true);
-
-    // Setting qss
-    setupStyleSheet(":/qss/style.qss");
-
-    // Setting fonts
-    QFontDatabase::addApplicationFont(":/fonts/Montserrat-Regular.ttf");
-    QFontDatabase db;
-    app.setFont(QFont{"Montserrat", 12, QFont::Medium});
-
-    MainWindow mainWindow;
-    mainWindow.show();
+    Application app(argc, argv);
 
     return app.exec();
 }

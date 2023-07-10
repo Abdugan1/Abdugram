@@ -2,7 +2,7 @@
 #include "messages/messagevisitor.h"
 
 SendMessageRequest::SendMessageRequest()
-    : AbduMessage{Type::SendMessage}
+    : AbduMessage{Type::SendMessageRequest}
 {
 
 }

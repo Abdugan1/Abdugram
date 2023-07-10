@@ -9,10 +9,9 @@
 MessageTextEdit::MessageTextEdit(QWidget *parent)
     : TextEdit{parent}
 {
-    setPlaceholderText(tr("Write a message..."));
-    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setupUi();
 
+    connect(sendButton_, &ImageButton::clicked, this, &MessageTextEdit::sendMessage);
     connect(document(), &QTextDocument::contentsChanged, this, &MessageTextEdit::setAppropriateSize);
 }
 
@@ -35,12 +34,10 @@ void MessageTextEdit::setAppropriateSize()
     setMaximumHeight(std::min(height, MaxHeight));
 }
 
-#ifdef Q_OS_LINUX
 void MessageTextEdit::showEvent(QShowEvent *event)
 {
     setAppropriateSize();
 }
-#endif
 
 void MessageTextEdit::keyPressEvent(QKeyEvent *event)
 {
@@ -49,4 +46,22 @@ void MessageTextEdit::keyPressEvent(QKeyEvent *event)
     } else {
         TextEdit::keyPressEvent(event);
     }
+}
+
+void MessageTextEdit::setupUi()
+{
+    sendButton_ = new ImageButton{QPixmap{":/images/back_button.png"}};
+    sendButton_->setShortcut(QKeySequence{Qt::Key_Return});
+
+    QHBoxLayout *hLayout = new QHBoxLayout;
+    hLayout->setContentsMargins(0, 0, 0, 0);
+    hLayout->setSpacing(0);
+    hLayout->addSpacerItem(new QSpacerItem{1, 1, QSizePolicy::Expanding, QSizePolicy::Maximum});
+    hLayout->addWidget(sendButton_, 0, Qt::AlignRight | Qt::AlignBottom);
+
+    setLayout(hLayout);
+
+    setPlaceholderText(tr("Write a message..."));
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }

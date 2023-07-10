@@ -6,7 +6,7 @@
 #include <QDebug>
 
 CreateChatRequest::CreateChatRequest()
-    : AbduMessage{Type::CreateChat}
+    : AbduMessage{Type::CreateChatRequest}
 {
 
 }

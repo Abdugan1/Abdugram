@@ -42,6 +42,8 @@ set(HEADERS
     ${HEADERS_DIR}/messages/syncmessagesrequest.h
     ${HEADERS_DIR}/messages/syncusersrequest.h
     ${HEADERS_DIR}/messages/syncusersreply.h
+    ${HEADERS_DIR}/messages/logoutrequest.h
+    ${HEADERS_DIR}/messages/logoutreply.h
     ${HEADERS_DIR}/tcpsession.h
 )
 
@@ -67,6 +69,8 @@ set(SOURCES
     ${SOURCES_DIR}/messages/syncmessagesrequest.cpp
     ${SOURCES_DIR}/messages/syncusersrequest.cpp
     ${SOURCES_DIR}/messages/syncusersreply.cpp
+    ${SOURCES_DIR}/messages/logoutrequest.cpp
+    ${SOURCES_DIR}/messages/logoutreply.cpp
     ${SOURCES_DIR}/tcpsession.cpp
 )
 

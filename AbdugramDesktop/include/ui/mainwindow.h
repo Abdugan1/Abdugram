@@ -12,6 +12,8 @@ class RegistrationPage;
 class ProblemWidget;
 class MainPage;
 
+class SideMenu;
+
 class TcpSession;
 class ClientMessageVisitor;
 
@@ -30,12 +32,21 @@ protected:
 
 private slots:
     void connectToServer();
+
+    void onConnected();
     void onConnectionError();
+
+    void onLoginResult(bool success);
+    void onRegisterResult(bool success);
 
     void toHelloPage();
     void toLoginPage();
     void toRegistrationPage();
     void toMainPage();
+
+    void startupLogin();
+    void onStartupLoginResult(bool success);
+    void onStartupLoginSuccess();
 
 private:
     void setupUi();
@@ -44,6 +55,8 @@ private:
     void connectTcpLogic();
 
 private:
+    bool startupLogin_ = false;
+
     int connectAttempts_ = 0;
     SecTimer *reconnectSoonTimer_       = nullptr;
     ProblemWidget *connectionProblem_   = nullptr;
@@ -51,8 +64,8 @@ private:
     StackedWidget    *stackedWidget_ = nullptr;
 
     HelloPage        *helloPage_            = nullptr;
-    LoginPage        *loginPage_            = nullptr;
     RegistrationPage *registrationPage_     = nullptr;
+    LoginPage        *loginPage_            = nullptr;
     MainPage         *mainPage_             = nullptr;
 
     friend class ClientMessageVisitor;

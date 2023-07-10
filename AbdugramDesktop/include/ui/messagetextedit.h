@@ -21,14 +21,15 @@ private slots:
     void setAppropriateSize();
 
 protected:
-#ifdef Q_OS_LINUX
     void showEvent(QShowEvent *event) override;
-#endif
 
     void keyPressEvent(QKeyEvent *event) override;
 
 private:
     void setupUi();
+
+private:
+    ImageButton *sendButton_ = nullptr;
 };
 
 #endif // MESSAGETEXTEDIT_H

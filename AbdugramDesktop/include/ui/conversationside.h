@@ -7,7 +7,7 @@
 
 class ChatHeader;
 class MessageListView;
-class MessageSide;
+class MessageTextEdit;
 
 class ConversationSide : public QWidget
 {
@@ -33,7 +33,7 @@ private:
 private:
     ChatHeader      *chatHeader_  = nullptr;
     MessageListView *messageView_ = nullptr;
-    MessageSide     *messageSide_ = nullptr;
+    MessageTextEdit *messageEdit_ = nullptr;
 
     ChatItemPtr currentChatItem_;
 };

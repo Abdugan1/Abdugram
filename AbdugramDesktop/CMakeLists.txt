@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.15)
 set(APP_NAME AbdugramDesktop)
-project(${APP_NAME} VERSION 0.1 LANGUAGES CXX)
+project(${APP_NAME} VERSION 0.0.1 LANGUAGES CXX)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -22,7 +22,9 @@ set(HEADERS
     ${HEADERS_DIR}/net/clientmessagevisitor.h
     ${HEADERS_DIR}/net/networkhandler.h
     ${HEADERS_DIR}/sectimer.h
-    ${HEADERS_DIR}/ui/button.h
+    ${HEADERS_DIR}/application.h
+    ${HEADERS_DIR}/settings.h
+    ${HEADERS_DIR}/ui/welcomebutton.h
     ${HEADERS_DIR}/ui/chatheader.h
     ${HEADERS_DIR}/ui/conversationside.h
     ${HEADERS_DIR}/ui/fieldlineedit.h
@@ -34,7 +36,6 @@ set(HEADERS
     ${HEADERS_DIR}/ui/mainlabel.h
     ${HEADERS_DIR}/ui/mainpage.h
     ${HEADERS_DIR}/ui/mainwindow.h
-    ${HEADERS_DIR}/ui/messageside.h
     ${HEADERS_DIR}/ui/messagetextedit.h
     ${HEADERS_DIR}/ui/mv/chatitem.h
     ${HEADERS_DIR}/ui/mv/chatlistdelegate.h
@@ -56,6 +57,8 @@ set(HEADERS
     ${HEADERS_DIR}/ui/sidepanel.h
     ${HEADERS_DIR}/ui/stackedwidget.h
     ${HEADERS_DIR}/ui/textedit.h
+    ${HEADERS_DIR}/ui/sidemenu.h
+    ${HEADERS_DIR}/ui/sidemenubutton.h
 )
 
 set(SOURCES
@@ -63,7 +66,9 @@ set(SOURCES
     ${SOURCES_DIR}/net/clientmessagevisitor.cpp
     ${SOURCES_DIR}/net/networkhandler.cpp
     ${SOURCES_DIR}/sectimer.cpp
-    ${SOURCES_DIR}/ui/button.cpp
+    ${SOURCES_DIR}/application.cpp
+    ${SOURCES_DIR}/settings.cpp
+    ${SOURCES_DIR}/ui/welcomebutton.cpp
     ${SOURCES_DIR}/ui/chatheader.cpp
     ${SOURCES_DIR}/ui/conversationside.cpp
     ${SOURCES_DIR}/ui/fieldlineedit.cpp
@@ -75,7 +80,6 @@ set(SOURCES
     ${SOURCES_DIR}/ui/mainlabel.cpp
     ${SOURCES_DIR}/ui/mainpage.cpp
     ${SOURCES_DIR}/ui/mainwindow.cpp
-    ${SOURCES_DIR}/ui/messageside.cpp
     ${SOURCES_DIR}/ui/messagetextedit.cpp
     ${SOURCES_DIR}/ui/mv/chatitem.cpp
     ${SOURCES_DIR}/ui/mv/chatlistdelegate.cpp
@@ -97,6 +101,8 @@ set(SOURCES
     ${SOURCES_DIR}/ui/sidepanel.cpp
     ${SOURCES_DIR}/ui/stackedwidget.cpp
     ${SOURCES_DIR}/ui/textedit.cpp
+    ${SOURCES_DIR}/ui/sidemenu.cpp
+    ${SOURCES_DIR}/ui/sidemenubutton.cpp
 )
 
 set(RESOURCES

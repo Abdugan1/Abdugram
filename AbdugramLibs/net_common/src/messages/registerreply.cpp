@@ -2,7 +2,7 @@
 #include "messages/messagevisitor.h"
 
 RegisterReply::RegisterReply()
-    : AbduMessage{Type::RegisterStaus}
+    : AbduMessage{Type::RegisterReply}
 {
 
 }

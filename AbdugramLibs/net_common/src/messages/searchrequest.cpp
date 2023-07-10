@@ -2,7 +2,7 @@
 #include "messages/messagevisitor.h"
 
 SearchRequest::SearchRequest()
-    : AbduMessage{Type::SearchOnServer}
+    : AbduMessage{Type::SearchOnServerRequest}
 {
 
 }

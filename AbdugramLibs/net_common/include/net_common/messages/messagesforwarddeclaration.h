@@ -13,6 +13,7 @@ class SyncMessagesRequest;
 class SearchRequest;
 class CreateChatRequest;
 class SendMessageRequest;
+class LogoutRequest;
 
 
 class LoginReply;
@@ -23,6 +24,7 @@ class SyncMessagesReply;
 class SearchUsersReply;
 class CreateChatReply;
 class SendMessageReply;
+class LogoutReply;
 
 
 using AbduMessagePtr = QSharedDataPointer<AbduMessage>;

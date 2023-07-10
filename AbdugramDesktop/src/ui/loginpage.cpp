@@ -2,7 +2,7 @@
 #include "ui/headerlabel.h"
 #include "ui/secondarylabel.h"
 #include "ui/fieldlineedit.h"
-#include "ui/button.h"
+#include "ui/welcomebutton.h"
 #include "ui/imagebutton.h"
 
 #include "net/networkhandler.h"
@@ -13,8 +13,8 @@ LoginPage::LoginPage(QWidget *parent)
     : QWidget{parent}
 {
     setupUi();
-
-    connect(nextButton_, &Button::clicked, this, &LoginPage::onNextButtonClicked);
+    
+    connect(nextButton_, &WelcomeButton::clicked, this, &LoginPage::onNextButtonClicked);
 
     connect(backButton_, &ImageButton::clicked, this, &LoginPage::backButtonClicked);
 
@@ -59,7 +59,7 @@ void LoginPage::setupUi()
     passwordEdit_ = new FieldLineEdit{tr("Password")};
 
     //
-    nextButton_ = new Button{tr("Next")};
+    nextButton_ = new WelcomeButton{tr("Next")};
     nextButton_->setEnabled(false);
     nextButton_->setShortcut(QKeySequence{Qt::Key_Return});
 

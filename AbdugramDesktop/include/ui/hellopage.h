@@ -5,7 +5,7 @@
 
 class MainLabel;
 class SecondaryLabel;
-class Button;
+class WelcomeButton;
 
 class HelloPage : public QWidget
 {
@@ -22,7 +22,7 @@ private:
 private:
     MainLabel       *appNameLabel_ = nullptr;
     SecondaryLabel  *welcomeLabel_ = nullptr;
-    Button          *startButton_  = nullptr;
+    WelcomeButton          *startButton_  = nullptr;
 
 };
 

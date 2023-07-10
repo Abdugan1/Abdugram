@@ -2,7 +2,7 @@
 #include "ui/fieldlineedit.h"
 #include "ui/headerlabel.h"
 #include "ui/secondarylabel.h"
-#include "ui/button.h"
+#include "ui/welcomebutton.h"
 #include "ui/imagebutton.h"
 #include "ui/phonelineedit.h"
 #include "ui/passwordlineedit.h"
@@ -19,8 +19,8 @@ RegistrationPage::RegistrationPage(QWidget *parent)
     : QWidget{parent}
 {
     setupUi();
-
-    connect(nextButton_, &Button::clicked,
+    
+    connect(nextButton_, &WelcomeButton::clicked,
             this,        &RegistrationPage::sendRegisterMessage);
 
     connect(backButton_, &ImageButton::clicked,
@@ -123,7 +123,7 @@ void RegistrationPage::setupUi()
     gLayout->addWidget(confirmPasswordEdit_, 4, 1);
 
     //
-    nextButton_ = new Button{tr("Next")};
+    nextButton_ = new WelcomeButton{tr("Next")};
     nextButton_->setEnabled(false);
     nextButton_->setShortcut(QKeySequence{Qt::Key_Return});
 

@@ -21,6 +21,9 @@ public:
 
     QWidget *previousWidget();
 
+signals:
+    void slideFinished();
+
 private:
     void setupToSlideWidget();
 

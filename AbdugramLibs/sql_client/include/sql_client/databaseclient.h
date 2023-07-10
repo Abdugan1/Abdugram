@@ -30,6 +30,7 @@ public:
 
     // Users
     bool addOrUpdateUser(const User &user);
+    User getUserById(int userId);
 
     // Chats
     bool addOrUpdateChat(const Chat &chat);
