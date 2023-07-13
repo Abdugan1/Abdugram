@@ -20,13 +20,22 @@ MainPage::MainPage(QWidget *parent)
     setupUi();
     
     connect(sidePanel_, &SidePanel::selectionWasChanged, conversationSide_, &ConversationSide::setCurrentChatItem);
-    connect(sidePanel_, &SidePanel::newChatItemAdded,    conversationSide_, &ConversationSide::checkCurrentChatItem);
+    connect(sidePanel_, &SidePanel::newChatItemAdded,    conversationSide_, &ConversationSide::updateCurrentChatIfAddedChatIsEqualToAdded);
 }
 
 void MainPage::resizeEvent(QResizeEvent *event)
 {
     QWidget::resizeEvent(event);
-    sideMenu_->resize(sideMenu_->geometry().width(), this->geometry().height());
+    sideMenu_->resize(sideMenu_->width(), this->geometry().height());
+}
+
+void MainPage::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Escape) {
+        conversationSide_->unsetCurrentChatItem();
+        sidePanel_->clearChatSelection();
+    }
+    QWidget::keyPressEvent(event);
 }
 
 void MainPage::onSideMenuRequested()
@@ -54,6 +63,9 @@ void MainPage::setupUi()
     splitter_->addWidget(conversationSide_);
 
     splitter_->setHandleWidth(1);
+
+    const QList<int> sizes{width() * 1/3, width() * 2/3};
+    splitter_->setSizes(sizes);
 
     blur_ = new QGraphicsBlurEffect;
     blur_->setBlurRadius(BlurStart);

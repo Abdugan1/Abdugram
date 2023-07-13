@@ -15,8 +15,8 @@ public:
 
     void accept(MessageVisitor *visitor) const override;
 
-    User user() const;
-    void setUser(const User &newUser);
+    int userId() const;
+    void setUserId(int newUserId);
 
 protected:
     void getBodyData(DataStream *stream) override;
@@ -24,7 +24,7 @@ protected:
 
 private:
     bool success_ = false;
-    User user_;
+    int userId_ = -1;
 };
 
 #endif // LOGINREPLY_H

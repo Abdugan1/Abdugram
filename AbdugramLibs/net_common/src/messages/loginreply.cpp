@@ -24,20 +24,20 @@ void LoginReply::accept(MessageVisitor *visitor) const
 
 void LoginReply::getBodyData(DataStream *stream)
 {
-    *stream >> success_ >> user_;
+    *stream >> success_ >> userId_;
 }
 
 void LoginReply::writeBodyData(DataStream *stream) const
 {
-    *stream << success_ << user_;
+    *stream << success_ << userId_;
 }
 
-User LoginReply::user() const
+int LoginReply::userId() const
 {
-    return user_;
+    return userId_;
 }
 
-void LoginReply::setUser(const User &newUser)
+void LoginReply::setUserId(int newUserId)
 {
-    user_ = newUser;
+    userId_ = newUserId;
 }

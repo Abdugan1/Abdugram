@@ -42,7 +42,7 @@ void NetworkHandler::sendLoginReply(Session* session, bool success, const User &
 {
     AnyMessagePtr<LoginReply> loginReply{new LoginReply};
     loginReply->setSuccess(success);
-    loginReply->setUser(user);
+    loginReply->setUserId(user.id());
 
     send(session, static_cast<AbduMessagePtr>(loginReply));
 }
@@ -51,7 +51,7 @@ void NetworkHandler::sendRegisterReply(Session* session, bool success, const Use
 {
     AnyMessagePtr<RegisterReply> registerReply{new RegisterReply};
     registerReply->setSuccess(success);
-    registerReply->setUser(user);
+    registerReply->setUserId(user.id());
 
     send(session, static_cast<AbduMessagePtr>(registerReply));
 }

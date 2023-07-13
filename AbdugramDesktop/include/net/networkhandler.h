@@ -42,11 +42,7 @@ public:
 
     void sendSendMessageRequest(const Message &message);
 
-    void sendSyncUsersRequest(const QDateTime &lastUpdate);
-
-    void sendSyncChatsRequest(const QDateTime &chatsLastUpdate, const QDateTime &chatUsersLastUpdate);
-
-    void sendSyncMessagesRequest(const QDateTime &lastUpdate);
+    void startSync();
 
     void sendLogoutRequest();
 
@@ -54,6 +50,9 @@ signals:
     void connectedSucessfully();
     void connectionError();
 
+    void usersSyncFinished();
+    void chatsAndChatUsersSyncFinished();
+    void messagesSyncFinished();
     void syncFinished();
 
     void loginResult(bool success);
@@ -68,6 +67,10 @@ public slots:
 
 private slots:
     void onMessageReceived(const AbduMessagePtr &message);
+
+    void sendSyncUsersRequest();
+    void sendSyncChatsRequest();
+    void sendSyncMessagesRequest();
 
 private:
     explicit NetworkHandler(QObject *parent = nullptr);

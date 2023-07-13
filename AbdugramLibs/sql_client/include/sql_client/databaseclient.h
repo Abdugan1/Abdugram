@@ -53,6 +53,9 @@ signals:
 
 protected:
     void createTables();
+
+private:
+    explicit DatabaseClient();
 };
 
 inline DatabaseClient *database()

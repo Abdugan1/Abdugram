@@ -9,6 +9,8 @@
 
 #include <sql_client/databaseclient.h>
 
+#include <QPainter>
+
 ChatListView::ChatListView(QWidget *parent)
     : QListView{parent}
     , mainModel_{new ChatListModel{this}}
@@ -135,14 +137,18 @@ void ChatListView::selectionChanged(const QItemSelection &selected, const QItemS
 
 void ChatListView::initMainModel()
 {
+    clearSelection();
     const QList<Chat> chats = database()->getAllChats();
 
+    QVector<ChatItemPtr> chatItems;
+    chatItems.reserve(chats.size());
     for (const auto &chat : chats) {
         ChatItemPtr chatItem{new ChatItem};
-        qDebug() << chat.id() << chat.name();
         chatItem->setChatId(chat.id());
         chatItem->setChatName(chat.name());
         chatItem->setChatType(chat.type());
-        mainModel_->addChatItem(chatItem);
+        chatItems.append(chatItem);
     }
+
+    mainModel_->setChatItems(chatItems);
 }

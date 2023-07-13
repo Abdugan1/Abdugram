@@ -23,7 +23,7 @@ SideMenu::SideMenu(QWidget *parent)
     setupUi();
 
     connect(logoutButton_, &SideMenuButton::clicked, this, []() {networkHandler()->sendLogoutRequest();});
-    connect(networkHandler(), &NetworkHandler::loginResult, this, &SideMenu::onLoginResult);
+    connect(networkHandler(), &NetworkHandler::syncFinished, this, &SideMenu::onSyncFinished);
 }
 
 void SideMenu::showEvent(QShowEvent *event)
@@ -71,11 +71,9 @@ void SideMenu::closeAnimation()
     closeAnim->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
-void SideMenu::onLoginResult(bool success)
+void SideMenu::onSyncFinished()
 {
-    if (success) {
-        username_->setText(database()->getUserById(networkHandler()->userId()).username());
-    }
+    username_->setText(database()->getUserById(networkHandler()->userId()).username());
 }
 
 void SideMenu::setupUi()

@@ -27,18 +27,11 @@ void ClientMessageVisitor::visit(const LoginReply &reply)
         return;
     }
 
-    User user = reply.user();
-    user.setCreatedAt(QDateTime{});
-    user.setUpdatedAt(QDateTime{});
-    user.setDeletedAt(QDateTime{});
+    networkHandler()->userId_ = reply.userId();
 
-    networkHandler()->userId_ = user.id();
+    database()->connectToDatabase(reply.userId());
 
-    database()->connectToDatabase(user.id());
-    database()->addOrUpdateUser(user);
-
-    const auto lastUpdatedAt = database()->getLastUpdatedAt(DatabaseClient::Tables::Users);
-    networkHandler()->sendSyncUsersRequest(lastUpdatedAt);
+    networkHandler()->startSync();
 
     emit networkHandler()->loginResult(true);
 }
@@ -50,12 +43,12 @@ void ClientMessageVisitor::visit(const RegisterReply &reply)
         return;
     }
 
-    const User user = reply.user();
+    networkHandler()->userId_ = reply.userId();
 
-    networkHandler()->userId_ = user.id();
+    database()->connectToDatabase(reply.userId());
 
-    database()->connectToDatabase(user.id());
-    database()->addOrUpdateUser(user);
+
+    networkHandler()->startSync();
 
     emit networkHandler()->registerResult(true);
 }
@@ -67,9 +60,7 @@ void ClientMessageVisitor::visit(const SyncUsersReply &reply)
         database()->addOrUpdateUser(user);
     }
 
-    const auto chatsLastUpdatedAt     = database()->getLastUpdatedAt(DatabaseClient::Tables::Chats);
-    const auto chatUsersLastUpdatedAt = database()->getLastUpdatedAt(DatabaseClient::Tables::ChatUsers);
-    networkHandler()->sendSyncChatsRequest(chatsLastUpdatedAt, chatUsersLastUpdatedAt);
+    emit networkHandler()->usersSyncFinished();
 }
 
 void ClientMessageVisitor::visit(const SyncChatsReply &reply)
@@ -81,8 +72,7 @@ void ClientMessageVisitor::visit(const SyncChatsReply &reply)
         database()->addChat(chat, chatUsers, networkHandler()->userId());
     }
 
-    const auto lastUpdatedAt = database()->getLastUpdatedAt(DatabaseClient::Tables::Messages);
-    networkHandler()->sendSyncMessagesRequest(lastUpdatedAt);
+    emit networkHandler()->chatsAndChatUsersSyncFinished();
 }
 
 void ClientMessageVisitor::visit(const SyncMessagesReply &reply)

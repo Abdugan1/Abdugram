@@ -28,7 +28,7 @@ private slots:
     void startShowAnimation();
     void closeAnimation();
 
-    void onLoginResult(bool success);
+    void onSyncFinished();
 
 private:
     void setupUi();

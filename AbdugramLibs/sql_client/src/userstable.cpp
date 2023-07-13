@@ -12,8 +12,20 @@ int UsersTable::lastInsertedId_ = -1;
 
 bool UsersTable::addOrUpdateUser(const User &user)
 {
-    const QString query = "INSERT OR REPLACE INTO users(id, username, first_name, email, phone, avatar_url, is_online, last_time_online, url_to_profile, created_at, updated_at, deleted_at) "
-                          "VALUES(:id, :username, :first_name, :email, :phone, :avatar_url, :is_online, :last_time_online, :url_to_profile, :created_at, :updated_at, :deleted_at);";
+    const QString query = "INSERT INTO users(id, username, first_name, email, phone, avatar_url, is_online, last_time_online, url_to_profile, created_at, updated_at, deleted_at) "
+                          "VALUES(:id, :username, :first_name, :email, :phone, :avatar_url, :is_online, :last_time_online, :url_to_profile, :created_at, :updated_at, :deleted_at) "
+                          "ON CONFLICT(id) DO UPDATE SET "
+                          "     username = excluded.username, "
+                          "     first_name = excluded.first_name, "
+                          "     email = excluded.email, "
+                          "     phone = excluded.phone, "
+                          "     avatar_url = excluded.avatar_url, "
+                          "     is_online = excluded.is_online, "
+                          "     last_time_online = excluded.last_time_online, "
+                          "     url_to_profile = excluded.url_to_profile, "
+                          "     created_at = excluded.created_at, "
+                          "     updated_at = excluded.updated_at, "
+                          "     deleted_at = excluded.deleted_at;";
 
     QSqlQuery addUserQuery;
     addUserQuery.prepare(query);

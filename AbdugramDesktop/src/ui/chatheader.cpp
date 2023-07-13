@@ -32,7 +32,7 @@ void ChatHeader::requestLastOnlineTimeOfCurrentUser()
 
 void ChatHeader::setupUi()
 {
-    chatName_        = new MainLabel{"Nurzhan"};
+    chatName_        = new MainLabel;
     lastOnlineLabel_ = new SecondaryLabel{"last seen 3 hours ago"};
     lastOnlineLabel_->setObjectName("small-font");
 

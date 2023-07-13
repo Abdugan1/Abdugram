@@ -19,9 +19,19 @@ SidePanel::SidePanel(QWidget *parent)
     connect(searchLineEdit_, &SearchLineEdit::searchIsEmpty, chatListView_, &ChatListView::setMainModel);
 
     connect(chatListView_, &ChatListView::selectionWasChanged, this, &SidePanel::selectionWasChanged);
+    connect(chatListView_, &ChatListView::selectionWasChanged, this, [this]() {
+        chatListView_->update(chatListView_->currentIndex());
+    });
 
     //
     connect(database(), &DatabaseClient::chatAdded, this, &SidePanel::addNewChatToView);
+}
+
+void SidePanel::clearChatSelection()
+{
+    const auto prevIndex = chatListView_->currentIndex();
+    chatListView_->clearSelection();
+    chatListView_->update(prevIndex);
 }
 
 void SidePanel::addNewChatToView(const Chat &chat)

@@ -4,6 +4,39 @@
     font-size: 12pt;
 }
 
+/* Scrollbar */
+QScrollBar:vertical
+{
+    background-color: #2A2929;
+    width: 9px;
+    margin-left: 0px;
+    margin-top: 4px;
+    margin-right: 3px;
+    margin-bottom: 4px;
+    border-width: 1px;
+    border-color: transparent;
+    border-radius: 3px;
+}
+
+QScrollBar::handle:vertical {
+    border-radius: 3px;
+    background-color: #605F5F;
+}
+
+QScrollBar::add-line:vertical {
+    border: none;
+    background: none;
+    width: 0px;
+    height: 0px;
+}
+
+QScrollBar::sub-line:vertical {
+    border: none;
+    background: none;
+    width: 0px;
+    height: 0px;
+}
+
 /* ========StackedWidget======== */
 StackedWidget {
     background-color: @backgroundColor;
@@ -58,6 +91,10 @@ SideMenuButton {
 
     width: 270px;
     height: 37px;
+}
+
+SideMenuButton::hover {
+    background-color: #333333;
 }
 
 /* SearchLineEdit */

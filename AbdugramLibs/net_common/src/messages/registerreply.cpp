@@ -18,14 +18,14 @@ void RegisterReply::setSuccess(bool newSuccess)
     success_ = newSuccess;
 }
 
-User RegisterReply::user() const
+int RegisterReply::userId() const
 {
-    return user_;
+    return userId_;
 }
 
-void RegisterReply::setUser(const User &newUser)
+void RegisterReply::setUserId(int newUserId)
 {
-    user_ = newUser;
+    userId_ = newUserId;
 }
 
 void RegisterReply::accept(MessageVisitor *visitor) const
@@ -35,10 +35,10 @@ void RegisterReply::accept(MessageVisitor *visitor) const
 
 void RegisterReply::getBodyData(DataStream *stream)
 {
-    *stream >> success_ >> user_;
+    *stream >> success_ >> userId_;
 }
 
 void RegisterReply::writeBodyData(DataStream *stream) const
 {
-    *stream << success_ << user_;
+    *stream << success_ << userId_;
 }

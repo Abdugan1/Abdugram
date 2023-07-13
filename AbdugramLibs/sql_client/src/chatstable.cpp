@@ -28,8 +28,14 @@ bool ChatsTable::isChatExist(const QString &chatName)
 
 bool ChatsTable::addOrUpdateChat(const Chat &chat)
 {
-    const QString query = "INSERT OR REPLACE INTO chats(id, name, description, type, created_at, updated_at, deleted_at) "
-                          "VALUES(:id, :name, :description, :type, :created_at, :updated_at, :deleted_at);";
+    const QString query = "INSERT INTO chats(id, name, description, type, created_at, updated_at, deleted_at) "
+                          "VALUES(:id, :name, :description, :type, :created_at, :updated_at, :deleted_at) "
+                          "ON CONFLICT(id) DO UPDATE SET "
+                          "     name = excluded.name, "
+                          "     description = excluded.description, "
+                          "     created_at = excluded.created_at, "
+                          "     updated_at = excluded.updated_at, "
+                          "     deleted_at = excluded.deleted_at;";
 
     QSqlQuery addChatQuery;
     addChatQuery.prepare(query);
@@ -78,7 +84,6 @@ QList<Chat> ChatsTable::getAllChats()
         size++;
         chats.append(Chat::fromSqlRecord(getAllChatsQuery.record()));
     }
-    qDebug() << "size:" << size;
 
     return chats;
 }

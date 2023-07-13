@@ -28,6 +28,7 @@ MessageListView::MessageListView(QWidget *parent)
     setItemDelegate(delegate_);
 
     setVerticalScrollMode(QListView::ScrollPerPixel);
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     setContentsMargins(0, 0, 0, 0);
 }
@@ -74,4 +75,5 @@ void MessageListView::setTimeColor(const QColor &newTimeColor)
 void MessageListView::setChatId(int chatId)
 {
     model_->setChatId(chatId);
+    scrollToBottom();
 }

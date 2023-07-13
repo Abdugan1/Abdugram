@@ -3,6 +3,7 @@
 #include "ui/mv/messagelistview.h"
 #include "ui/mv/founduserchatitem.h"
 #include "ui/messagetextedit.h"
+#include "ui/colorrepository.h"
 
 #include "net/networkhandler.h"
 
@@ -15,6 +16,7 @@
 #include <sql_client/chatstable.h>
 
 #include <QVBoxLayout>
+#include <QPainter>
 #include <QDebug>
 
 ConversationSide::ConversationSide(QWidget *parent)
@@ -22,7 +24,10 @@ ConversationSide::ConversationSide(QWidget *parent)
 {
     setupUi();
 
-    connect(messageEdit_, &MessageTextEdit::sendMessageRequest, this, &ConversationSide::onSendMessageRequested);
+    connect(messageEdit_, &MessageTextEdit::sendMessageRequest,
+            this,         &ConversationSide::onSendMessageRequested);
+
+    connect(networkHandler(), &NetworkHandler::loggedOut, this, &ConversationSide::unsetCurrentChatItem);
 }
 
 ChatItem ConversationSide::currentChat() const
@@ -30,14 +35,38 @@ ChatItem ConversationSide::currentChat() const
     return *currentChatItem_;
 }
 
+void ConversationSide::paintEvent(QPaintEvent *event)
+{
+    if (!currentChatItem_) {
+        drawOnNoChatSelected();
+    } else {
+        QWidget::paintEvent(event);
+    }
+}
+
 void ConversationSide::setCurrentChatItem(const ChatItemPtr &chat)
 {
     currentChatItem_ = chat;
+
+    if (!currentChatItem_) {
+        hideAll();
+        return;
+    } else if (!messageView_->isVisible()) {
+        showAll();
+    }
+
     chatHeader_->setChatName(chat->chatName());
     messageView_->setChatId(chat->chatId());
+
+    update();
 }
 
-void ConversationSide::checkCurrentChatItem(const ChatItemPtr &chat)
+void ConversationSide::unsetCurrentChatItem()
+{
+    setCurrentChatItem(nullptr);
+}
+
+void ConversationSide::updateCurrentChatIfAddedChatIsEqualToAdded(const ChatItemPtr &chat)
 {
     if (currentChatItem_ && currentChatItem_->chatName() == chat->chatName()) {
         setCurrentChatItem(chat);
@@ -87,6 +116,8 @@ void ConversationSide::setupUi()
     messageView_ = new MessageListView;
     messageEdit_ = new MessageTextEdit;
 
+    hideAll();
+
     QVBoxLayout *vLayout = new QVBoxLayout;
     vLayout->setContentsMargins(0, 0, 0, 0);
     vLayout->setSpacing(0);
@@ -95,4 +126,51 @@ void ConversationSide::setupUi()
     vLayout->addWidget(messageEdit_);
 
     setLayout(vLayout);
+    setFocusPolicy(Qt::ClickFocus);
+}
+
+void ConversationSide::showAll()
+{
+    chatHeader_->show();
+    messageView_->show();
+    messageEdit_->show();
+}
+
+void ConversationSide::hideAll()
+{
+    chatHeader_->hide();
+    messageView_->hide();
+    messageEdit_->hide();
+}
+
+void ConversationSide::drawOnNoChatSelected()
+{
+    QPainter painter{this};
+    painter.setRenderHint(QPainter::Antialiasing);
+
+    QFont f = painter.font();
+    f.setPointSize(11);
+    painter.setFont(f);
+
+    const QFontMetrics fm = painter.fontMetrics();
+    const QString text    = tr("Select a chat to start messaging");
+    const QRect textBRect = fm.boundingRect(text);
+    const QPoint center = rect().center();
+
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(QColor{Colors.value("decorationColor")});
+    const int hMargin = 15;
+    const int vMargin = 3;
+    QRect background = QRect{center.x() - textBRect.width() / 2 - hMargin,
+                             center.y() - fm.ascent() / 2 - vMargin,
+                             textBRect.width() + 2 * hMargin,
+                             textBRect.height() + 2 * vMargin};
+    painter.drawRoundedRect(background, background.height() / 2, background.height() / 2);
+
+    painter.setPen(QColor{Colors.value("mainLabelColor")});
+
+    const QPoint textDrawPoint{center.x() - fm.horizontalAdvance(text) / 2,
+                               center.y() + fm.ascent() / 2};
+
+    painter.drawText(textDrawPoint, text);
 }

@@ -26,7 +26,11 @@ DatabaseClient *DatabaseClient::instance()
 
 void DatabaseClient::connectToDatabase(int ownId)
 {
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+    if (QSqlDatabase::database().isOpen()) {
+        QSqlDatabase::database().close();
+
+    }
+    QSqlDatabase db = QSqlDatabase::database();
     db.setDatabaseName(".sql/" + DbName + "_" + QString::number(ownId));
 
     if (!db.open()) {
@@ -157,4 +161,9 @@ void DatabaseClient::createTables()
             qFatal(qPrintable("Couldn't execute query!" + createQuery.lastError().text()));
         }
     }
+}
+
+DatabaseClient::DatabaseClient()
+{
+    QSqlDatabase::addDatabase("QSQLITE");
 }

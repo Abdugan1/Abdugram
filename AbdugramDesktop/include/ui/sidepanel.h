@@ -19,6 +19,8 @@ class SidePanel : public QFrame
 public:
     explicit SidePanel(QWidget *parent = nullptr);
 
+    void clearChatSelection();
+
 signals:
     void sideMenuRequested();
 

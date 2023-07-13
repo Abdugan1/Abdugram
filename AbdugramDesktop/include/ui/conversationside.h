@@ -17,10 +17,14 @@ public:
 
     ChatItem currentChat() const;
 
+protected:
+    void paintEvent(QPaintEvent *event) override;
+
 public slots:
     void setCurrentChatItem(const ChatItemPtr &chat);
+    void unsetCurrentChatItem();
 
-    void checkCurrentChatItem(const ChatItemPtr &chat);
+    void updateCurrentChatIfAddedChatIsEqualToAdded(const ChatItemPtr &chat);
 
 private slots:
     void requestCreatePrivateChat();
@@ -29,6 +33,11 @@ private slots:
 
 private:
     void setupUi();
+
+    void showAll();
+    void hideAll();
+
+    void drawOnNoChatSelected();
 
 private:
     ChatHeader      *chatHeader_  = nullptr;

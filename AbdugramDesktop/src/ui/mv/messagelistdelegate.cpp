@@ -14,7 +14,7 @@
 const int MaxWidth_ = 400;
 const int Radius_   = 20;
 
-const int HSpacing_ = 15;
+const int HSpacing_ = 10;
 const int VSpacing_ = 7;
 
 const int TimeSpacing = 10;

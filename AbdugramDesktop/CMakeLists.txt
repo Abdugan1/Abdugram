@@ -59,6 +59,7 @@ set(HEADERS
     ${HEADERS_DIR}/ui/textedit.h
     ${HEADERS_DIR}/ui/sidemenu.h
     ${HEADERS_DIR}/ui/sidemenubutton.h
+    ${HEADERS_DIR}/ui/colorrepository.h
 )
 
 set(SOURCES
@@ -103,6 +104,7 @@ set(SOURCES
     ${SOURCES_DIR}/ui/textedit.cpp
     ${SOURCES_DIR}/ui/sidemenu.cpp
     ${SOURCES_DIR}/ui/sidemenubutton.cpp
+    ${SOURCES_DIR}/ui/colorrepository.cpp
 )
 
 set(RESOURCES

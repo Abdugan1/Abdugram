@@ -14,6 +14,7 @@
 
 #include <net_common/consts.h>
 
+#include <sql_client/databaseclient.h>
 #include <sql_common/data_structures/chatuser.h>
 
 NetworkHandler::NetworkHandler(QObject *parent)
@@ -25,6 +26,14 @@ NetworkHandler::NetworkHandler(QObject *parent)
     connect(tcpSession_, &TcpSession::errorOccurred, this, &NetworkHandler::connectionError);
 
     connect(tcpSession_, &TcpSession::received, this, &NetworkHandler::onMessageReceived);
+
+
+    // sync connections
+    connect(this, &NetworkHandler::usersSyncFinished,
+            this, &NetworkHandler::sendSyncChatsRequest);
+
+    connect(this, &NetworkHandler::chatsAndChatUsersSyncFinished,
+            this, &NetworkHandler::sendSyncMessagesRequest);
 }
 
 QAbstractSocket::SocketState NetworkHandler::tcpState() const
@@ -119,37 +128,52 @@ void NetworkHandler::sendSendMessageRequest(const Message &message)
     sendToServer(static_cast<AbduMessagePtr>(sendMessage));
 }
 
-void NetworkHandler::sendSyncUsersRequest(const QDateTime &chatsLastUpdatedAt)
+void NetworkHandler::startSync()
+{
+    networkHandler()->sendSyncUsersRequest();
+}
+
+void NetworkHandler::sendSyncUsersRequest()
 {
     AnyMessagePtr<SyncUsersRequest> syncUsers{new SyncUsersRequest};
     syncUsers->setUserId(userId());
-    syncUsers->setLastUpdatedAt(chatsLastUpdatedAt.isValid() ? chatsLastUpdatedAt : QDateTime{QDate{0, 0, 0}, QTime{0, 0}});
+
+    const auto lastUpdatedAt = database()->getLastUpdatedAt(DatabaseClient::Tables::Users);
+    syncUsers->setLastUpdatedAt(lastUpdatedAt.isValid() ? lastUpdatedAt
+                                                        : QDateTime{QDate{0, 0, 0}, QTime{0, 0}});
 
     sendToServer(static_cast<AbduMessagePtr>(syncUsers));
 }
 
-void NetworkHandler::sendSyncChatsRequest(const QDateTime &chatsLastUpdate, const QDateTime &chatUsersLastUpdate)
+void NetworkHandler::sendSyncChatsRequest()
 {
     AnyMessagePtr<SyncChatsRequest> syncChats{new SyncChatsRequest};
     syncChats->setUserId(userId());
-    syncChats->setChatsLastUpdatedAt(chatsLastUpdate.isValid() ? chatsLastUpdate : QDateTime{QDate{0, 0, 0}, QTime{0, 0}});
-    syncChats->setChatUsersLastUpdatedAt(chatUsersLastUpdate.isValid() ? chatsLastUpdate : QDateTime{QDate{0, 0, 0}, QTime{0, 0}});
+
+    const auto chatsLastUpdate     = database()->getLastUpdatedAt(DatabaseClient::Tables::Chats);
+    const auto chatUsersLastUpdate = database()->getLastUpdatedAt(DatabaseClient::Tables::ChatUsers);
+    syncChats->setChatsLastUpdatedAt(chatsLastUpdate.isValid() ? chatsLastUpdate
+                                                               : QDateTime{QDate{0, 0, 0}, QTime{0, 0}});
+    syncChats->setChatUsersLastUpdatedAt(chatUsersLastUpdate.isValid() ? chatsLastUpdate
+                                                                       : QDateTime{QDate{0, 0, 0}, QTime{0, 0}});
 
     sendToServer(static_cast<AbduMessagePtr>(syncChats));
 }
 
-void NetworkHandler::sendSyncMessagesRequest(const QDateTime &lastUpdate)
+void NetworkHandler::sendSyncMessagesRequest()
 {
     AnyMessagePtr<SyncMessagesRequest> syncMessages{new SyncMessagesRequest};
     syncMessages->setUserId(userId());
-    syncMessages->setLastUpdatedAt(lastUpdate.isValid() ? lastUpdate : QDateTime{QDate{0, 0, 0}, QTime{0, 0}});
+
+    const auto lastUpdate = database()->getLastUpdatedAt(DatabaseClient::Tables::Messages);
+    syncMessages->setLastUpdatedAt(lastUpdate.isValid() ? lastUpdate
+                                                        : QDateTime{QDate{0, 0, 0}, QTime{0, 0}});
 
     sendToServer(static_cast<AbduMessagePtr>(syncMessages));
 }
 
 void NetworkHandler::sendLogoutRequest()
 {
-    qDebug() << "sending logout";
     AnyMessagePtr<LogoutRequest> logoutRequest{new LogoutRequest};
 
     sendToServer(static_cast<AbduMessagePtr>(logoutRequest));
