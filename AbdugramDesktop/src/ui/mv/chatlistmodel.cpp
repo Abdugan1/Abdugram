@@ -28,7 +28,8 @@ QVariant ChatListModel::data(const QModelIndex &index, int role) const
         return QVariant{};
     const ChatItemPtr &chatItem = chatItems_.at(index.row());
     switch (role) {
-    case Roles::Avatar:      return chatItem->avatar();      break;
+    case Roles::Id:          return chatItem->chatId();      break;
+    case Roles::Avatar:      return chatItem->pictureUrl();  break;
     case Roles::ChatName:    return chatItem->chatName();    break;
     case Roles::LastMessage: return chatItem->lastMessage(); break;
     case Roles::MessageDate: return chatItem->messageDate(); break;

@@ -17,9 +17,9 @@ SidePanel::SidePanel(QWidget *parent)
     setupUi();
 
     connect(searchLineEdit_, &SearchLineEdit::searchIsEmpty, chatListView_, &ChatListView::setMainModel);
-
-    connect(chatListView_, &ChatListView::selectionWasChanged, this, &SidePanel::selectionWasChanged);
-    connect(chatListView_, &ChatListView::selectionWasChanged, this, [this]() {
+    
+    connect(chatListView_, &ChatListView::selectionWasChangedByUser, this, &SidePanel::selectionWasChanged);
+    connect(chatListView_, &ChatListView::selectionWasChangedByUser, this, [this]() {
         chatListView_->update(chatListView_->currentIndex());
     });
 

@@ -5,14 +5,14 @@ ChatItem::ChatItem()
 
 }
 
-QUrl ChatItem::avatar() const
+QUrl ChatItem::pictureUrl() const
 {
-    return avatar_;
+    return pictureUrl_;
 }
 
-void ChatItem::setAvatar(const QUrl &newAvatar)
+void ChatItem::setPictureUrl(const QUrl &newPictureUrl)
 {
-    avatar_ = newAvatar;
+    pictureUrl_ = newPictureUrl;
 }
 
 QString ChatItem::chatName() const

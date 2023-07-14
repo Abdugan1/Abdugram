@@ -19,8 +19,8 @@ public:
     explicit ChatItem();
     virtual ~ChatItem() = default;
 
-    QUrl avatar() const;
-    void setAvatar(const QUrl &newAvatar);
+    QUrl pictureUrl() const;
+    void setPictureUrl(const QUrl &newPictureUrl);
 
     QString chatName() const;
     void setChatName(const QString &newChatName);
@@ -38,7 +38,7 @@ public:
     void setChatId(int newId);
 
 private:
-    QUrl avatar_;
+    QUrl pictureUrl_;
     QString chatName_;
     QString lastMessage_;
     QDateTime messageDate_;

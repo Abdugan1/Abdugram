@@ -2,6 +2,7 @@
 #include "settings.h"
 
 #include "ui/mainwindow.h"
+#include "ui/colorrepository.h"
 
 #include "net/networkhandler.h"
 
@@ -19,8 +20,6 @@ Application::Application(int &argc, char **argv)
     setOrganizationName("Abdu Softwares");
     setOrganizationDomain("abdu.kz");
     setApplicationName("Abdugram");
-
-    applicationVersion();
 
     // Setup logger
     Logger::init();
@@ -65,27 +64,8 @@ void Application::setupStyleSheet(const QString &qssFileName)
     }
     QString rawStyleSheet = qssFile.readAll();
 
-    QFile styleVarsFile(":/qss/style_vars.txt");
-    if (!styleVarsFile.open(QFile::ReadOnly)) {
-        qDebug() << "Could not open" << styleVarsFile.fileName();
-        QMetaObject::invokeMethod(qApp, "quit", Qt::QueuedConnection);
-    }
-
-    using Regex      = QRegularExpression;
-    using RegexMatch = QRegularExpressionMatch;
-    Regex      varRegex{"(\\@[a-z\\dA-Z]+)\\s*\\=\\s*(.*)\\;"};
-    RegexMatch match;
-
-    while (!styleVarsFile.atEnd()) {
-        QString var = styleVarsFile.readLine();
-        match = varRegex.match(var);
-        if (!match.hasMatch())
-            continue;
-
-        QString varName = match.captured(1);
-        QString varVal  = match.captured(2);
-
-        rawStyleSheet.replace(varName, varVal);
+    for (auto it = Colors.begin(); it != Colors.end(); ++it) {
+        rawStyleSheet.replace('@' + it.key(), it.value().name());
     }
 
     setStyleSheet(rawStyleSheet);

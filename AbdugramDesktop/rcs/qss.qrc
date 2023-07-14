@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
         <file>qss/style.qss</file>
-        <file>qss/style_vars.txt</file>
     </qresource>
 </RCC>

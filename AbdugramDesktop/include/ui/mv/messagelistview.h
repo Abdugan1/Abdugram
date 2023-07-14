@@ -8,6 +8,8 @@ class MessageListDelegate;
 
 class ChatItem;
 
+class Message;
+
 class MessageListView : public QListView
 {
     Q_OBJECT
@@ -32,6 +34,9 @@ signals:
     void backgroundColorChanged();
     void textColorChanged();
     void timeColorChanged();
+
+private slots:
+    void scrollToBottomIfSenderIsMe(const Message &message);
 
 private:
     MessageListModel    *model_     = nullptr;

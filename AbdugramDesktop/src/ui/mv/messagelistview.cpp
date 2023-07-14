@@ -2,6 +2,10 @@
 #include "ui/mv/messagelistmodel.h"
 #include "ui/mv/messagelistdelegate.h"
 
+#include "net/networkhandler.h"
+
+#include <sql_common/data_structures/message.h>
+
 #include <sql_client/databaseclient.h>
 
 #include <QPainter>
@@ -22,7 +26,7 @@ MessageListView::MessageListView(QWidget *parent)
         delegate_->setTimeColor(timeColor_);
     });
 
-    connect(database(), &DatabaseClient::messageAdded, this, &MessageListView::scrollToBottom);
+    connect(database(), &DatabaseClient::messageAdded, this, &MessageListView::scrollToBottomIfSenderIsMe);
 
     setModel(model_);
     setItemDelegate(delegate_);
@@ -76,4 +80,11 @@ void MessageListView::setChatId(int chatId)
 {
     model_->setChatId(chatId);
     scrollToBottom();
+}
+
+void MessageListView::scrollToBottomIfSenderIsMe(const Message &message)
+{
+    if (message.senderId() == networkHandler()->userId()) {
+        scrollToBottom();
+    }
 }

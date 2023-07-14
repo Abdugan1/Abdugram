@@ -1,6 +1,8 @@
 #include "ui/mv/chatlistdelegate.h"
 #include "ui/mv/chatlistmodel.h"
 
+#include "ui/colorrepository.h"
+
 #include <QPainter>
 #include <QDebug>
 
@@ -12,6 +14,26 @@ const QMargins ChatListDelegate::ChatNameMargins_    = QMargins{10, 8, -1, -1};
 const QMargins ChatListDelegate::MessageDateMargins_ = QMargins{-1, 8, 5, -1};
 
 const int ChatListDelegate::SeparatorThin_ = 1;
+
+inline QColor chatNameColor()
+{
+    return Colors.value(colornames::mainLabelColor);
+}
+
+inline QColor lastMessageColor()
+{
+    return Colors.value(colornames::secondaryLabelColor);
+}
+
+inline QColor messageDateColor()
+{
+    return Colors.value(colornames::secondaryLabelColor);
+}
+
+inline QColor highlightColor()
+{
+    return Colors.value(colornames::decorationColor);
+}
 
 ChatListDelegate::ChatListDelegate(QObject *parent)
     : QStyledItemDelegate{parent}
@@ -47,42 +69,6 @@ QSize ChatListDelegate::sizeHint(const QStyleOptionViewItem &option,
     return QSize{option.rect.width(), 65 + SeparatorThin_};
 }
 
-QColor ChatListDelegate::chatNameColor() const
-{
-    return chatNameColor_;
-}
-
-void ChatListDelegate::setChatNameColor(const QColor &newChatNameColor)
-{
-    if (chatNameColor_ == newChatNameColor)
-        return;
-    chatNameColor_ = newChatNameColor;
-}
-
-QColor ChatListDelegate::lastMessageColor() const
-{
-    return lastMessageColor_;
-}
-
-void ChatListDelegate::setLastMessageColor(const QColor &newLastMessageColor)
-{
-    if (lastMessageColor_ == newLastMessageColor)
-        return;
-    lastMessageColor_ = newLastMessageColor;
-}
-
-QColor ChatListDelegate::messageDateColor() const
-{
-    return messageDateColor_;
-}
-
-void ChatListDelegate::setMessageDateColor(const QColor &newMessageDateColor)
-{
-    if (messageDateColor_ == newMessageDateColor)
-        return;
-    messageDateColor_ = newMessageDateColor;
-}
-
 void ChatListDelegate::drawHighlight(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     Q_UNUSED(option);
@@ -90,7 +76,7 @@ void ChatListDelegate::drawHighlight(QPainter *painter, const QStyleOptionViewIt
     painter->save();
 
     painter->setPen(Qt::NoPen);
-    painter->setBrush(highlightColor_);
+    painter->setBrush(highlightColor());
     painter->drawRect(contentRect_);
 
     painter->restore();
@@ -115,13 +101,15 @@ void ChatListDelegate::drawChatName(QPainter *painter,
 {
     painter->save();
 
-    painter->setPen(QPen{chatNameColor_});
+    painter->setPen(QPen{chatNameColor()});
 
     const int x = contentRect_.x() + AvatarMargins_.left() + AvatarSize_.width() + ChatNameMargins_.left();
     const int y = contentRect_.y() + ChatNameMargins_.top() + option.fontMetrics.height();
 
     const QString chatName = index.data(Roles::ChatName).toString();
-    painter->drawText(x, y, chatName);
+    const int width = contentRect_.width() - x - MessageDateMargins_.right();
+    const QString elidedName = option.fontMetrics.elidedText(chatName, Qt::ElideRight, width);
+    painter->drawText(x, y, elidedName);
 
     painter->restore();
 }
@@ -131,15 +119,17 @@ void ChatListDelegate::drawLastMessage(QPainter *painter, const QStyleOptionView
     painter->save();
 
     if (option.state & QStyle::State_Selected)
-        painter->setPen(QPen{chatNameColor_});
+        painter->setPen(QPen{chatNameColor()});
     else
-        painter->setPen(QPen{lastMessageColor_});
+        painter->setPen(QPen{lastMessageColor()});
 
     const int x = contentRect_.x() + AvatarMargins_.left() + AvatarSize_.width() + ChatNameMargins_.left();
     const int y = contentRect_.y() + ChatNameMargins_.top() + option.fontMetrics.height() * 2;
 
     const QString lastMessage = index.data(Roles::LastMessage).toString();
-    painter->drawText(x, y, lastMessage);
+    const int width = contentRect_.width() - x - MessageDateMargins_.right();
+    const QString elidedMessage = option.fontMetrics.elidedText(lastMessage, Qt::ElideRight, width);
+    painter->drawText(x, y, elidedMessage);
 
     painter->restore();
 }
@@ -149,9 +139,9 @@ void ChatListDelegate::drawMessageDate(QPainter *painter, const QStyleOptionView
     painter->save();
 
     if (option.state & QStyle::State_Selected)
-        painter->setPen(QPen{chatNameColor_});
+        painter->setPen(QPen{chatNameColor()});
     else
-        painter->setPen(QPen{messageDateColor_});
+        painter->setPen(QPen{messageDateColor()});
 
     int       x = contentRect_.right() - MessageDateMargins_.right();
     const int y = contentRect_.top() + MessageDateMargins_.top() + option.fontMetrics.height();
@@ -190,14 +180,4 @@ void ChatListDelegate::updateContentRect(const QStyleOptionViewItem &option) con
 {
     const auto &r = option.rect;
     contentRect_ = QRect{r.x(), r.y(), r.width(), r.height() - SeparatorThin_};
-}
-
-QColor ChatListDelegate::highlightColor() const
-{
-    return highlightColor_;
-}
-
-void ChatListDelegate::setHighlightColor(const QColor &newHighlightColor)
-{
-    highlightColor_ = newHighlightColor;
 }

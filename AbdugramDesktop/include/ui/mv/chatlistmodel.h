@@ -18,7 +18,8 @@ public:
     using ChatItems   = QVector<ChatItemPtr>;
 
     enum Roles {
-        Avatar = Qt::UserRole + 1,
+        Id = Qt::UserRole + 1,
+        Avatar,
         ChatName,
         LastMessage,
         MessageDate

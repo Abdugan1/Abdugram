@@ -120,6 +120,13 @@ QList<Chat> DatabaseClient::getAllChats()
     return ChatsTable::getAllChats();
 }
 
+QSqlQuery DatabaseClient::getChatsView()
+{
+    QSqlQuery query{"SELECT * FROM chats_view;"};
+    query.exec();
+    return query;
+}
+
 bool DatabaseClient::addOrUpdateMessage(const Message &message)
 {
     bool success = MessagesTable::addOrUpdateMessage(message);

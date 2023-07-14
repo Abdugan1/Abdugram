@@ -6,6 +6,8 @@
 #include <QObject>
 #include <QList>
 
+class QSqlQuery;
+
 class User;
 class Chat;
 class ChatUser;
@@ -36,6 +38,9 @@ public:
     bool addOrUpdateChat(const Chat &chat);
     bool addChat(Chat chat, const QList<ChatUser> &chatUsers, int ownUserId);
     QList<Chat> getAllChats();
+
+    // ChatsView
+    QSqlQuery getChatsView();
 
     // Messages
     bool addOrUpdateMessage(const Message &message);

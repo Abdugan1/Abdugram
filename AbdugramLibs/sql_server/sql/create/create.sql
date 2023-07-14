@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS chats (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(40),
     description VARCHAR(255),
+    picture_url TEXT,
     type ENUM('private', 'group', 'channel'),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

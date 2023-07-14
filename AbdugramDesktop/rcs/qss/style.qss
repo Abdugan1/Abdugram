@@ -44,19 +44,13 @@ StackedWidget {
 
 /* SidePanel */
 SidePanel {
-    background-color: @backgroundLighter3Color;
+    background-color: @backgroundLighterHelper1;
 }
 
 /* ChatListView */
 ChatListView {
-    background-color: @backgroundLighter3Color;
+    background-color: @backgroundLighterHelper1;
     border: none;
-
-    /* For ChatListModel */
-    qproperty-chatNameColor: @mainLabelColor;
-    qproperty-lastMessageColor: @secondaryLabelColor;
-    qproperty-messageDateColor: @secondaryLabelColor;
-    qproperty-highlightColor: @decorationColor;
 }
 
 /* MessageListView */
@@ -78,12 +72,12 @@ MainPage::handle {
 
 /* SideMenu */
 SideMenu {
-    background-color: @backgroundLighter5Color;
+    background-color: @backgroundLighterHelper2;
 }
 
 /* SideMenuButton */
 SideMenuButton {
-    background-color: @backgroundLighter5Color;
+    background-color: @backgroundLighterHelper2;
     color: @mainLabelColor;
     font-size: 11pt;
     font-weight: bold;
@@ -94,7 +88,7 @@ SideMenuButton {
 }
 
 SideMenuButton::hover {
-    background-color: #333333;
+    background-color: @backgroundLighterHelper3;
 }
 
 /* SearchLineEdit */
