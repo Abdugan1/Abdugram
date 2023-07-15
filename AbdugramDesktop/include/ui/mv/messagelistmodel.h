@@ -2,8 +2,11 @@
 #define MESSAGELISTMODEL_H
 
 #include <QAbstractListModel>
+#include <QDate>
 
-#include "messageitem.h"
+#include <memory>
+
+class MessageModelItem;
 
 class Message;
 
@@ -11,10 +14,8 @@ class MessageListModel : public QAbstractListModel
 {
     Q_OBJECT
 public:
-    enum Roles {
-        Text = Qt::UserRole + 1,
-        DateTime,
-        SenderId,
+    enum class Roles {
+        Type = Qt::UserRole + 1,
     };
 
     explicit MessageListModel(QObject *parent = nullptr);
@@ -31,10 +32,16 @@ private slots:
     void onMessageAdded(const Message &message);
 
 private:
-    using MessageItems = QVector<MessageItem>;
-    MessageItems messageItems_;
+    void addMessage(const Message &message);
+
+private:
+    using MessageModelItemPtr = std::shared_ptr<MessageModelItem>;
+    using MessageModelItems = QVector<MessageModelItemPtr>;
+    MessageModelItems messageModelItems_;
 
     int chatId_ = -1;
+
+    QDate lastDate_;
 };
 
 #endif // MESSAGELISTMODEL_H

@@ -12,29 +12,27 @@ public:
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
     QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
-    QColor backgroundColor() const;
-    void setBackgroundColor(const QColor &newBackgroundColor);
-
-    QColor textColor() const;
-    void setTextColor(const QColor &newTextColor);
-
-    QColor timeColor() const;
-    void setTimeColor(const QColor &newTimeColor);
-
 private:
-    void setPainterOrigin(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-
-    void drawBackground(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    void setPainterOriginOnMessage(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    void drawMessageItem(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    void drawMessageBackground(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     void drawMessageText(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-    void drawTime(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    void drawMessageTime(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
-    static QRect getBackgroundRect(const QStyleOptionViewItem &option, const QModelIndex &index);
-    static QRect getTextRect(const QString &text, const QStyleOptionViewItem &option);
+    void setPainterOriginOnDateSeparator(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    void drawDateSeparatorItem(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    void drawDateSeparatorBackground(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    void drawDateSeparatorDate(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
-private:
-    QColor backgroundColor_ = Qt::black;
-    QColor textColor_       = Qt::black;
-    QColor timeColor_       = Qt::black;
+    QSize messageSizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    QSize dateSeparatorSizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+
+    QRect getMessageBackgroundRect(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    QRect getDateSeparatorBackgroundRect(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+
+    QRect getTextRect(const QString &text, const QFont &font) const;
+
+    QString dateToString(const QModelIndex &index) const;
 };
 
 #endif // MESSAGELISTDELEGATE_H

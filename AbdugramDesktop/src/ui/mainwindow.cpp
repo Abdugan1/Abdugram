@@ -27,8 +27,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     connectUiLogic();
     connectTcpLogic();
-
-    connectToServer();
 }
 
 void MainWindow::resizeEvent(QResizeEvent *event)

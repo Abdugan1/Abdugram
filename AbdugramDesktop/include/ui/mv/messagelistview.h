@@ -13,20 +13,8 @@ class Message;
 class MessageListView : public QListView
 {
     Q_OBJECT
-    Q_PROPERTY(QColor backgroundColor READ backgroundColor WRITE setBackgroundColor NOTIFY backgroundColorChanged)
-    Q_PROPERTY(QColor textColor READ textColor WRITE setTextColor NOTIFY textColorChanged)
-    Q_PROPERTY(QColor timeColor READ timeColor WRITE setTimeColor NOTIFY timeColorChanged)
 public:
     explicit MessageListView(QWidget *parent = nullptr);
-
-    QColor backgroundColor() const;
-    void setBackgroundColor(const QColor &newBackgroundColor);
-
-    QColor textColor() const;
-    void setTextColor(const QColor &newTextColor);
-
-    QColor timeColor() const;
-    void setTimeColor(const QColor &newTimeColor);
 
     void setChatId(int chatId);
 

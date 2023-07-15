@@ -17,26 +17,16 @@
 Application::Application(int &argc, char **argv)
     : QApplication{argc, argv}
 {
-    setOrganizationName("Abdu Softwares");
-    setOrganizationDomain("abdu.kz");
-    setApplicationName("Abdugram");
-
-    // Setup logger
     Logger::init();
     Logger::setEchoMode(true);
 
-    // Setting qss
+    setupFont();
     setupStyleSheet(":/qss/style.qss");
+    setupSettings();
 
-    // Setting fonts
-    QFontDatabase::addApplicationFont(":/fonts/Montserrat-Regular.ttf");
-    QFontDatabase db;
-    setFont(QFont{"Montserrat", 12, QFont::Medium});
+    mainWindow_ = std::unique_ptr<MainWindow>(new MainWindow);
 
-    mainWindow_ = new MainWindow;
-
-    connect(networkHandler(), &NetworkHandler::loginResult, this, &Application::saveLoginDataOnSuccess);
-    connect(networkHandler(), &NetworkHandler::loggedOut,   this, &Application::removeLoginData);
+    networkHandler()->connectToServer();
 }
 
 void Application::saveLoginDataOnSuccess(bool success)
@@ -69,4 +59,22 @@ void Application::setupStyleSheet(const QString &qssFileName)
     }
 
     setStyleSheet(rawStyleSheet);
+}
+
+void Application::setupFont()
+{
+    QFontDatabase::addApplicationFont(":/fonts/Montserrat-Regular.ttf");
+    QFontDatabase db;
+    setFont(QFont{"Montserrat", 12, QFont::Medium});
+}
+
+void Application::setupSettings()
+{
+    setOrganizationName("Abdu Softwares");
+    setOrganizationDomain("abdu.kz");
+    setApplicationName("Abdugram");
+
+    connect(networkHandler(), &NetworkHandler::loginResult, this, &Application::saveLoginDataOnSuccess);
+    connect(networkHandler(), &NetworkHandler::loggedOut,   this, &Application::removeLoginData);
+
 }

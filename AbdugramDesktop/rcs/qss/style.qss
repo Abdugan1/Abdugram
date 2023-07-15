@@ -58,11 +58,6 @@ MessageListView {
     background-color: @backgroundColor;
     font-size: 11pt;
     border: none;
-
-    /* For MessageListDelegate */
-    qproperty-backgroundColor: @decorationColor;
-    qproperty-textColor: @mainLabelColor;
-    qproperty-timeColor: @mainLabelColor;
 }
 
 /* MainPage */

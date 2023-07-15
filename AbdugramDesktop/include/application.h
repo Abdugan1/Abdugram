@@ -2,9 +2,9 @@
 #define APPLICATION_H
 
 #include <QApplication>
-#include <QPointer>
+#include <memory>
 
-class MainWindow;
+#include "ui/mainwindow.h"
 
 class Application : public QApplication
 {
@@ -18,9 +18,11 @@ private slots:
 
 private:
     void setupStyleSheet(const QString &qssFileName);
+    void setupFont();
+    void setupSettings();
 
 private:
-    QPointer<MainWindow> mainWindow_ = nullptr;
+    std::unique_ptr<MainWindow> mainWindow_;
 };
 
 #endif // APPLICATION_H

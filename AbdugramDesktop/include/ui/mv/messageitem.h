@@ -1,14 +1,27 @@
 #ifndef MESSAGEITEM_H
 #define MESSAGEITEM_H
 
+#include "messagemodelitem.h"
+
 #include <QString>
 #include <QDateTime>
 
+#include <memory>
+
+class MessageItem;
 class Message;
 
-class MessageItem
+using MessageItemPtr = std::shared_ptr<MessageItem>;
+
+class MessageItem : public MessageModelItem
 {
 public:
+    enum Roles {
+        SenderId = static_cast<int>(MessageModelItem::Roles::UserRole) + 1,
+        Text,
+        DateTime
+    };
+
     explicit MessageItem();
 
     int senderId() const;
@@ -20,7 +33,10 @@ public:
     QDateTime dateTime() const;
     void setDateTime(const QDateTime &newDateTime);
 
-    static MessageItem fromMessage(const Message &message);
+    static MessageItemPtr fromMessage(const Message &message);
+
+protected:
+    QVariant dataImp(int role) const override;
 
 private:
     int senderId_ = -1;

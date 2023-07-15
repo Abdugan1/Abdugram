@@ -1,5 +1,6 @@
 #include "ui/mv/messagelistmodel.h"
 #include "ui/mv/messageitem.h"
+#include "ui/mv/dateseparatoritem.h"
 
 #include <sql_client/databaseclient.h>
 
@@ -15,7 +16,7 @@ MessageListModel::MessageListModel(QObject *parent)
 
 int MessageListModel::rowCount(const QModelIndex &) const
 {
-    return messageItems_.count();
+    return messageModelItems_.count();
 }
 
 QVariant MessageListModel::data(const QModelIndex &index, int role) const
@@ -23,19 +24,12 @@ QVariant MessageListModel::data(const QModelIndex &index, int role) const
     if (!index.isValid())
         return QVariant{};
 
-    const auto &messageItem = messageItems_.at(index.row());
-    switch (role) {
-    case Text:     return messageItem.text();     break;
-    case DateTime: return messageItem.dateTime(); break;
-    case SenderId: return messageItem.senderId(); break;
-    }
-
-    return QVariant{};
+    return messageModelItems_[index.row()]->data(role);
 }
 
 bool MessageListModel::isEmpty() const
 {
-    return messageItems_.isEmpty();
+    return messageModelItems_.isEmpty();
 }
 
 int MessageListModel::chatId() const
@@ -47,12 +41,13 @@ void MessageListModel::setChatId(int newChatId)
 {
     chatId_ = newChatId;
 
-    const int prevSize = messageItems_.size();
-    messageItems_.clear();
+    const int prevSize = messageModelItems_.size();
+    messageModelItems_.clear();
+    lastDate_ = QDate{};
 
     QList<Message> messages = database()->getMessages(newChatId);
     for (const auto &message : messages) {
-        messageItems_.append(MessageItem::fromMessage(message));
+        addMessage(message);
     }
 
     emit dataChanged(index(0, 0), index(prevSize, 0));
@@ -63,8 +58,17 @@ void MessageListModel::onMessageAdded(const Message &message)
     if (chatId_ != message.chatId())
         return;
 
-    const int row = messageItems_.count();
+    const int row = messageModelItems_.count();
     beginInsertRows(QModelIndex(), row, row);
-    messageItems_.append(MessageItem::fromMessage(message));
+    addMessage(message);
     endInsertRows();
+}
+
+void MessageListModel::addMessage(const Message &message)
+{
+    if (lastDate_ != message.createdAt().date()) {
+        lastDate_ = message.createdAt().date();
+        messageModelItems_.append(MessageModelItemPtr(new DateSeparatorItem{message.createdAt().date()}));
+    }
+    messageModelItems_.append(MessageItem::fromMessage(message));
 }

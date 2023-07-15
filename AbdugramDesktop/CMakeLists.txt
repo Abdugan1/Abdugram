@@ -42,7 +42,9 @@ set(HEADERS
     ${HEADERS_DIR}/ui/mv/chatlistmodel.h
     ${HEADERS_DIR}/ui/mv/chatlistview.h
     ${HEADERS_DIR}/ui/mv/founduserchatitem.h
+    ${HEADERS_DIR}/ui/mv/messagemodelitem.h
     ${HEADERS_DIR}/ui/mv/messageitem.h
+    ${HEADERS_DIR}/ui/mv/dateseparatoritem.h
     ${HEADERS_DIR}/ui/mv/messagelistdelegate.h
     ${HEADERS_DIR}/ui/mv/messagelistmodel.h
     ${HEADERS_DIR}/ui/mv/messagelistview.h
@@ -87,7 +89,9 @@ set(SOURCES
     ${SOURCES_DIR}/ui/mv/chatlistmodel.cpp
     ${SOURCES_DIR}/ui/mv/chatlistview.cpp
     ${SOURCES_DIR}/ui/mv/founduserchatitem.cpp
+    ${SOURCES_DIR}/ui/mv/messagemodelitem.cpp
     ${SOURCES_DIR}/ui/mv/messageitem.cpp
+    ${SOURCES_DIR}/ui/mv/dateseparatoritem.cpp
     ${SOURCES_DIR}/ui/mv/messagelistdelegate.cpp
     ${SOURCES_DIR}/ui/mv/messagelistmodel.cpp
     ${SOURCES_DIR}/ui/mv/messagelistview.cpp

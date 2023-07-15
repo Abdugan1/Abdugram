@@ -2,9 +2,12 @@
 
 #include <sql_common/data_structures/message.h>
 
-MessageItem::MessageItem()
-{
+#include <QVariant>
+#include <QDebug>
 
+MessageItem::MessageItem()
+    : MessageModelItem{Type::MessageItem}
+{
 }
 
 int MessageItem::senderId() const
@@ -37,13 +40,23 @@ void MessageItem::setDateTime(const QDateTime &newDateTime)
     dateTime_ = newDateTime;
 }
 
-MessageItem MessageItem::fromMessage(const Message &message)
+MessageItemPtr MessageItem::fromMessage(const Message &message)
 {
-    MessageItem messageItem;
+    MessageItemPtr messageItem{new MessageItem};
 
-    messageItem.setSenderId(message.senderId());
-    messageItem.setText(message.text());
-    messageItem.setDateTime(message.createdAt());
+    messageItem->setSenderId(message.senderId());
+    messageItem->setText(message.text());
+    messageItem->setDateTime(message.createdAt());
 
     return messageItem;
+}
+
+QVariant MessageItem::dataImp(int role) const
+{
+    switch (static_cast<Roles>(role)) {
+    case Roles::SenderId: return senderId_; break;
+    case Roles::Text:     return text_;     break;
+    case Roles::DateTime: return dateTime_; break;
+    }
+    return QVariant{};
 }
