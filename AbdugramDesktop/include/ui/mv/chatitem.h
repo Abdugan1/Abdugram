@@ -1,6 +1,8 @@
 #ifndef CHATITEM_H
 #define CHATITEM_H
 
+#include "chatmodelitem.h"
+
 #include <QString>
 #include <QDateTime>
 #include <QUrl>
@@ -13,17 +15,28 @@ class ChatItem;
 
 using ChatItemPtr = std::shared_ptr<ChatItem>;
 
-class ChatItem
+class ChatItem : public ChatModelItem
 {
 public:
-    explicit ChatItem();
-    virtual ~ChatItem() = default;
+    enum Roles {
+        ChatId = ChatModelItem::Roles::UserRole + 1,
+        ChatName,
+        PictureUrl,
+        LastMessage,
+        MessageDate,
+        ChatType,
+    };
 
-    QUrl pictureUrl() const;
-    void setPictureUrl(const QUrl &newPictureUrl);
+    explicit ChatItem();
+
+    int chatId() const;
+    void setChatId(int newId);
 
     QString chatName() const;
     void setChatName(const QString &newChatName);
+
+    QUrl pictureUrl() const;
+    void setPictureUrl(const QUrl &newPictureUrl);
 
     QString lastMessage() const;
     void setLastMessage(const QString &newLastMessage);
@@ -34,8 +47,9 @@ public:
     Chat::Type chatType() const;
     void setChatType(Chat::Type newChatType);
 
-    int chatId() const;
-    void setChatId(int newId);
+
+protected:
+    QVariant dataImp(int role) const override;
 
 private:
     QUrl pictureUrl_;

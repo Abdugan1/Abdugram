@@ -44,6 +44,7 @@ set(HEADERS
     ${HEADERS_DIR}/messages/syncusersreply.h
     ${HEADERS_DIR}/messages/logoutrequest.h
     ${HEADERS_DIR}/messages/logoutreply.h
+    ${HEADERS_DIR}/messages/createprivatechatrequest.h
     ${HEADERS_DIR}/tcpsession.h
 )
 
@@ -71,6 +72,7 @@ set(SOURCES
     ${SOURCES_DIR}/messages/syncusersreply.cpp
     ${SOURCES_DIR}/messages/logoutrequest.cpp
     ${SOURCES_DIR}/messages/logoutreply.cpp
+    ${SOURCES_DIR}/messages/createprivatechatrequest.cpp
     ${SOURCES_DIR}/tcpsession.cpp
 )
 

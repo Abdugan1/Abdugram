@@ -28,9 +28,14 @@ const int TimeSpacing = 10;
 const QMargins MessagePaddings       = QMargins{15, 15, 15, 15};
 const QMargins DateSeparatorPaddings = QMargins{17, 5, 17, 5};
 
-inline QColor messageBackgroundColor()
+inline QColor messageBackgroundColorWhenSenderIsMe()
 {
     return Colors.value(colornames::decorationColor);
+}
+
+inline QColor messageBackgroundColorWhenSenderIsOther()
+{
+    return Colors.value(colornames::backgroundLighterHelper4);
 }
 
 inline QColor messageTextColor()
@@ -51,6 +56,11 @@ inline QColor dateSeparatorBackgroundColor()
 inline QColor dateColor()
 {
     return Colors.value(colornames::mainLabelColor);
+}
+
+inline bool senderIsMe(const QModelIndex &index)
+{
+    return networkHandler()->userId() == index.data(MessageItem::Roles::SenderId).toInt();
 }
 
 QTextOption textOption()
@@ -137,14 +147,10 @@ QSize MessageListDelegate::sizeHint(const QStyleOptionViewItem &option, const QM
 
 void MessageListDelegate::setPainterOriginOnMessage(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    const int senderId = index.data(MessageItem::SenderId).toInt();
-
     const int fullWidth = option.rect.width();
     const int bgWidth   = getMessageBackgroundRect(option, index).width();
 
-    const int myId = networkHandler()->userId();
-
-    const int dx = senderId != myId ? HSpacingMessage : fullWidth - HSpacingMessage - bgWidth;
+    const int dx = !senderIsMe(index) ? HSpacingMessage : fullWidth - HSpacingMessage - bgWidth;
     const int dy = option.rect.top() + VSpacingMessage;
 
     painter->translate(dx, dy);
@@ -168,8 +174,11 @@ void MessageListDelegate::drawMessageBackground(QPainter *painter, const QStyleO
     painter->save();
 
     painter->setPen(Qt::NoPen);
-    painter->setBrush(messageBackgroundColor());
-    painter->drawRoundedRect(getMessageBackgroundRect(option, index), MessageBackgroundRadius, MessageBackgroundRadius);
+    painter->setBrush(senderIsMe(index) ? messageBackgroundColorWhenSenderIsMe()
+                                        : messageBackgroundColorWhenSenderIsOther());
+
+    painter->drawRoundedRect(getMessageBackgroundRect(option, index),
+                             MessageBackgroundRadius, MessageBackgroundRadius);
 
     painter->restore();
 }

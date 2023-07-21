@@ -1,7 +1,7 @@
 #include "ui/mv/chatlistview.h"
 #include "ui/mv/chatlistmodel.h"
 #include "ui/mv/chatlistdelegate.h"
-#include "ui/mv/founduserchatitem.h"
+#include "ui/mv/founduseritem.h"
 
 #include "net/networkhandler.h"
 
@@ -62,15 +62,15 @@ void ChatListView::setMainModel()
 
 void ChatListView::setTemporaryModel(const QList<User> &foundUserList)
 {
-    QVector<ChatItemPtr> chatItems;
-    chatItems.reserve(foundUserList.size());
+    QList<ChatModelItemPtr> chatItems;
     for (const auto &foundUser : foundUserList) {
-        std::shared_ptr<FoundUserChatItem> chatItem{new FoundUserChatItem};
+        std::shared_ptr<FoundUserItem> chatItem{new FoundUserItem};
         chatItem->setUserId(foundUser.id());
-        chatItem->setChatName(foundUser.username());
+        chatItem->setUserName(foundUser.username());
         chatItems.append(chatItem);
     }
     tempModel_->setChatItems(chatItems);
+
     this->setModel(tempModel_);
 }
 
@@ -94,7 +94,7 @@ void ChatListView::initMainModel()
     clearSelection();
 
     QSqlQuery query = database()->getChatsView();
-    QVector<ChatItemPtr> chatItems;
+    QList<ChatModelItemPtr> chatItems;
     chatItems.reserve(query.size());
     while (query.next()) {
         chatItems.append(getChatItemFromChatsViewRecord(query.record()));
@@ -105,21 +105,22 @@ void ChatListView::initMainModel()
 
 void ChatListView::updateMainModel()
 {
-    const int prevSelectedChatId = currentIndex().data(ChatListModel::Roles::Id).toInt();
+    const int prevSelectedChatId = currentIndex().data(ChatItem::Roles::ChatId).toInt();
     int indexWithPrevSelectedChatId = -1;
 
     QSqlQuery query = database()->getChatsView();
-    QVector<ChatItemPtr> chatItems;
+    QList<ChatModelItemPtr> chatItems;
     chatItems.reserve(query.size());
     int i = 0;
     while (query.next()) {
         chatItems.append(getChatItemFromChatsViewRecord(query.record()));
-        if (chatItems.last()->chatId() == prevSelectedChatId) {
+        if (chatItems.last()->data(ChatItem::Roles::ChatId).toInt() == prevSelectedChatId) {
             indexWithPrevSelectedChatId = i;
         }
         ++i;
     }
 
+    qDebug() << indexWithPrevSelectedChatId;
     mainModel_->setChatItems(chatItems);
 
     selectionByUser_ = false;

@@ -13,6 +13,9 @@ class ImageButton;
 class SearchLineEdit;
 class ChatListView;
 
+class ChatModelItem;
+using ChatModelItemPtr = std::shared_ptr<ChatModelItem>;
+
 class SidePanel : public QFrame
 {
     Q_OBJECT
@@ -24,7 +27,7 @@ public:
 signals:
     void sideMenuRequested();
 
-    void selectionWasChanged(const ChatItemPtr &selectedChat);
+    void selectionWasChanged(const ChatModelItemPtr &selectedChat);
 
     void newChatItemAdded(const ChatItemPtr &chatItem);
 

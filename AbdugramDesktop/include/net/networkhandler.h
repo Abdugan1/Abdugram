@@ -38,6 +38,10 @@ public:
 
     void sendSearchRequest(const QString &searchText);
 
+    void sendCreatePrivateChatRequest(const Chat &chat,
+                                      const QList<ChatUser> &chatUsers,
+                                      const Message &message);
+
     void sendCreateChatRequest(const Chat &chat, const QList<ChatUser> &chatUsers);
 
     void sendSendMessageRequest(const Message &message);

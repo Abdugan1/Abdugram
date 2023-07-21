@@ -1,8 +1,6 @@
 #include "messages/createchatrequest.h"
 #include "messages/messagevisitor.h"
 
-#include <sql_common/data_structures/chatuser.h>
-
 #include <QDebug>
 
 CreateChatRequest::CreateChatRequest()

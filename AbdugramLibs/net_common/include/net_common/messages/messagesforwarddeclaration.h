@@ -14,7 +14,7 @@ class SearchRequest;
 class CreateChatRequest;
 class SendMessageRequest;
 class LogoutRequest;
-
+class CreatePrivateChatRequest;
 
 class LoginReply;
 class RegisterReply;

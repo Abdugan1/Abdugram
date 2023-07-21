@@ -11,6 +11,9 @@ class ChatListDelegate;
 class User;
 class Chat;
 
+class ChatModelItem;
+using ChatModelItemPtr = std::shared_ptr<ChatModelItem>;
+
 class ChatListView : public QListView
 {
     Q_OBJECT
@@ -20,7 +23,7 @@ public:
     void addNewChatItemToMainModel(const ChatItemPtr &chatItem);
 
 signals:
-    void selectionWasChangedByUser(const ChatItemPtr &selectedChat);
+    void selectionWasChangedByUser(const ChatModelItemPtr &selectedChat);
 
     void highlightColorChanged();
 

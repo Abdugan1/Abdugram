@@ -11,6 +11,7 @@
 #include <net_common/messages/createchatrequest.h>
 #include <net_common/messages/sendmessagerequest.h>
 #include <net_common/messages/logoutrequest.h>
+#include <net_common/messages/createprivatechatrequest.h>
 
 #include <net_common/consts.h>
 
@@ -97,27 +98,39 @@ void NetworkHandler::sendLoginRequest(const QString &username, const QString &pa
     lastUsername_ = username;
     lastPassword_ = password;
 
-    AnyMessagePtr<LoginRequest> loginMessage{new LoginRequest};
-    loginMessage->setUsername(username);
-    loginMessage->setPassword(password);
+    AnyMessagePtr<LoginRequest> loginRequest{new LoginRequest};
+    loginRequest->setUsername(username);
+    loginRequest->setPassword(password);
 
-    sendToServer(static_cast<AbduMessagePtr>(loginMessage));
+    sendToServer(static_cast<AbduMessagePtr>(loginRequest));
 }
 
 void NetworkHandler::sendSearchRequest(const QString &searchText)
 {
-    AnyMessagePtr<SearchRequest> searchOnServerMessage{new SearchRequest{}};
-    searchOnServerMessage->setSearchText(searchText);
-    sendToServer(static_cast<AbduMessagePtr>(searchOnServerMessage));
+    AnyMessagePtr<SearchRequest> searchOnServerRequest{new SearchRequest{}};
+    searchOnServerRequest->setSearchText(searchText);
+    sendToServer(static_cast<AbduMessagePtr>(searchOnServerRequest));
+}
+
+void NetworkHandler::sendCreatePrivateChatRequest(const Chat &chat,
+                                                  const QList<ChatUser> &chatUsers,
+                                                  const Message &message)
+{
+    AnyMessagePtr<CreatePrivateChatRequest> createPrivateChatRequest{new CreatePrivateChatRequest};
+    createPrivateChatRequest->setChat(chat);
+    createPrivateChatRequest->setChatUsers(chatUsers);
+    createPrivateChatRequest->setMessage(message);
+
+    sendToServer(static_cast<AbduMessagePtr>(createPrivateChatRequest));
 }
 
 void NetworkHandler::sendCreateChatRequest(const Chat &chat, const QList<ChatUser> &chatUsers)
 {
-    AnyMessagePtr<CreateChatRequest> createPrivateChat{new CreateChatRequest};
-    createPrivateChat->setChat(chat);
-    createPrivateChat->setChatUsers(chatUsers);
+    AnyMessagePtr<CreateChatRequest> createChatRequest{new CreateChatRequest};
+    createChatRequest->setChat(chat);
+    createChatRequest->setChatUsers(chatUsers);
 
-    sendToServer(static_cast<AbduMessagePtr>(createPrivateChat));
+    sendToServer(static_cast<AbduMessagePtr>(createChatRequest));
 }
 
 void NetworkHandler::sendSendMessageRequest(const Message &message)
@@ -185,6 +198,9 @@ void NetworkHandler::sendRegisterRequest(const QString &firstName,
                                          const QString &phone,
                                          const QString &password)
 {
+    lastUsername_ = username;
+    lastPassword_ = password;
+
     AnyMessagePtr<RegisterRequest> registerMessage{new RegisterRequest};
     registerMessage->setFirstName(firstName);
     registerMessage->setUsername(username);

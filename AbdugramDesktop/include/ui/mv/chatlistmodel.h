@@ -5,25 +5,19 @@
 
 #include <memory>
 
-#include "chatitem.h"
-
 class User;
 class Chat;
 class ChatUser;
+
+class ChatModelItem;
+
+using ChatModelItemPtr = std::shared_ptr<ChatModelItem>;
 
 class ChatListModel : public QAbstractListModel
 {
     Q_OBJECT
 public:
-    using ChatItems   = QVector<ChatItemPtr>;
-
-    enum Roles {
-        Id = Qt::UserRole + 1,
-        Avatar,
-        ChatName,
-        LastMessage,
-        MessageDate
-    };
+    using ChatModelItems = QVector<ChatModelItemPtr>;
 
     explicit ChatListModel(QObject *parent = nullptr);
 
@@ -31,15 +25,15 @@ public:
 
     QVariant data(const QModelIndex &index, int role) const override;
 
-    void addChatItem(const ChatItemPtr &item);
-    ChatItemPtr chatItem(int row) const;
+    Qt::ItemFlags flags(const QModelIndex &index) const override;
 
-    void setChatItems(const ChatItems &chatItems);
+    void addChatItem(const ChatModelItemPtr &item);
+    ChatModelItemPtr chatItem(int row) const;
 
-    bool isChatItemExists(const ChatItemPtr &chatItem) const;
+    void setChatItems(const QList<ChatModelItemPtr> &chatItems);
 
 private:
-    ChatItems chatItems_;
+    ChatModelItems chatItems_;
 };
 
 #endif // CHATLISTMODEL_H

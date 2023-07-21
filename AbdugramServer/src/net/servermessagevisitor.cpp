@@ -11,6 +11,7 @@
 #include <net_common/messages/createchatrequest.h>
 #include <net_common/messages/sendmessagerequest.h>
 #include <net_common/messages/logoutrequest.h>
+#include <net_common/messages/createprivatechatrequest.h>
 
 #include <sql_common/data_structures/user.h>
 #include <sql_common/data_structures/chatuser.h>
@@ -161,4 +162,19 @@ void ServerMessageVisitor::visit(const LogoutRequest &request)
     networkHandler_->removeSession(client_->userId());
 
     emit networkHandler_->requestLogoutReply(client_);
+}
+
+void ServerMessageVisitor::visit(const CreatePrivateChatRequest &request)
+{
+    AnyMessagePtr<CreateChatRequest> createChatRequest{new CreateChatRequest};
+    createChatRequest->setChat(request.chat());
+    createChatRequest->setChatUsers(request.chatUsers());
+    this->visit(*createChatRequest);
+
+    Message message = request.message();
+    message.setChatId(database()->lastInsertedId(DatabaseServer::Tables::Chats));
+
+    AnyMessagePtr<SendMessageRequest> sendMessageRequest{new SendMessageRequest};
+    sendMessageRequest->setMessage(message);
+    this->visit(*sendMessageRequest);
 }

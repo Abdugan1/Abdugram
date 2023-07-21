@@ -75,6 +75,7 @@ void Application::setupSettings()
     setApplicationName("Abdugram");
 
     connect(networkHandler(), &NetworkHandler::loginResult, this, &Application::saveLoginDataOnSuccess);
+    connect(networkHandler(), &NetworkHandler::registerResult, this, &Application::saveLoginDataOnSuccess);
     connect(networkHandler(), &NetworkHandler::loggedOut,   this, &Application::removeLoginData);
 
 }

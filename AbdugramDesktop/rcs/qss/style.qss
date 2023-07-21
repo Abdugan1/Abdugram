@@ -51,6 +51,7 @@ SidePanel {
 ChatListView {
     background-color: @backgroundLighterHelper1;
     border: none;
+    font-size: 11pt;
 }
 
 /* MessageListView */
@@ -83,7 +84,7 @@ SideMenuButton {
 }
 
 SideMenuButton::hover {
-    background-color: @backgroundLighterHelper3;
+    background-color: @backgroundLighterHelper5;
 }
 
 /* SearchLineEdit */

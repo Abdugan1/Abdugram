@@ -13,26 +13,25 @@ public:
     QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
 private:
-    void drawHighlight(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-    void drawAvatar(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    void setPainterOrigin(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+
+    void drawChatItem(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    void drawBackground(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    void drawChatPicture(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     void drawChatName(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     void drawLastMessage(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     void drawMessageDate(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
-    void drawSeparator(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
-    bool isContentRectEqual(const QStyleOptionViewItem &option) const;
-    void updateContentRect(const QStyleOptionViewItem &option) const;
+    void drawFoundUserItem(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    void drawUsername(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    void drawAvatar(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
-private:
-    static const QMargins AvatarMargins_ ;
-    static const QSize    AvatarSize_;
+    void drawLineSeparator(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
-    static const QMargins ChatNameMargins_;
-    static const QMargins MessageDateMargins_;
+    QSize chatItemSizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    QSize lineSeparatorSizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
-    static const int SeparatorThin_;
-
-    mutable QRect contentRect_;
+    QString dateTimeToString(const QDateTime &dateTime) const;
 };
 
 #endif // CHATLISTDELEGATE_H

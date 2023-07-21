@@ -1,18 +1,19 @@
 #include "ui/mv/chatitem.h"
 
 ChatItem::ChatItem()
+    : ChatModelItem{Type::ChatItem}
 {
 
 }
 
-QUrl ChatItem::pictureUrl() const
+int ChatItem::chatId() const
 {
-    return pictureUrl_;
+    return chatId_;
 }
 
-void ChatItem::setPictureUrl(const QUrl &newPictureUrl)
+void ChatItem::setChatId(int newId)
 {
-    pictureUrl_ = newPictureUrl;
+    chatId_ = newId;
 }
 
 QString ChatItem::chatName() const
@@ -23,6 +24,16 @@ QString ChatItem::chatName() const
 void ChatItem::setChatName(const QString &newChatName)
 {
     chatName_ = newChatName;
+}
+
+QUrl ChatItem::pictureUrl() const
+{
+    return pictureUrl_;
+}
+
+void ChatItem::setPictureUrl(const QUrl &newPictureUrl)
+{
+    pictureUrl_ = newPictureUrl;
 }
 
 QString ChatItem::lastMessage() const
@@ -55,12 +66,15 @@ void ChatItem::setChatType(Chat::Type newChatType)
     chatType_ = newChatType;
 }
 
-int ChatItem::chatId() const
+QVariant ChatItem::dataImp(int role) const
 {
-    return chatId_;
-}
-
-void ChatItem::setChatId(int newId)
-{
-    chatId_ = newId;
+    switch (role) {
+    case Roles::ChatId:      return chatId_;      break;
+    case Roles::ChatName:    return chatName_;    break;
+    case Roles::PictureUrl:  return pictureUrl_;  break;
+    case Roles::LastMessage: return lastMessage_; break;
+    case Roles::MessageDate: return messageDate_; break;
+    case Roles::ChatType:    return chatType_;    break;
+    }
+    return QVariant{};
 }

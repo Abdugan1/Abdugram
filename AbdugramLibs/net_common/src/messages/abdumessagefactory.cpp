@@ -9,6 +9,7 @@
 #include "messages/createchatrequest.h"
 #include "messages/sendmessagerequest.h"
 #include "messages/logoutrequest.h"
+#include "messages/createprivatechatrequest.h"
 
 #include "messages/loginreply.h"
 #include "messages/registerreply.h"
@@ -57,6 +58,9 @@ AbduMessagePtr AbduMessageFactory::fromData(const QByteArray &data)
         break;
     case AbduMessage::Type::LogoutRequest:
         abduMessage = new LogoutRequest;
+        break;
+    case AbduMessage::Type::CreatePrivateChatRequest:
+        abduMessage = new CreatePrivateChatRequest;
         break;
         
     case AbduMessage::Type::LoginReply:

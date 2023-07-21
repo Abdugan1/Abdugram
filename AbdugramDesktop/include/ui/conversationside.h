@@ -4,10 +4,14 @@
 #include <QWidget>
 
 #include "mv/chatitem.h"
+#include <net_common/messages/messagesforwarddeclaration.h>
 
 class ChatHeader;
 class MessageListView;
 class MessageTextEdit;
+
+class ChatModelItem;
+using ChatModelItemPtr = std::shared_ptr<ChatModelItem>;
 
 class ConversationSide : public QWidget
 {
@@ -15,19 +19,20 @@ class ConversationSide : public QWidget
 public:
     explicit ConversationSide(QWidget *parent = nullptr);
 
-    ChatItem currentChat() const;
+    ChatModelItemPtr currentChat() const;
 
 protected:
     void paintEvent(QPaintEvent *event) override;
 
 public slots:
-    void setCurrentChatItem(const ChatItemPtr &chat);
+    void setCurrentChatItem(const ChatModelItemPtr &chat);
     void unsetCurrentChatItem();
 
     void updateCurrentChatIfAddedChatIsEqualToAdded(const ChatItemPtr &chat);
 
 private slots:
-    void requestCreatePrivateChat();
+    void requestCreatePrivateChat(const QString &messageText);
+    void requestSendMessage(const QString &messageText);
 
     void onSendMessageRequested(const QString &messageText);
 
@@ -44,7 +49,7 @@ private:
     MessageListView *messageView_ = nullptr;
     MessageTextEdit *messageEdit_ = nullptr;
 
-    ChatItemPtr currentChatItem_;
+    ChatModelItemPtr currentChatItem_;
 };
 
 #endif // CONVERSATIONSIDE_H

@@ -1,4 +1,7 @@
 #include "ui/mv/chatlistmodel.h"
+#include "ui/mv/chatitem.h"
+#include "ui/mv/founduseritem.h"
+#include "ui/mv/lineseparatoritem.h"
 
 #include <net/networkhandler.h>
 
@@ -14,7 +17,6 @@
 ChatListModel::ChatListModel(QObject *parent)
     : QAbstractListModel{parent}
 {
-//    connect(networkHandler()->newChatAdded(), this, )
 }
 
 int ChatListModel::rowCount(const QModelIndex &) const
@@ -26,44 +28,44 @@ QVariant ChatListModel::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
         return QVariant{};
-    const ChatItemPtr &chatItem = chatItems_.at(index.row());
-    switch (role) {
-    case Roles::Id:          return chatItem->chatId();      break;
-    case Roles::Avatar:      return chatItem->pictureUrl();  break;
-    case Roles::ChatName:    return chatItem->chatName();    break;
-    case Roles::LastMessage: return chatItem->lastMessage(); break;
-    case Roles::MessageDate: return chatItem->messageDate(); break;
-    }
 
-    return QVariant{};
+    return chatItems_[index.row()]->data(role);
 }
 
-void ChatListModel::addChatItem(const ChatItemPtr &item)
+Qt::ItemFlags ChatListModel::flags(const QModelIndex &index) const
 {
-    if (isChatItemExists(item))
-        return;
+    const int type = index.data(ChatModelItem::Roles::Type).toInt();
 
+    switch (type) {
+    case ChatModelItem::Type::ChatItem:
+    case ChatModelItem::Type::FoundUserItem:
+        return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+    }
+
+    return Qt::NoItemFlags;
+}
+
+void ChatListModel::addChatItem(const ChatModelItemPtr &item)
+{
     const int row = chatItems_.count();
     beginInsertRows(QModelIndex(), row, row);
     chatItems_.append(item);
     endInsertRows();
 }
 
-ChatItemPtr ChatListModel::chatItem(int row) const
+ChatModelItemPtr ChatListModel::chatItem(int row) const
 {
     return chatItems_.at(row);
 }
 
-void ChatListModel::setChatItems(const ChatItems &chatItems)
+void ChatListModel::setChatItems(const QList<ChatModelItemPtr> &chatItems)
 {
     int oldSize = chatItems_.size();
-    chatItems_ = chatItems;
+    chatItems_.clear();
+    chatItems_.reserve(chatItems.size() * 2 - 1);
+    for (const auto &item : chatItems) {
+        chatItems_.append(item);
+        chatItems_.append(ChatModelItemPtr{new LineSeparatorItem});
+    }
     emit dataChanged(index(0, 0), index(oldSize, 0));
-}
-
-bool ChatListModel::isChatItemExists(const ChatItemPtr &chatItem) const
-{
-    return std::find_if(chatItems_.begin(), chatItems_.end(), [chatItem](const ChatItemPtr &item) {
-               return (item->chatId() == chatItem->chatId());
-           }) != chatItems_.end();
 }

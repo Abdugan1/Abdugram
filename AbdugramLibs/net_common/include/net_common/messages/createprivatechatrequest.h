@@ -1,17 +1,16 @@
-#ifndef CREATECHATREQUEST_H
-#define CREATECHATREQUEST_H
+#ifndef CREATEPRIVATECHATREQUEST_H
+#define CREATEPRIVATECHATREQUEST_H
 
 #include "abdumessage.h"
 
 #include <sql_common/data_structures/chat.h>
 #include <sql_common/data_structures/chatuser.h>
+#include <sql_common/data_structures/message.h>
 
-class ChatUser;
-
-class NETCOMMON_EXPORT CreateChatRequest : public AbduMessage
+class NETCOMMON_EXPORT CreatePrivateChatRequest : public AbduMessage
 {
 public:
-    explicit CreateChatRequest();
+    explicit CreatePrivateChatRequest();
 
     void accept(MessageVisitor *visitor) const override;
 
@@ -21,6 +20,9 @@ public:
     QList<ChatUser> chatUsers() const;
     void setChatUsers(const QList<ChatUser> &newChatUsers);
 
+    Message message() const;
+    void setMessage(const Message &newMessage);
+
 protected:
     void getBodyData(DataStream *stream) override;
     void writeBodyData(DataStream *stream) const override;
@@ -28,6 +30,7 @@ protected:
 private:
     Chat chat_;
     QList<ChatUser> chatUsers_;
+    Message message_;
 };
 
-#endif // CREATECHATREQUEST_H
+#endif // CREATEPRIVATECHATREQUEST_H

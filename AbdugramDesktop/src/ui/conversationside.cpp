@@ -1,7 +1,7 @@
 #include "ui/conversationside.h"
 #include "ui/chatheader.h"
 #include "ui/mv/messagelistview.h"
-#include "ui/mv/founduserchatitem.h"
+#include "ui/mv/founduseritem.h"
 #include "ui/messagetextedit.h"
 #include "ui/colorrepository.h"
 
@@ -30,9 +30,9 @@ ConversationSide::ConversationSide(QWidget *parent)
     connect(networkHandler(), &NetworkHandler::loggedOut, this, &ConversationSide::unsetCurrentChatItem);
 }
 
-ChatItem ConversationSide::currentChat() const
+ChatModelItemPtr ConversationSide::currentChat() const
 {
-    return *currentChatItem_;
+    return currentChatItem_;
 }
 
 void ConversationSide::paintEvent(QPaintEvent *event)
@@ -44,19 +44,27 @@ void ConversationSide::paintEvent(QPaintEvent *event)
     }
 }
 
-void ConversationSide::setCurrentChatItem(const ChatItemPtr &chat)
+void ConversationSide::setCurrentChatItem(const ChatModelItemPtr &chat)
 {
     currentChatItem_ = chat;
 
     if (!currentChatItem_) {
         hideAll();
         return;
-    } else if (!messageView_->isVisible()) {
-        showAll();
+    } else {
+        if (!messageView_->isVisible())
+            showAll();
+        messageEdit_->setFocus(Qt::MouseFocusReason);
     }
 
-    chatHeader_->setChatName(chat->chatName());
-    messageView_->setChatId(chat->chatId());
+    const int type = chat->type();
+    if (type == ChatModelItem::Type::ChatItem) {
+        chatHeader_->setChatName(chat->data(ChatItem::Roles::ChatName).toString());
+        messageView_->setChatId(chat->data(ChatItem::Roles::ChatId).toInt());
+    } else if (type == ChatModelItem::Type::FoundUserItem) {
+        chatHeader_->setChatName(chat->data(FoundUserItem::Roles::Username).toString());
+        messageView_->setChatId(-1);
+    }
 
     update();
 }
@@ -68,19 +76,16 @@ void ConversationSide::unsetCurrentChatItem()
 
 void ConversationSide::updateCurrentChatIfAddedChatIsEqualToAdded(const ChatItemPtr &chat)
 {
-    if (currentChatItem_ && currentChatItem_->chatName() == chat->chatName()) {
+    if (!currentChatItem_)
+        return;
+    const int type = currentChatItem_->type();
+    if (type == ChatModelItem::Type::FoundUserItem) {
         setCurrentChatItem(chat);
     }
 }
 
-void ConversationSide::requestCreatePrivateChat()
+void ConversationSide::requestCreatePrivateChat(const QString &messageText)
 {
-    auto currentChatItem = dynamic_cast<FoundUserChatItem *>(currentChatItem_.get());
-    if (currentChatItem && currentChatItem->userId() == -1) {
-        qCritical() << "Can't create private chat! current chat user id is undefined";
-        return;
-    }
-
     Chat chat;
     chat.setType(Chat::Type::Private);
 
@@ -89,24 +94,33 @@ void ConversationSide::requestCreatePrivateChat()
     chatUser1.setRole(ChatUser::Role::Owner);
 
     ChatUser chatUser2;
-    chatUser2.setUserId(currentChatItem->userId());
+    chatUser2.setUserId(currentChatItem_->data(FoundUserItem::Roles::UserId).toInt());
     chatUser2.setRole(ChatUser::Role::Owner);
 
+    Message message;
+    message.setSenderId(networkHandler()->userId());
+    message.setText(messageText);
 
-    networkHandler()->sendCreateChatRequest(chat, {chatUser1, chatUser2});
+    networkHandler()->sendCreatePrivateChatRequest(chat, {chatUser1, chatUser2}, message);
+}
+
+void ConversationSide::requestSendMessage(const QString &messageText)
+{
+    Message message;
+    message.setChatId(currentChatItem_->data(ChatItem::Roles::ChatId).toInt());
+    message.setSenderId(networkHandler()->userId());
+    message.setText(messageText);
+
+    networkHandler()->sendSendMessageRequest(message);
 }
 
 void ConversationSide::onSendMessageRequested(const QString &messageText)
 {
-    if (currentChatItem_->chatId() == -1) {
-        requestCreatePrivateChat();
+    const int type = currentChatItem_->type();
+    if (type == ChatModelItem::Type::FoundUserItem) {
+        requestCreatePrivateChat(messageText);
     } else {
-        Message message;
-        message.setChatId(currentChatItem_->chatId());
-        message.setSenderId(networkHandler()->userId());
-        message.setText(messageText);
-
-        networkHandler()->sendSendMessageRequest(message);
+        requestSendMessage(messageText);
     }
 }
 
@@ -126,7 +140,6 @@ void ConversationSide::setupUi()
     vLayout->addWidget(messageEdit_);
 
     setLayout(vLayout);
-    setFocusPolicy(Qt::ClickFocus);
 }
 
 void ConversationSide::showAll()

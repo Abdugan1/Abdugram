@@ -37,11 +37,13 @@ set(HEADERS
     ${HEADERS_DIR}/ui/mainpage.h
     ${HEADERS_DIR}/ui/mainwindow.h
     ${HEADERS_DIR}/ui/messagetextedit.h
+    ${HEADERS_DIR}/ui/mv/chatmodelitem.h
     ${HEADERS_DIR}/ui/mv/chatitem.h
     ${HEADERS_DIR}/ui/mv/chatlistdelegate.h
     ${HEADERS_DIR}/ui/mv/chatlistmodel.h
     ${HEADERS_DIR}/ui/mv/chatlistview.h
-    ${HEADERS_DIR}/ui/mv/founduserchatitem.h
+    ${HEADERS_DIR}/ui/mv/founduseritem.h
+    ${HEADERS_DIR}/ui/mv/lineseparatoritem.h
     ${HEADERS_DIR}/ui/mv/messagemodelitem.h
     ${HEADERS_DIR}/ui/mv/messageitem.h
     ${HEADERS_DIR}/ui/mv/dateseparatoritem.h
@@ -84,11 +86,13 @@ set(SOURCES
     ${SOURCES_DIR}/ui/mainpage.cpp
     ${SOURCES_DIR}/ui/mainwindow.cpp
     ${SOURCES_DIR}/ui/messagetextedit.cpp
+    ${SOURCES_DIR}/ui/mv/chatmodelitem.cpp
     ${SOURCES_DIR}/ui/mv/chatitem.cpp
     ${SOURCES_DIR}/ui/mv/chatlistdelegate.cpp
     ${SOURCES_DIR}/ui/mv/chatlistmodel.cpp
     ${SOURCES_DIR}/ui/mv/chatlistview.cpp
-    ${SOURCES_DIR}/ui/mv/founduserchatitem.cpp
+    ${SOURCES_DIR}/ui/mv/founduseritem.cpp
+    ${SOURCES_DIR}/ui/mv/lineseparatoritem.cpp
     ${SOURCES_DIR}/ui/mv/messagemodelitem.cpp
     ${SOURCES_DIR}/ui/mv/messageitem.cpp
     ${SOURCES_DIR}/ui/mv/dateseparatoritem.cpp
