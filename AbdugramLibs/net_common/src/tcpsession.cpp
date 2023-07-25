@@ -5,6 +5,7 @@
 #include <QJsonParseError>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QThread>
 #include <QDebug>
 
 TcpSession::TcpSession(QObject *parent)
@@ -61,4 +62,6 @@ void TcpSession::readAvailData()
 void TcpSession::init()
 {
     connect(this, &TcpSession::readyRead, this, &TcpSession::readAvailData);
+
+    connect(this, &TcpSession::requestSend, this, &TcpSession::send);
 }

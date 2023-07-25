@@ -20,7 +20,7 @@
 
 NetworkHandler::NetworkHandler(QObject *parent)
     : QObject{parent}
-    , tcpSession_{new TcpSession}
+    , tcpSession_{new TcpSession{this}}
 {
     connect(tcpSession_, &TcpSession::connected, this, &NetworkHandler::connectedSucessfully);
 
@@ -69,7 +69,7 @@ void NetworkHandler::sendToServer(const AbduMessagePtr &message)
 {
     if (!isConnected())
         return;
-    tcpSession_->send(message);
+    emit tcpSession_->requestSend(message);
 }
 
 void NetworkHandler::onMessageReceived(const AbduMessagePtr &message)

@@ -13,8 +13,8 @@ public:
     bool success() const;
     void setSuccess(bool newSuccess);
 
-    int userId() const;
-    void setUserId(int newUserId);
+    User user() const;
+    void setUser(const User &newUser);
 
     void accept(MessageVisitor *visitor) const override;
 
@@ -24,7 +24,7 @@ protected:
 
 private:
     bool success_ = false;
-    int userId_ = -1;
+    User user_;
 
 };
 

@@ -1,6 +1,8 @@
 #include "messages/loginreply.h"
 #include "messages/messagevisitor.h"
 
+#include <QDebug>
+
 LoginReply::LoginReply()
     : AbduMessage{Type::LoginReply}
 {

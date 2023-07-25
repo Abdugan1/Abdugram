@@ -1,9 +1,9 @@
 #include "userstable.h"
+#include "sqlquery.h"
 
 #include <sql_common/functions.h>
 #include <sql_common/data_structures/user.h>
 
-#include <QSqlQuery>
 #include <QSqlRecord>
 #include <QVariant>
 #include <QDebug>
@@ -27,7 +27,7 @@ bool UsersTable::addOrUpdateUser(const User &user)
                           "     updated_at = excluded.updated_at, "
                           "     deleted_at = excluded.deleted_at;";
 
-    QSqlQuery addUserQuery;
+    SqlQuery addUserQuery;
     addUserQuery.prepare(query);
     addUserQuery.bindValue(":id", user.id());
     addUserQuery.bindValue(":username", user.username());
@@ -52,7 +52,7 @@ User UsersTable::getUserById(int userId)
 {
     const QString query = "SELECT * FROM users WHERE id = :id;";
 
-    QSqlQuery getUserByIdQuery;
+    SqlQuery getUserByIdQuery;
     getUserByIdQuery.prepare(query);
     getUserByIdQuery.bindValue(":id", userId);
 

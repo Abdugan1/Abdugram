@@ -8,6 +8,7 @@
 #include <sql_common/data_structures/user.h>
 
 #include <sql_client/databaseclient.h>
+#include <sql_client/sqlquery.h>
 
 #include <QSqlQuery>
 #include <QSqlRecord>
@@ -36,7 +37,7 @@ ChatListView::ChatListView(QWidget *parent)
 
     connect(networkHandler(), &NetworkHandler::searchResult, this, &ChatListView::setTemporaryModel);
 
-    connect(database(), &DatabaseClient::messageAdded, this, &ChatListView::updateMainModel);
+    connect(networkHandler(), &NetworkHandler::loggedOut, this, &ChatListView::onLoggedOut);
 
     setModel(mainModel_);
     setItemDelegate(delegate_);
@@ -48,11 +49,6 @@ ChatListView::ChatListView(QWidget *parent)
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     setContentsMargins(0, 0, 0, 0);
-}
-
-void ChatListView::addNewChatItemToMainModel(const ChatItemPtr &chatItem)
-{
-    mainModel_->addChatItem(chatItem);
 }
 
 void ChatListView::setMainModel()
@@ -93,7 +89,7 @@ void ChatListView::initMainModel()
 {
     clearSelection();
 
-    QSqlQuery query = database()->getChatsView();
+    SqlQuery query = database()->getChatsView();
     QList<ChatModelItemPtr> chatItems;
     chatItems.reserve(query.size());
     while (query.next()) {
@@ -101,6 +97,9 @@ void ChatListView::initMainModel()
     }
 
     mainModel_->setChatItems(chatItems);
+
+    connect(database(), &DatabaseClient::messageAdded, this, &ChatListView::updateMainModel);
+    connect(database(), &DatabaseClient::chatAdded, this, &ChatListView::addNewChatToMainModel);
 }
 
 void ChatListView::updateMainModel()
@@ -120,10 +119,28 @@ void ChatListView::updateMainModel()
         ++i;
     }
 
-    qDebug() << indexWithPrevSelectedChatId;
     mainModel_->setChatItems(chatItems);
 
     selectionByUser_ = false;
     setCurrentIndex(mainModel_->index(indexWithPrevSelectedChatId));
     selectionByUser_ = true;
+}
+
+void ChatListView::onLoggedOut()
+{
+    disconnect(database(), &DatabaseClient::messageAdded, this, &ChatListView::updateMainModel);
+    disconnect(database(), &DatabaseClient::chatAdded, this, &ChatListView::addNewChatToMainModel);
+    mainModel_->setChatItems({});
+}
+
+void ChatListView::addNewChatToMainModel(const Chat &chat)
+{
+    ChatItemPtr chatItem{new ChatItem};
+    chatItem->setChatId(chat.id());
+    chatItem->setChatName(chat.name());
+    chatItem->setChatType(chat.type());
+
+    mainModel_->addChatItem(chatItem);
+
+    emit newChatItemAdded(chatItem);
 }

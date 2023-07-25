@@ -51,7 +51,7 @@ void NetworkHandler::sendRegisterReply(Session* session, bool success, const Use
 {
     AnyMessagePtr<RegisterReply> registerReply{new RegisterReply};
     registerReply->setSuccess(success);
-    registerReply->setUserId(user.id());
+    registerReply->setUser(user);
 
     send(session, static_cast<AbduMessagePtr>(registerReply));
 }

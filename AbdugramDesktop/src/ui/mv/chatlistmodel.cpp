@@ -1,6 +1,4 @@
 #include "ui/mv/chatlistmodel.h"
-#include "ui/mv/chatitem.h"
-#include "ui/mv/founduseritem.h"
 #include "ui/mv/lineseparatoritem.h"
 
 #include <net/networkhandler.h>

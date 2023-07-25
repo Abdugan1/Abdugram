@@ -5,9 +5,14 @@
 
 #include <QObject>
 #include <QList>
+#include <QThreadStorage>
+#include <QMutexLocker>
 
-class QSqlQuery;
+#include <memory>
 
+class SqlQuery;
+
+class SqlDatabase;
 class User;
 class Chat;
 class ChatUser;
@@ -26,7 +31,10 @@ public:
 
     static DatabaseClient *instance();
 
-    void connectToDatabase(int ownId);
+    std::shared_ptr<SqlDatabase> threadDb();
+
+    int ownId() const;
+    void setOwnId(int ownId);
 
     QDateTime getLastUpdatedAt(Tables table);
 
@@ -40,7 +48,7 @@ public:
     QList<Chat> getAllChats();
 
     // ChatsView
-    QSqlQuery getChatsView();
+    SqlQuery getChatsView();
 
     // Messages
     bool addOrUpdateMessage(const Message &message);
@@ -56,11 +64,18 @@ signals:
     void chatAdded(const Chat &chat);
     void messageAdded(const Message &message);
 
-protected:
-    void createTables();
-
 private:
     explicit DatabaseClient();
+
+    int ownId_ = -1;
+
+    QThreadStorage<std::shared_ptr<SqlDatabase>> threadDatabases_;
+
+    QMutex users_;
+    QMutex chats_;
+    QMutex chatUsers_;
+    QMutex chatsView_;
+    QMutex messages_;
 };
 
 inline DatabaseClient *database()

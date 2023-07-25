@@ -20,9 +20,9 @@ class ChatListView : public QListView
 public:
     explicit ChatListView(QWidget *parent = nullptr);
 
-    void addNewChatItemToMainModel(const ChatItemPtr &chatItem);
-
 signals:
+    void newChatItemAdded(const ChatItemPtr &chatItem);
+
     void selectionWasChangedByUser(const ChatModelItemPtr &selectedChat);
 
     void highlightColorChanged();
@@ -37,6 +37,10 @@ protected slots:
 private slots:
     void initMainModel();
     void updateMainModel();
+
+    void onLoggedOut();
+
+    void addNewChatToMainModel(const Chat &chat);
 
 private:
     ChatListModel *mainModel_ = nullptr;

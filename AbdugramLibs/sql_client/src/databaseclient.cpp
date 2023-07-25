@@ -1,4 +1,6 @@
 #include "databaseclient.h"
+#include "sqlquery.h"
+#include "database.h"
 
 #include "userstable.h"
 #include "chatstable.h"
@@ -11,9 +13,9 @@
 #include <sql_common/data_structures/message.h>
 #include <sql_common/functions.h>
 
-#include <QSqlQuery>
 #include <QSqlError>
 #include <QMap>
+#include <QThread>
 #include <QDebug>
 
 const QString DbName = "abdugram";
@@ -24,21 +26,24 @@ DatabaseClient *DatabaseClient::instance()
     return &self;
 }
 
-void DatabaseClient::connectToDatabase(int ownId)
+std::shared_ptr<SqlDatabase> DatabaseClient::threadDb()
 {
-    if (QSqlDatabase::database().isOpen()) {
-        QSqlDatabase::database().close();
-
+    if (!threadDatabases_.hasLocalData()) {
+        threadDatabases_.setLocalData(std::make_shared<SqlDatabase>());
     }
-    QSqlDatabase db = QSqlDatabase::database();
-    db.setDatabaseName(".sql/" + DbName + "_" + QString::number(ownId));
+    auto db = threadDatabases_.localData();
+    db->connect();
+    return threadDatabases_.localData();
+}
 
-    if (!db.open()) {
-        qFatal(qPrintable("Couldn't open database!" + db.lastError().text()));
-    } else {
-        createTables();
-        emit connected();
-    }
+int DatabaseClient::ownId() const
+{
+    return ownId_;
+}
+
+void DatabaseClient::setOwnId(int ownId)
+{
+    ownId_ = ownId;
 }
 
 QDateTime DatabaseClient::getLastUpdatedAt(Tables table)
@@ -50,10 +55,19 @@ QDateTime DatabaseClient::getLastUpdatedAt(Tables table)
         {Tables::Messages, "messages"},
     };
 
+    static const QMap<Tables, QMutex *> tableToMutex {
+        {Tables::Users, &users_},
+        {Tables::Chats, &chats_},
+        {Tables::ChatUsers, &chatUsers_},
+        {Tables::Messages, &messages_},
+    };
+
+    QMutexLocker lock{tableToMutex[table]};
+
     const QString query = QString{"SELECT MAX(DATETIME(updated_at)) AS last_updated_at FROM %1;"}
                               .arg(tableToString[table]);
 
-    QSqlQuery getLastUpdatedAtQuery{query};
+    SqlQuery getLastUpdatedAtQuery{query};
 
     if (!executeQuery(getLastUpdatedAtQuery, ErrorImportance::Critical)) {
         return QDateTime{};
@@ -65,6 +79,7 @@ QDateTime DatabaseClient::getLastUpdatedAt(Tables table)
 
 bool DatabaseClient::addOrUpdateUser(const User &user)
 {
+    QMutexLocker lock{&users_};
     bool success = UsersTable::addOrUpdateUser(user);
 
     if (success)
@@ -75,11 +90,13 @@ bool DatabaseClient::addOrUpdateUser(const User &user)
 
 User DatabaseClient::getUserById(int userId)
 {
+    QMutexLocker lock{&users_};
     return UsersTable::getUserById(userId);
 }
 
 bool DatabaseClient::addOrUpdateChat(const Chat &chat)
 {
+    QMutexLocker lock{&chats_};
     const bool success = ChatsTable::addOrUpdateChat(chat);
 
     if (success)
@@ -90,7 +107,10 @@ bool DatabaseClient::addOrUpdateChat(const Chat &chat)
 
 bool DatabaseClient::addChat(Chat chat, const QList<ChatUser> &chatUsers, int ownUserId)
 {
-    bool success = executeTransaction([&]() {
+    QMutexLocker lockChats{&chats_};
+    QMutexLocker lockChatUsers{&chatUsers_};
+
+    bool success = executeTransaction(*threadDb(), [&]() {
         if (chat.type() == Chat::Type::Private) {
             auto it = std::find_if(chatUsers.begin(), chatUsers.end(), [&](const ChatUser &chatUser) {
                 return chatUser.userId() != ownUserId;
@@ -117,18 +137,21 @@ bool DatabaseClient::addChat(Chat chat, const QList<ChatUser> &chatUsers, int ow
 
 QList<Chat> DatabaseClient::getAllChats()
 {
+    QMutexLocker lock{&chats_};
     return ChatsTable::getAllChats();
 }
 
-QSqlQuery DatabaseClient::getChatsView()
+SqlQuery DatabaseClient::getChatsView()
 {
-    QSqlQuery query{"SELECT * FROM chats_view;"};
+    QMutexLocker lock{&chatsView_};
+    SqlQuery query{"SELECT * FROM chats_view;"};
     query.exec();
     return query;
 }
 
 bool DatabaseClient::addOrUpdateMessage(const Message &message)
 {
+    QMutexLocker lock{&messages_};
     bool success = MessagesTable::addOrUpdateMessage(message);
 
     if (success)
@@ -139,38 +162,16 @@ bool DatabaseClient::addOrUpdateMessage(const Message &message)
 
 QList<Message> DatabaseClient::getMessages(int chatId)
 {
+    QMutexLocker lock{&messages_};
     return MessagesTable::getMessagesFromChat(chatId);
 }
 
 bool DatabaseClient::addOrUpdateChatUser(const ChatUser &chatUser)
 {
+    QMutexLocker lock{&chatUsers_};
     return ChatUsersTable::addOrUpdateChatUser(chatUser);
-}
-
-void DatabaseClient::createTables()
-{
-    QSqlQuery enableForeignKeys{"PRAGMA foreign_keys = ON;"};
-
-    if (!enableForeignKeys.exec()) {
-        qFatal(qPrintable("Couldn't enable keys!" + enableForeignKeys.lastError().text()));
-    }
-
-    QString fileName("./.sql/create/create.sql");
-    QString queries = readFullFile(fileName);
-
-    QStringList queryList = queries.split(";");
-    for (QString query : queryList) {
-        query = query.trimmed();
-        if (query.isEmpty())
-            continue;
-        QSqlQuery createQuery{query};
-        if (!createQuery.exec()) {
-            qFatal(qPrintable("Couldn't execute query!" + createQuery.lastError().text()));
-        }
-    }
 }
 
 DatabaseClient::DatabaseClient()
 {
-    QSqlDatabase::addDatabase("QSQLITE");
 }

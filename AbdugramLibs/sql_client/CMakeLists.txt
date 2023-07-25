@@ -25,16 +25,20 @@ set(HEADERS
     ${HEADERS_DIR}/chatstable.h
     ${HEADERS_DIR}/chatuserstable.h
     ${HEADERS_DIR}/databaseclient.h
+    ${HEADERS_DIR}/database.h
     ${HEADERS_DIR}/messagestable.h
     ${HEADERS_DIR}/userstable.h
+    ${HEADERS_DIR}/sqlquery.h
 )
 
 set(SOURCES
     ${SOURCES_DIR}/chatstable.cpp
     ${SOURCES_DIR}/chatuserstable.cpp
     ${SOURCES_DIR}/databaseclient.cpp
+    ${SOURCES_DIR}/database.cpp
     ${SOURCES_DIR}/messagestable.cpp
     ${SOURCES_DIR}/userstable.cpp
+    ${SOURCES_DIR}/sqlquery.cpp
 )
 
 add_library(${LIBRARY_NAME} SHARED ${SOURCES})

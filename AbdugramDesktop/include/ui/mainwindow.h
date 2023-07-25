@@ -26,9 +26,16 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
 
 signals:
+    void pageSlideFinished();
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
+
+public slots:
+    void toHelloPage();
+    void toLoginPage();
+    void toRegistrationPage();
+    void toMainPage();
 
 private slots:
     void connectToServer();
@@ -38,15 +45,6 @@ private slots:
 
     void onLoginResult(bool success);
     void onRegisterResult(bool success);
-
-    void toHelloPage();
-    void toLoginPage();
-    void toRegistrationPage();
-    void toMainPage();
-
-    void startupLogin();
-    void onStartupLoginResult(bool success);
-    void onStartupLoginSuccess();
 
 private:
     void setupUi();

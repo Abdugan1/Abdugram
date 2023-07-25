@@ -1,4 +1,5 @@
 #include "chatuserstable.h"
+#include "sqlquery.h"
 
 #include <sql_common/data_structures/chatuser.h>
 #include <sql_common/functions.h>
@@ -18,7 +19,7 @@ bool ChatUsersTable::addOrUpdateChatUser(const ChatUser &chatUser)
                           "     left_at = excluded.left_at, "
                           "     updated_at = excluded.updated_at;";
 
-    QSqlQuery addUserToChatQuery;
+    SqlQuery addUserToChatQuery;
     addUserToChatQuery.prepare(query);
     addUserToChatQuery.bindValue(":chat_id", chatUser.chatId());
     addUserToChatQuery.bindValue(":user_id", chatUser.userId());

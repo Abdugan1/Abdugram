@@ -1,9 +1,9 @@
 #include "messagestable.h"
+#include "sqlquery.h"
 
 #include <sql_common/data_structures/message.h>
 #include <sql_common/functions.h>
 
-#include <QSqlQuery>
 #include <QSqlRecord>
 #include <QVariant>
 #include <QDebug>
@@ -23,7 +23,7 @@ bool MessagesTable::addOrUpdateMessage(const Message &message)
                           "     created_at = excluded.created_at, "
                           "     updated_at = excluded.updated_at;";
 
-    QSqlQuery addMessageQuery;
+    SqlQuery addMessageQuery;
     addMessageQuery.prepare(query);
     addMessageQuery.bindValue(":id", message.id());
     addMessageQuery.bindValue(":chat_id", message.chatId());
@@ -47,7 +47,7 @@ QList<Message> MessagesTable::getMessagesFromChat(int chatId)
 {
     const QString query = "SELECT * FROM messages WHERE chat_id = :chat_id;";
 
-    QSqlQuery getMessagesQuery;
+    SqlQuery getMessagesQuery;
     getMessagesQuery.prepare(query);
     getMessagesQuery.bindValue(":chat_id", chatId);
 

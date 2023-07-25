@@ -80,7 +80,7 @@ QList<User> DatabaseServer::getUnsyncUsers(int userId, const QDateTime &lastUpda
 
 bool DatabaseServer::addChat(const Chat &chat, const QList<ChatUser> &chatUsers)
 {
-    const bool success = executeTransaction([&]() {
+    const bool success = executeTransaction(QSqlDatabase::database(), [&]() {
         if (!ChatsTable::addChat(chat)) {
             return false;
         }

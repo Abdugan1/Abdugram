@@ -13,6 +13,8 @@ class Chat;
 class ChatUser;
 class Message;
 
+class Application;
+
 class NetworkHandler : public QObject
 {
     Q_OBJECT

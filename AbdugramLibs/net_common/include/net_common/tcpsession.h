@@ -14,6 +14,7 @@ public:
 
 signals:
     void received(const AbduMessagePtr &message);
+    void requestSend(const AbduMessagePtr &message);
 
 public slots:
     bool openSession(quintptr descriptor);

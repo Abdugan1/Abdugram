@@ -33,26 +33,26 @@ QString readFullFile(const QString &fileName)
 bool executeQuery(QSqlQuery &query, ErrorImportance errorImportance)
 {
     if (!query.exec()) {
-        logError("Couldn't execute query \"" + query.executedQuery() + "\"" +
+        logError("Couldn't execute query \"" + query.lastQuery() + "\"" +
                  "Error: \"" + query.lastError().text() + "\"", errorImportance);
         return false;
     }
     return true;
 }
 
-bool executeTransaction(std::function<bool ()> callable)
+bool executeTransaction(QSqlDatabase db, std::function<bool ()> callable)
 {
-    QSqlDatabase::database().transaction();
+    db.transaction();
 
     bool success = callable();
 
     if (success) {
-        if (!QSqlDatabase::database().commit()) {
-            QSqlDatabase::database().rollback();
+        if (!db.commit()) {
+            db.rollback();
             success = false;
         }
     } else {
-        QSqlDatabase::database().rollback();
+        db.rollback();
     }
 
     return success;

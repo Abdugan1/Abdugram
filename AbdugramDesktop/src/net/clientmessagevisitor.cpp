@@ -17,7 +17,9 @@
 #include <sql_common/functions.h>
 
 #include <sql_client/databaseclient.h>
+#include <sql_client/database.h>
 
+#include <QThread>
 #include <QDebug>
 
 void ClientMessageVisitor::visit(const LoginReply &reply)
@@ -29,7 +31,7 @@ void ClientMessageVisitor::visit(const LoginReply &reply)
 
     networkHandler()->userId_ = reply.userId();
 
-    database()->connectToDatabase(reply.userId());
+    database()->setOwnId(reply.userId());
 
     networkHandler()->startSync();
 
@@ -43,14 +45,18 @@ void ClientMessageVisitor::visit(const RegisterReply &reply)
         return;
     }
 
-    networkHandler()->userId_ = reply.userId();
+    const auto user = reply.user();
 
-    database()->connectToDatabase(reply.userId());
+    networkHandler()->userId_ = user.id();
 
+    database()->setOwnId(user.id());
 
-    networkHandler()->startSync();
+    database()->addOrUpdateUser(user);
 
     emit networkHandler()->registerResult(true);
+
+    // Since we are new user, nothing to sync rather than own user data...
+    emit networkHandler()->syncFinished();
 }
 
 void ClientMessageVisitor::visit(const SyncUsersReply &reply)
@@ -89,7 +95,7 @@ void ClientMessageVisitor::visit(const SearchUsersReply &reply)
 {
     const QList<User> users = reply.users();
 
-    bool success = executeTransaction([&]() {
+    bool success = executeTransaction(*database()->threadDb(), [&]() {
         for (const auto& user : users) {
             if (!database()->addOrUpdateUser(user)) {
                 return false;
@@ -124,8 +130,8 @@ void ClientMessageVisitor::visit(const SendMessageReply &reply)
 
 void ClientMessageVisitor::visit(const LogoutReply &reply)
 {
-    qDebug() << "logout...";
     networkHandler()->userId_ = -1;
+    database()->setOwnId(-1);
 
     emit networkHandler()->loggedOut();
 }

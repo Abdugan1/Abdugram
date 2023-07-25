@@ -4,6 +4,7 @@
 #include "../SqlCommon_global.h"
 #include <QString>
 #include <QDateTime>
+#include <QMetaType>
 
 class QSqlRecord;
 
@@ -72,5 +73,7 @@ private:
     QDateTime updatedAt_;
     QDateTime deletedAt_;
 };
+
+Q_DECLARE_METATYPE(User)
 
 #endif // USER_H

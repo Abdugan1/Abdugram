@@ -73,6 +73,7 @@ void SideMenu::closeAnimation()
 
 void SideMenu::onSyncFinished()
 {
+//    qDebug() <<
     username_->setText(database()->getUserById(networkHandler()->userId()).username());
 }
 

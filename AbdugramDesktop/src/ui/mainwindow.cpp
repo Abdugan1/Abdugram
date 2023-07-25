@@ -7,7 +7,6 @@
 #include "ui/problemwidget.h"
 
 #include "sectimer.h"
-#include "settings.h"
 
 #include "net/networkhandler.h"
 
@@ -35,51 +34,6 @@ void MainWindow::resizeEvent(QResizeEvent *event)
     connectionProblem_->move(10, height() - 20 - connectionProblem_->height());
 }
 
-void MainWindow::connectToServer()
-{
-    reconnectSoonTimer_->stop();
-    networkHandler()->connectToServer();
-}
-
-void MainWindow::onConnected()
-{
-    connectAttempts_ = 0;
-    connectionProblem_->hide();
-
-    startupLogin();
-}
-
-void MainWindow::onConnectionError()
-{
-    if (connectAttempts_++ < 6) {
-        connectionProblem_->setTextToConnecting();
-        QTimer::singleShot(500, this, &MainWindow::connectToServer);
-    } else {
-        connectAttempts_ = 0;
-        reconnectSoonTimer_->start();
-    }
-    connectionProblem_->setVisible(true);
-}
-
-void MainWindow::onLoginResult(bool success)
-{
-    if (startupLogin_) {
-        onStartupLoginResult(success);
-    } else if (!success) {
-        // TODO: Show error
-        return;
-    }
-}
-
-void MainWindow::onRegisterResult(bool success)
-{
-    if (success) {
-        toMainPage();
-    } else {
-        // TODO: Show error
-    }
-}
-
 void MainWindow::toHelloPage()
 {
     stackedWidget_->toWidget(helloPage_);
@@ -100,36 +54,43 @@ void MainWindow::toMainPage()
     stackedWidget_->toWidget(mainPage_);
 }
 
-void MainWindow::startupLogin()
+
+void MainWindow::connectToServer()
 {
-    startupLogin_ = true;
-
-    const QSettings settings;
-    const auto username = settings.value(settings::net::Username).toString();
-    const auto password = settings.value(settings::net::Password).toString();
-
-    if (username.isEmpty() || password.isEmpty()) {
-        show();
-        return;
-    }
-
-    networkHandler()->sendLoginRequest(username, password);
+    reconnectSoonTimer_->stop();
+    networkHandler()->connectToServer();
 }
 
-void MainWindow::onStartupLoginResult(bool success)
+void MainWindow::onConnected()
 {
-    if (!success) {
-        show();
+    connectAttempts_ = 0;
+    connectionProblem_->hide();
+}
+
+void MainWindow::onConnectionError()
+{
+    if (connectAttempts_++ < 6) {
+        connectionProblem_->setTextToConnecting();
+        QTimer::singleShot(500, this, &MainWindow::connectToServer);
     } else {
+        connectAttempts_ = 0;
+        reconnectSoonTimer_->start();
+    }
+    connectionProblem_->setVisible(true);
+}
+
+void MainWindow::onLoginResult(bool success)
+{
+    if (success) {
         toMainPage();
-        connect(stackedWidget_, &StackedWidget::slideFinished, this, &MainWindow::onStartupLoginSuccess);
     }
 }
 
-void MainWindow::onStartupLoginSuccess()
+void MainWindow::onRegisterResult(bool success)
 {
-    disconnect(stackedWidget_, &StackedWidget::slideFinished, this, &MainWindow::onStartupLoginSuccess);
-    show();
+    if (success) {
+        toMainPage();
+    }
 }
 
 void MainWindow::setupUi()
@@ -172,12 +133,12 @@ void MainWindow::connectUiLogic()
     connect(registrationPage_, &RegistrationPage::backButtonClicked, this, &MainWindow::toHelloPage);
 
     connect(registrationPage_, &RegistrationPage::toLoginPageClicked, this, &MainWindow::toLoginPage);
+
+    connect(stackedWidget_, &StackedWidget::slideFinished, this, &MainWindow::pageSlideFinished);
 }
 
 void MainWindow::connectTcpLogic()
 {
-    connect(networkHandler(), &NetworkHandler::connectedSucessfully, this, &MainWindow::startupLogin);
-
     connect(networkHandler(), &NetworkHandler::connectionError, this, &MainWindow::onConnectionError);
 
     connect(connectionProblem_, &ProblemWidget::reconnectNowClicked, this, &MainWindow::connectToServer);

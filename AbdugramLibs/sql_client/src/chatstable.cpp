@@ -1,11 +1,12 @@
 #include "chatstable.h"
+#include "sqlquery.h"
 
 #include <sql_common/functions.h>
 #include <sql_common/data_structures/user.h>
 #include <sql_common/data_structures/chat.h>
 
+#
 #include <QString>
-#include <QSqlQuery>
 #include <QSqlRecord>
 #include <QVariant>
 #include <QDebug>
@@ -14,7 +15,7 @@ bool ChatsTable::isChatExist(const QString &chatName)
 {
     const QString query = "SELECT COUNT(*) FROM chats WHERE name = :chat_name;";
 
-    QSqlQuery isChatExistQuery;
+    SqlQuery isChatExistQuery;
     isChatExistQuery.prepare(query);
     isChatExistQuery.bindValue(":chat_name", chatName);
 
@@ -37,7 +38,7 @@ bool ChatsTable::addOrUpdateChat(const Chat &chat)
                           "     updated_at = excluded.updated_at, "
                           "     deleted_at = excluded.deleted_at;";
 
-    QSqlQuery addChatQuery;
+    SqlQuery addChatQuery;
     addChatQuery.prepare(query);
     addChatQuery.bindValue(":id", chat.id());
     addChatQuery.bindValue(":name", chat.name());
@@ -54,7 +55,7 @@ Chat ChatsTable::getChatById(int chatId)
 {
     const QString query = "SELECT * FROM chats WHERE id = :id;";
 
-    QSqlQuery getChatByIdQuery;
+    SqlQuery getChatByIdQuery;
     getChatByIdQuery.prepare(query);
     getChatByIdQuery.bindValue(":id", chatId);
 
@@ -69,7 +70,7 @@ QList<Chat> ChatsTable::getAllChats()
 {
     const QString query = "SELECT * FROM chats;";
 
-    QSqlQuery getAllChatsQuery{query};
+    SqlQuery getAllChatsQuery{query};
     getAllChatsQuery.setForwardOnly(true);
 
     if (!executeQuery(getAllChatsQuery, ErrorImportance::Critical)) {
