@@ -23,13 +23,11 @@ protected:
     void keyPressEvent(QKeyEvent *event) override;
 
 private slots:
-    void onSideMenuRequested();
-    void onSideMenuLostFocus();
+    void makeMainWidgetVisuallyInactive();
+    void makeMainWidgetNormal();
 
 private:
     void setupUi();
-    void makeMainWidgetVisuallyInactive();
-    void makeMainWidgetNormal();
 
 private:
     QSplitter        *splitter_         = nullptr;

@@ -10,61 +10,81 @@
 
 #include <QLabel>
 #include <QBoxLayout>
-#include <QPropertyAnimation>
-#include <QFocusEvent>
 #include <QMouseEvent>
 #include <QCloseEvent>
-#include <QFrame>
+#include <QStateMachine>
+#include <QPropertyAnimation>
 #include <QDebug>
 
 SideMenu::SideMenu(QWidget *parent)
-    : QFrame{parent}
+    : QWidget{parent}
 {
     setupUi();
 
     connect(logoutButton_, &SideMenuButton::clicked, this, []() {networkHandler()->sendLogoutRequest();});
+    connect(logoutButton_, &SideMenuButton::clicked, this, &SideMenu::close);
     connect(networkHandler(), &NetworkHandler::syncFinished, this, &SideMenu::onSyncFinished);
+
+    parent->installEventFilter(this);
+}
+
+bool SideMenu::eventFilter(QObject *watched, QEvent *event)
+{
+    switch (event->type()) {
+    case QEvent::Resize:
+        setGeometry(parentWidget()->geometry());
+        break;
+    default:
+        break;
+    }
+    return QWidget::eventFilter(watched, event);
 }
 
 void SideMenu::showEvent(QShowEvent *event)
 {
+    emit aboutToShow();
+    raise();
     startShowAnimation();
     setFocus(Qt::MouseFocusReason);
+
+    setAttribute(Qt::WA_TransparentForMouseEvents, false);
 }
 
 void SideMenu::closeEvent(QCloseEvent *event)
 {
+    emit aboutToClose();
     event->ignore();
     closeAnimation();
+
+    setAttribute(Qt::WA_TransparentForMouseEvents, true);
 }
 
-void SideMenu::focusOutEvent(QFocusEvent *event)
+void SideMenu::mousePressEvent(QMouseEvent *event)
 {
-    if (event->reason() == Qt::ActiveWindowFocusReason)
-        return;
-
-    emit lostFocus();
-    QFrame::focusOutEvent(event);
+    if (!background_->geometry().contains(event->pos())) {
+        close();
+    }
+    return QWidget::mousePressEvent(event);
 }
 
 void SideMenu::startShowAnimation()
 {
-    QPropertyAnimation *showAnim = new QPropertyAnimation{this, "size"};
-    showAnim->setStartValue(QSize{0, height()});
-    showAnim->setEndValue(QSize{normalWidth_, height()});
+    QPropertyAnimation *showAnim = new QPropertyAnimation{this, "offset"};
+    showAnim->setStartValue(-menuWidth_);
+    showAnim->setEndValue(0);
     showAnim->setEasingCurve(QEasingCurve::OutQuint);
-    showAnim->setDuration(300);
+    showAnim->setDuration(250);
 
     showAnim->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
 void SideMenu::closeAnimation()
 {
-    QPropertyAnimation *closeAnim = new QPropertyAnimation{this, "size"};
-    closeAnim->setStartValue(QSize{normalWidth_, height()});
-    closeAnim->setEndValue(QSize{0, height()});
+    QPropertyAnimation *closeAnim = new QPropertyAnimation{this, "offset"};
+    closeAnim->setStartValue(0);
+    closeAnim->setEndValue(-menuWidth_);
     closeAnim->setEasingCurve(QEasingCurve::OutQuint);
-    closeAnim->setDuration(300);
+    closeAnim->setDuration(250);
 
     connect(closeAnim, &QPropertyAnimation::finished, this, &QWidget::hide);
 
@@ -73,7 +93,6 @@ void SideMenu::closeAnimation()
 
 void SideMenu::onSyncFinished()
 {
-//    qDebug() <<
     username_->setText(database()->getUserById(networkHandler()->userId()).username());
 }
 
@@ -89,10 +108,9 @@ void SideMenu::setupUi()
     username_->setFont(boldFont);
 
     QVBoxLayout *avatarLayout = new QVBoxLayout;
-    avatarLayout->setContentsMargins(0, 20, 15, 0);
+    avatarLayout->setContentsMargins(0, 20, 15, 15);
     avatarLayout->setSpacing(0);
     avatarLayout->addWidget(avatar_);
-    avatarLayout->addWidget(username_);
 
     const int leftMargin = 20;
 
@@ -102,7 +120,9 @@ void SideMenu::setupUi()
     userInfoLayout->addLayout(avatarLayout);
     userInfoLayout->addWidget(username_);
 
-    logoutButton_ = new SideMenuButton{tr("Log out")};
+    logoutButton_ = new SideMenuButton{tr(" Log out")};
+    logoutButton_->setIcon(QIcon{":/images/logout.png"});
+    logoutButton_->setStyleSheet("color: #F64650");
 
     appName_ = new SecondaryLabel{"Abdugram Desktop"};
     appName_->setFont(boldFont);
@@ -114,17 +134,43 @@ void SideMenu::setupUi()
     appInfoLayout->addWidget(appName_);
     appInfoLayout->addWidget(appVersion_);
 
-    QVBoxLayout *mainLayout = new QVBoxLayout;
+    QVBoxLayout *backgroundLayout = new QVBoxLayout;
+    backgroundLayout->setContentsMargins(0, 0, 0, 0);
+    backgroundLayout->setSpacing(0);
+    backgroundLayout->addLayout(userInfoLayout);
+    backgroundLayout->addSpacerItem(new QSpacerItem{1, 10, QSizePolicy::Maximum, QSizePolicy::Fixed});
+    backgroundLayout->addWidget(logoutButton_);
+    backgroundLayout->addSpacerItem(new QSpacerItem{1, 1, QSizePolicy::Maximum, QSizePolicy::Expanding});
+    backgroundLayout->addLayout(appInfoLayout);
+
+    background_ = new QWidget;
+    background_->setObjectName("sideMenuBackground");
+    background_->setLayout(backgroundLayout);
+    background_->setAutoFillBackground(true);
+
+    QHBoxLayout *mainLayout = new QHBoxLayout;
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(0);
-    mainLayout->addLayout(userInfoLayout);
-    mainLayout->addSpacerItem(new QSpacerItem{1, 10, QSizePolicy::Maximum, QSizePolicy::Fixed});
-    mainLayout->addWidget(logoutButton_);
-    mainLayout->addSpacerItem(new QSpacerItem{1, 1, QSizePolicy::Maximum, QSizePolicy::Expanding});
-    mainLayout->addLayout(appInfoLayout);
+    mainLayout->addWidget(background_);
+    mainLayout->addSpacerItem(new QSpacerItem{1, 1, QSizePolicy::Expanding, QSizePolicy::Maximum});
 
     setLayout(mainLayout);
-    setAutoFillBackground(true);
 
-    normalWidth_ = sizeHint().width();
+    menuWidth_ = background_->sizeHint().width();
+
+    hide();
+}
+
+int SideMenu::offset() const
+{
+    return offset_;
+}
+
+void SideMenu::setOffset(int newOffset)
+{
+    if (offset_ == newOffset)
+        return;
+    offset_ = newOffset;
+    setGeometry(rect().translated(offset_, 0));
+    emit offsetChanged();
 }

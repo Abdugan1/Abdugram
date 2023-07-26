@@ -4,5 +4,6 @@
         <file>images/avatar.png</file>
         <file>images/back_button.png</file>
         <file>images/drawer_button.png</file>
+        <file>images/logout.png</file>
     </qresource>
 </RCC>

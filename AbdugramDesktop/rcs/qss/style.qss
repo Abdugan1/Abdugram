@@ -67,7 +67,7 @@ MainPage::handle {
 }
 
 /* SideMenu */
-SideMenu {
+QWidget#sideMenuBackground {
     background-color: @backgroundLighterHelper2;
 }
 
@@ -81,6 +81,10 @@ SideMenuButton {
 
     width: 270px;
     height: 37px;
+
+    text-align: left;
+
+    padding-left: 20px;
 }
 
 SideMenuButton::hover {

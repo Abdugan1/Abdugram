@@ -38,22 +38,15 @@ void MainPage::keyPressEvent(QKeyEvent *event)
     QWidget::keyPressEvent(event);
 }
 
-void MainPage::onSideMenuRequested()
-{
-    sideMenu_->show();
-    makeMainWidgetVisuallyInactive();
-}
-
-void MainPage::onSideMenuLostFocus()
-{
-    sideMenu_->close();
-    makeMainWidgetNormal();
-}
-
 void MainPage::setupUi()
 {
+    sideMenu_ = new SideMenu{this};
+
+    connect(sideMenu_, &SideMenu::aboutToShow, this, &MainPage::makeMainWidgetVisuallyInactive);
+    connect(sideMenu_, &SideMenu::aboutToClose, this, &MainPage::makeMainWidgetNormal);
+
     sidePanel_        = new SidePanel;
-    connect(sidePanel_, &SidePanel::sideMenuRequested, this, &MainPage::onSideMenuRequested);
+    connect(sidePanel_, &SidePanel::sideMenuRequested, sideMenu_, &SideMenu::show);
 
     conversationSide_ = new ConversationSide;
 
@@ -77,11 +70,6 @@ void MainPage::setupUi()
     hLayout->addWidget(splitter_);
 
     setLayout(hLayout);
-
-    sideMenu_ = new SideMenu{this};
-    sideMenu_->hide();
-
-    connect(sideMenu_, &SideMenu::lostFocus, this, &MainPage::onSideMenuLostFocus);
 }
 
 void MainPage::makeMainWidgetVisuallyInactive()

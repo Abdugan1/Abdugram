@@ -18,4 +18,5 @@ void SideMenuButton::init()
 {
     rippleAnimation_ = new RippleAnimation{this};
     setFocusPolicy(Qt::NoFocus);
+    setCursor(Qt::PointingHandCursor);
 }
