@@ -16,15 +16,6 @@
 NetworkHandler::NetworkHandler(QObject *parent)
     : QObject{parent}
 {
-    connect(this, &NetworkHandler::requestLoginReply, this, &NetworkHandler::sendLoginReply);
-    connect(this, &NetworkHandler::requestRegisterReply, this, &NetworkHandler::sendRegisterReply);
-    connect(this, &NetworkHandler::requestSyncUsersReply, this, &NetworkHandler::sendSyncUsersReply);
-    connect(this, &NetworkHandler::requestSyncChatsReply, this, &NetworkHandler::sendSyncChatsReply);
-    connect(this, &NetworkHandler::requestSyncMessagesReply, this, &NetworkHandler::sendSyncMessagesReply);
-    connect(this, &NetworkHandler::requestSearchReply, this, &NetworkHandler::sendSearchReply);
-    connect(this, &NetworkHandler::requestCreateChatReply, this, &NetworkHandler::sendCreateChatReply);
-    connect(this, &NetworkHandler::requestSendMessageReply, this, &NetworkHandler::sendSendMessageReply);
-    connect(this, &NetworkHandler::requestLogoutReply, this, &NetworkHandler::sendLogoutReply);
 }
 
 void NetworkHandler::addSession(int userId, Session *session)

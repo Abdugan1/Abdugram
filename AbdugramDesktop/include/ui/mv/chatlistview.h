@@ -14,6 +14,14 @@ class Chat;
 class ChatModelItem;
 using ChatModelItemPtr = std::shared_ptr<ChatModelItem>;
 
+class ChatViewItem;
+
+class ChatItem;
+class FoundUserItem;
+
+using ChatItemPtr = std::shared_ptr<ChatItem>;
+using FoundUserItemPtr = std::shared_ptr<FoundUserItem>;
+
 class ChatListView : public QListView
 {
     Q_OBJECT
@@ -23,13 +31,18 @@ public:
 signals:
     void newChatItemAdded(const ChatItemPtr &chatItem);
 
-    void selectionWasChangedByUser(const ChatModelItemPtr &selectedChat);
+    void chatSelected(const ChatModelItemPtr &chat);
+    void foundUserSelected(const ChatModelItemPtr &foundUser);
 
     void highlightColorChanged();
 
+    void localSearchFinished();
+
 public slots:
     void setMainModel();
-    void setTemporaryModel(const QList<User> &foundUserList);
+    void setMainModelSelected(int chatId);
+
+    void addFoundUsers(const QList<User> &foundUsers);
 
 protected slots:
     void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
@@ -41,6 +54,8 @@ private slots:
     void onLoggedOut();
 
     void addNewChatToMainModel(const Chat &chat);
+
+    void onChatsFound(const QList<ChatViewItem> &chatViews);  
 
 private:
     ChatListModel *mainModel_ = nullptr;

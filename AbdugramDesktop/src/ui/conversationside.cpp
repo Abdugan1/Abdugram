@@ -5,6 +5,8 @@
 #include "ui/messagetextedit.h"
 #include "ui/colorrepository.h"
 
+#include "ui/mv/chatitem.h"
+
 #include "net/networkhandler.h"
 
 #include <net_common/messages/createchatrequest.h>
@@ -30,11 +32,6 @@ ConversationSide::ConversationSide(QWidget *parent)
     connect(networkHandler(), &NetworkHandler::loggedOut, this, &ConversationSide::unsetCurrentChatItem);
 }
 
-ChatModelItemPtr ConversationSide::currentChat() const
-{
-    return currentChatItem_;
-}
-
 void ConversationSide::paintEvent(QPaintEvent *event)
 {
     if (!currentChatItem_) {
@@ -46,6 +43,7 @@ void ConversationSide::paintEvent(QPaintEvent *event)
 
 void ConversationSide::setCurrentChatItem(const ChatModelItemPtr &chat)
 {
+    const auto prevChat = currentChatItem_;
     currentChatItem_ = chat;
 
     if (!currentChatItem_) {
@@ -57,15 +55,29 @@ void ConversationSide::setCurrentChatItem(const ChatModelItemPtr &chat)
         messageEdit_->setFocus(Qt::MouseFocusReason);
     }
 
-    const int type = chat->type();
-    if (type == ChatModelItem::Type::ChatItem) {
+    const int type = chat->data(ChatModelItem::Roles::Type).toInt();
+
+    const auto FoundUserItem = ChatModelItem::Type::FoundUserItem;
+    const auto ChatItem      = ChatModelItem::Type::ChatItem;
+
+    if (prevChat) {
+        const int prevType = prevChat->data(ChatModelItem::Roles::Type).toInt();
+        if (prevType == FoundUserItem && type == ChatItem) {
+            if (prevChat->data(FoundUserItem::Username) == currentChatItem_->data(ChatItem::ChatName)) {
+                messageView_->setChatIdWithoutSelect(currentChatItem_->data(ChatItem::ChatId).toInt());
+                return;
+            }
+        }
+        update();
+    }
+
+    if (type == ChatItem) {
         chatHeader_->setChatName(chat->data(ChatItem::Roles::ChatName).toString());
         messageView_->setChatId(chat->data(ChatItem::Roles::ChatId).toInt());
-    } else if (type == ChatModelItem::Type::FoundUserItem) {
+    } else if (type == FoundUserItem) {
         chatHeader_->setChatName(chat->data(FoundUserItem::Roles::Username).toString());
         messageView_->setChatId(-1);
     }
-
     update();
 }
 
@@ -78,9 +90,9 @@ void ConversationSide::updateCurrentChatIfAddedChatIsEqualToAdded(const ChatItem
 {
     if (!currentChatItem_)
         return;
-    const int type = currentChatItem_->type();
+    const int type = currentChatItem_->data(ChatModelItem::Roles::Type).toInt();
     if (type == ChatModelItem::Type::FoundUserItem) {
-        setCurrentChatItem(chat);
+        emit addedChatWasCurrent(chat->data(ChatItem::Roles::ChatId).toInt());
     }
 }
 
@@ -116,7 +128,7 @@ void ConversationSide::requestSendMessage(const QString &messageText)
 
 void ConversationSide::onSendMessageRequested(const QString &messageText)
 {
-    const int type = currentChatItem_->type();
+    const int type = currentChatItem_->data(ChatModelItem::Roles::Type).toInt();
     if (type == ChatModelItem::Type::FoundUserItem) {
         requestCreatePrivateChat(messageText);
     } else {

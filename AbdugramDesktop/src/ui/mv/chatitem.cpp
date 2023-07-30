@@ -8,73 +8,80 @@ ChatItem::ChatItem()
 
 int ChatItem::chatId() const
 {
-    return chatId_;
+    return chatView_.chatId();
 }
 
-void ChatItem::setChatId(int newId)
+void ChatItem::setChatId(int newChatId)
 {
-    chatId_ = newId;
+    chatView_.setChatId(newChatId);
 }
 
 QString ChatItem::chatName() const
 {
-    return chatName_;
+    return chatView_.chatName();
 }
 
 void ChatItem::setChatName(const QString &newChatName)
 {
-    chatName_ = newChatName;
+    chatView_.setChatName(newChatName);
 }
 
 QUrl ChatItem::pictureUrl() const
 {
-    return pictureUrl_;
+    return chatView_.pictureUrl();
 }
 
-void ChatItem::setPictureUrl(const QUrl &newPictureUrl)
+void ChatItem::setPictureName(const QUrl &newPictureUrl)
 {
-    pictureUrl_ = newPictureUrl;
+    chatView_.setPictureUrl(newPictureUrl);
 }
 
 QString ChatItem::lastMessage() const
 {
-    return lastMessage_;
+    return chatView_.lastMessage();
 }
 
 void ChatItem::setLastMessage(const QString &newLastMessage)
 {
-    lastMessage_ = newLastMessage;
+    chatView_.setLastMessage(newLastMessage);
 }
 
 QDateTime ChatItem::messageDate() const
 {
-    return messageDate_;
+    return chatView_.messageDate();
 }
 
 void ChatItem::setMessageDate(const QDateTime &newMessageDate)
 {
-    messageDate_ = newMessageDate;
+    chatView_.setMessageDate(newMessageDate);
 }
 
 Chat::Type ChatItem::chatType() const
 {
-    return chatType_;
+    return chatView_.chatType();
 }
 
 void ChatItem::setChatType(Chat::Type newChatType)
 {
-    chatType_ = newChatType;
+    chatView_.setChatType(newChatType);
+}
+
+ChatItemPtr ChatItem::fromChatViewItem(const ChatViewItem &newChatView)
+{
+    ChatItemPtr chatItem{new ChatItem};
+    chatItem->chatView_ = newChatView;
+    return chatItem;
 }
 
 QVariant ChatItem::dataImp(int role) const
 {
     switch (role) {
-    case Roles::ChatId:      return chatId_;      break;
-    case Roles::ChatName:    return chatName_;    break;
-    case Roles::PictureUrl:  return pictureUrl_;  break;
-    case Roles::LastMessage: return lastMessage_; break;
-    case Roles::MessageDate: return messageDate_; break;
-    case Roles::ChatType:    return chatType_;    break;
+    case Roles::ChatId:      return chatId();      break;
+    case Roles::ChatName:    return chatName();    break;
+    case Roles::PictureUrl:  return pictureUrl();  break;
+    case Roles::LastMessage: return lastMessage(); break;
+    case Roles::MessageDate: return messageDate(); break;
+    case Roles::ChatType:    return chatType();    break;
     }
     return QVariant{};
 }

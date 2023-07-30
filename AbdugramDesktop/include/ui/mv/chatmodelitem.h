@@ -16,7 +16,7 @@ public:
         Unknown = -1,
         ChatItem,
         FoundUserItem,
-        LineSeparator,
+        SectionSeparator
     };
 
     explicit ChatModelItem(enum Type type);

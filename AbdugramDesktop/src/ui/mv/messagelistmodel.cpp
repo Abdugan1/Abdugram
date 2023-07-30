@@ -53,6 +53,17 @@ void MessageListModel::setChatId(int newChatId)
     emit dataChanged(index(0, 0), index(prevSize, 0));
 }
 
+void MessageListModel::setChatIdWithoutSelect(int newChatId)
+{
+    chatId_ = newChatId;
+
+    const int prevSize = messageModelItems_.size();
+    messageModelItems_.clear();
+    lastDate_ = QDate{};
+
+    emit dataChanged(index(0, 0), index(prevSize, 0));
+}
+
 void MessageListModel::onMessageAdded(const Message &message)
 {
     if (chatId_ != message.chatId())

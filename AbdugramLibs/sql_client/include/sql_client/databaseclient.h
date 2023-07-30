@@ -13,10 +13,12 @@
 class SqlQuery;
 
 class SqlDatabase;
+
 class User;
 class Chat;
 class ChatUser;
 class Message;
+class ChatViewItem;
 
 class SQLCLIENT_EXPORT DatabaseClient : public QObject
 {
@@ -48,7 +50,7 @@ public:
     QList<Chat> getAllChats();
 
     // ChatsView
-    SqlQuery getChatsView();
+    QList<ChatViewItem> getChatsView();
 
     // Messages
     bool addOrUpdateMessage(const Message &message);
@@ -57,16 +59,25 @@ public:
     // ChatUsers
     bool addOrUpdateChatUser(const ChatUser &chatUser);
 
+    //
+    void likeSearch(const QString &likeSearch);
+
 signals:
     void connected();
 
     void userAdded(const User &user);
     void chatAdded(const Chat &chat);
     void messageAdded(const Message &message);
+    
+    void foundChats(const QList<ChatViewItem> &chatViews);
 
 private:
     explicit DatabaseClient();
 
+    // ChatsView
+    QList<ChatViewItem> getChatsViewByLikeSearch(const QString &likeSearch);
+
+private:
     int ownId_ = -1;
 
     QThreadStorage<std::shared_ptr<SqlDatabase>> threadDatabases_;

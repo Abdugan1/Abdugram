@@ -77,9 +77,9 @@ QList<ChatUser> ChatUsersTable::getUnsyncChatUsers(int userId, int chatId, const
     const QString query = "SELECT cu.* "
                           "FROM chat_users cu "
                           "WHERE cu.chat_id IN ( "
-                          "SELECT chat_id "
-                          "FROM chat_users "
-                          "WHERE user_id = :user_id "
+                          "     SELECT chat_id "
+                          "     FROM chat_users "
+                          "     WHERE user_id = :user_id "
                           ") "
                           "AND cu.chat_id = :chat_id "
                           "AND cu.updated_at >= :last_updated_at;";

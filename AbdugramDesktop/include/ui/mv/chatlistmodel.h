@@ -10,8 +10,12 @@ class Chat;
 class ChatUser;
 
 class ChatModelItem;
+class ChatItem;
+class FoundUserItem;
 
 using ChatModelItemPtr = std::shared_ptr<ChatModelItem>;
+using ChatItemPtr = std::shared_ptr<ChatItem>;
+using FoundUserItemPtr = std::shared_ptr<FoundUserItem>;
 
 class ChatListModel : public QAbstractListModel
 {
@@ -27,13 +31,17 @@ public:
 
     Qt::ItemFlags flags(const QModelIndex &index) const override;
 
-    void addChatItem(const ChatModelItemPtr &item);
-    ChatModelItemPtr chatItem(int row) const;
+    void addChatItem(const ChatItemPtr &item);
 
-    void setChatItems(const QList<ChatModelItemPtr> &chatItems);
+    ChatModelItemPtr chatModelItem(int row) const;
+
+    int rowByChatId(int id) const;
+
+    void setChatItems(const QList<ChatItemPtr> &chatItems);
+    void addFoundUserItems(const QList<FoundUserItemPtr> &foundUsers);
 
 private:
-    ChatModelItems chatItems_;
+    ChatModelItems chatModelItems_;
 };
 
 #endif // CHATLISTMODEL_H

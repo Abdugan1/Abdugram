@@ -16,11 +16,19 @@ public:
 signals:
     void searchIsEmpty();
 
-private:
+public slots:
+    void startSearchOnServer();
+
+private slots:
+    void onTextEdited(const QString &text);
+
+private slots:
+    void searchOnLocal();
     void searchOnServer();
 
 private:
-    QTimer *searchServerTimer_ = nullptr;
+    QTimer *localSearchTimer_  = nullptr;
+    QTimer *serverSearchTimer_ = nullptr;
 };
 
 #endif // SEARCHLINEEDIT_H

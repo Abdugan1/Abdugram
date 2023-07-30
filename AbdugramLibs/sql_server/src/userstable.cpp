@@ -57,13 +57,26 @@ bool UsersTable::isUserExists(const QString &username, const QString &password)
     return isUserExistsQuery.value(0).toBool();
 }
 
-QList<User> UsersTable::getUsersByLikeSearch(const QString &likeSearch)
+QList<User> UsersTable::getUsersByLikeSearch(const QString &likeSearch, int ownId)
 {
-    const QString query = "SELECT * FROM users WHERE username LIKE :like_search OR first_name LIKE :like_search;";
+    const QString query = "SELECT u.* "
+                          "FROM users u "
+                          "WHERE (u.username LIKE :like_search OR u.first_name LIKE :like_search) AND u.id NOT IN ( "
+                          "     SELECT u.id "
+                          "     FROM users u "
+                          "     JOIN chat_users cu ON cu.user_id = u.id "
+                          "     JOIN chats c ON c.id = cu.chat_id "
+                          "     WHERE c.id IN ( "
+                          "         SELECT chat_id "
+                          "         FROM chat_users "
+                          "         WHERE user_id = :user_id "
+                          "     ) "
+                          ");";
 
     QSqlQuery searchUsersQuery;
     searchUsersQuery.prepare(query);
     searchUsersQuery.bindValue(":like_search", likeSearch);
+    searchUsersQuery.bindValue(":user_id", ownId);
 
     if (!executeQuery(searchUsersQuery, ErrorImportance::Critical)) {
         return QList<User>{};
@@ -115,9 +128,9 @@ QList<User> UsersTable::getUnsyncUsers(int userId, const QDateTime &lastUpdatedA
                           "JOIN chat_users cu ON cu.user_id = u.id "
                           "JOIN chats c ON c.id = cu.chat_id "
                           "WHERE c.id IN ( "
-                          "SELECT chat_id "
-                          "FROM chat_users "
-                          "WHERE user_id = :user_id "
+                          "     SELECT chat_id "
+                          "     FROM chat_users "
+                          "     WHERE user_id = :user_id "
                           ") "
                           "AND u.updated_at >= :last_updated_at;";
 

@@ -1,6 +1,7 @@
 #include "ui/mv/chatlistview.h"
 #include "ui/mv/chatlistmodel.h"
 #include "ui/mv/chatlistdelegate.h"
+#include "ui/mv/chatitem.h"
 #include "ui/mv/founduseritem.h"
 
 #include "net/networkhandler.h"
@@ -15,18 +16,6 @@
 #include <QVariant>
 #include <QPainter>
 
-ChatItemPtr getChatItemFromChatsViewRecord(const QSqlRecord &record)
-{
-    ChatItemPtr chatItem{new ChatItem};
-    chatItem->setChatId(record.value("chat_id").toInt());
-    chatItem->setChatName(record.value("chat_name").toString());
-    chatItem->setChatType(Chat::stringToType(record.value("chat_type").toString()));
-    chatItem->setLastMessage(record.value("last_message").toString());
-    chatItem->setMessageDate(record.value("last_message_time").toDateTime());
-
-    return chatItem;
-}
-
 ChatListView::ChatListView(QWidget *parent)
     : QListView{parent}
     , mainModel_{new ChatListModel{this}}
@@ -35,12 +24,16 @@ ChatListView::ChatListView(QWidget *parent)
 {
     connect(networkHandler(), &NetworkHandler::syncFinished, this, &ChatListView::initMainModel);
 
-    connect(networkHandler(), &NetworkHandler::searchResult, this, &ChatListView::setTemporaryModel);
+    connect(networkHandler(), &NetworkHandler::searchResult, this, &ChatListView::addFoundUsers);
 
     connect(networkHandler(), &NetworkHandler::loggedOut, this, &ChatListView::onLoggedOut);
 
+    connect(database(), &DatabaseClient::foundChats, this, &ChatListView::onChatsFound);
+
     setModel(mainModel_);
     setItemDelegate(delegate_);
+
+    viewport()->setAttribute(Qt::WA_Hover);
 
     setSelectionMode(QAbstractItemView::SingleSelection);
     setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -56,16 +49,22 @@ void ChatListView::setMainModel()
     setModel(mainModel_);
 }
 
-void ChatListView::setTemporaryModel(const QList<User> &foundUserList)
+void ChatListView::setMainModelSelected(int chatId)
 {
-    QList<ChatModelItemPtr> chatItems;
-    for (const auto &foundUser : foundUserList) {
+    setMainModel();
+    setCurrentIndex(mainModel_->index(mainModel_->rowByChatId(chatId)));
+}
+
+void ChatListView::addFoundUsers(const QList<User> &foundUsers)
+{
+    QList<FoundUserItemPtr> chatItems;
+    for (const auto &foundUser : foundUsers) {
         std::shared_ptr<FoundUserItem> chatItem{new FoundUserItem};
         chatItem->setUserId(foundUser.id());
         chatItem->setUserName(foundUser.username());
         chatItems.append(chatItem);
     }
-    tempModel_->setChatItems(chatItems);
+    tempModel_->addFoundUserItems(chatItems);
 
     this->setModel(tempModel_);
 }
@@ -79,22 +78,36 @@ void ChatListView::selectionChanged(const QItemSelection &selected, const QItemS
     if (!selectedIndex.isValid())
         return;
 
-    if (selectionByUser_) {
-        if (auto model = static_cast<const ChatListModel*>(this->model()))
-            emit selectionWasChangedByUser(model->chatItem(selectedIndex.row()));
+    if (!selectionByUser_)
+        return;
+
+    auto model = static_cast<const ChatListModel*>(this->model());
+    if (!model)
+        return;
+
+    if (selectedIndex.data(ChatModelItem::Roles::Type).toInt() == ChatModelItem::Type::FoundUserItem) {
+        emit foundUserSelected(model->chatModelItem(selectedIndex.row()));
+        return;
     }
+
+    if ((model == tempModel_)
+        && (selectedIndex.data(ChatModelItem::Roles::Type).toInt() == ChatModelItem::Type::ChatItem)) {
+        setMainModelSelected(selectedIndex.data(ChatItem::Roles::ChatId).toInt());
+    } else {
+        setMainModel();
+    }
+
+    emit chatSelected(model->chatModelItem(selectedIndex.row()));
 }
 
 void ChatListView::initMainModel()
 {
     clearSelection();
 
-    SqlQuery query = database()->getChatsView();
-    QList<ChatModelItemPtr> chatItems;
-    chatItems.reserve(query.size());
-    while (query.next()) {
-        chatItems.append(getChatItemFromChatsViewRecord(query.record()));
-    }
+    const auto chatViews = database()->getChatsView();
+    QList<ChatItemPtr> chatItems;
+    for (const auto &chatView : chatViews)
+        chatItems.append(ChatItem::fromChatViewItem(chatView));
 
     mainModel_->setChatItems(chatItems);
 
@@ -107,13 +120,12 @@ void ChatListView::updateMainModel()
     const int prevSelectedChatId = currentIndex().data(ChatItem::Roles::ChatId).toInt();
     int indexWithPrevSelectedChatId = -1;
 
-    QSqlQuery query = database()->getChatsView();
-    QList<ChatModelItemPtr> chatItems;
-    chatItems.reserve(query.size());
+    const auto chatViews = database()->getChatsView();
+    QList<ChatItemPtr> chatItems;
     int i = 0;
-    while (query.next()) {
-        chatItems.append(getChatItemFromChatsViewRecord(query.record()));
-        if (chatItems.last()->data(ChatItem::Roles::ChatId).toInt() == prevSelectedChatId) {
+    for (const auto &chatView : chatViews) {
+        chatItems.append(ChatItem::fromChatViewItem(chatView));
+        if (chatView.chatId() == prevSelectedChatId) {
             indexWithPrevSelectedChatId = i;
         }
         ++i;
@@ -143,4 +155,17 @@ void ChatListView::addNewChatToMainModel(const Chat &chat)
     mainModel_->addChatItem(chatItem);
 
     emit newChatItemAdded(chatItem);
+}
+
+void ChatListView::onChatsFound(const QList<ChatViewItem> &chatViews)
+{
+    QList<ChatItemPtr> chatItems;
+    for (const auto &chatView : chatViews)
+        chatItems.append(ChatItem::fromChatViewItem(chatView));
+
+    tempModel_->setChatItems(chatItems);
+
+    this->setModel(tempModel_);
+
+    emit localSearchFinished();
 }

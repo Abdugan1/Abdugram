@@ -12,7 +12,7 @@
 #include <QBoxLayout>
 #include <QMouseEvent>
 #include <QCloseEvent>
-#include <QStateMachine>
+#include <QGraphicsDropShadowEffect>
 #include <QPropertyAnimation>
 #include <QDebug>
 
@@ -72,7 +72,7 @@ void SideMenu::startShowAnimation()
     QPropertyAnimation *showAnim = new QPropertyAnimation{this, "offset"};
     showAnim->setStartValue(-menuWidth_);
     showAnim->setEndValue(0);
-    showAnim->setEasingCurve(QEasingCurve::OutQuint);
+    showAnim->setEasingCurve(QEasingCurve::OutCubic);
     showAnim->setDuration(250);
 
     showAnim->start(QAbstractAnimation::DeleteWhenStopped);
@@ -83,7 +83,7 @@ void SideMenu::closeAnimation()
     QPropertyAnimation *closeAnim = new QPropertyAnimation{this, "offset"};
     closeAnim->setStartValue(0);
     closeAnim->setEndValue(-menuWidth_);
-    closeAnim->setEasingCurve(QEasingCurve::OutQuint);
+    closeAnim->setEasingCurve(QEasingCurve::OutCubic);
     closeAnim->setDuration(250);
 
     connect(closeAnim, &QPropertyAnimation::finished, this, &QWidget::hide);
@@ -146,7 +146,13 @@ void SideMenu::setupUi()
     background_ = new QWidget;
     background_->setObjectName("sideMenuBackground");
     background_->setLayout(backgroundLayout);
-    background_->setAutoFillBackground(true);
+
+    QGraphicsDropShadowEffect *shadow = new QGraphicsDropShadowEffect;
+    shadow->setColor(Qt::black);
+    shadow->setBlurRadius(100);
+    shadow->setXOffset(5);
+    shadow->setYOffset(0);
+    background_->setGraphicsEffect(shadow);
 
     QHBoxLayout *mainLayout = new QHBoxLayout;
     mainLayout->setContentsMargins(0, 0, 0, 0);

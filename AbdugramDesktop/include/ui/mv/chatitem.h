@@ -9,7 +9,7 @@
 
 #include <memory>
 
-#include <sql_common/data_structures/chat.h>
+#include <sql_client/data_structures/chatitem.h>
 
 class ChatItem;
 
@@ -30,13 +30,13 @@ public:
     explicit ChatItem();
 
     int chatId() const;
-    void setChatId(int newId);
+    void setChatId(int newChatId);
 
     QString chatName() const;
     void setChatName(const QString &newChatName);
 
     QUrl pictureUrl() const;
-    void setPictureUrl(const QUrl &newPictureUrl);
+    void setPictureName(const QUrl &newPictureUrl);
 
     QString lastMessage() const;
     void setLastMessage(const QString &newLastMessage);
@@ -47,18 +47,13 @@ public:
     Chat::Type chatType() const;
     void setChatType(Chat::Type newChatType);
 
+    static ChatItemPtr fromChatViewItem(const ChatViewItem &newChatView);
 
 protected:
     QVariant dataImp(int role) const override;
 
 private:
-    QUrl pictureUrl_;
-    QString chatName_;
-    QString lastMessage_;
-    QDateTime messageDate_;
-
-    Chat::Type chatType_ = Chat::Type::Private;
-    int chatId_ = -1;
+    ChatViewItem chatView_;
 };
 
 #endif // CHATITEM_H

@@ -80,9 +80,7 @@ QList<Chat> ChatsTable::getAllChats()
 
     QList<Chat> chats;
 
-    int size = 0;
     while (getAllChatsQuery.next()) {
-        size++;
         chats.append(Chat::fromSqlRecord(getAllChatsQuery.record()));
     }
 

@@ -6,8 +6,6 @@
 class MessageListModel;
 class MessageListDelegate;
 
-class ChatItem;
-
 class Message;
 
 class MessageListView : public QListView
@@ -17,11 +15,7 @@ public:
     explicit MessageListView(QWidget *parent = nullptr);
 
     void setChatId(int chatId);
-
-signals:
-    void backgroundColorChanged();
-    void textColorChanged();
-    void timeColorChanged();
+    void setChatIdWithoutSelect(int chatId);
 
 private slots:
     void scrollToBottomIfSenderIsMe(const Message &message);

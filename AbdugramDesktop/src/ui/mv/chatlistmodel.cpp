@@ -1,5 +1,7 @@
 #include "ui/mv/chatlistmodel.h"
-#include "ui/mv/lineseparatoritem.h"
+#include "ui/mv/chatitem.h"
+#include "ui/mv/founduseritem.h"
+#include "ui/mv/sectionseparator.h"
 
 #include <net/networkhandler.h>
 
@@ -12,6 +14,8 @@
 
 #include <QModelIndex>
 
+#include <algorithm>
+
 ChatListModel::ChatListModel(QObject *parent)
     : QAbstractListModel{parent}
 {
@@ -19,7 +23,7 @@ ChatListModel::ChatListModel(QObject *parent)
 
 int ChatListModel::rowCount(const QModelIndex &) const
 {
-    return chatItems_.count();
+    return chatModelItems_.count();
 }
 
 QVariant ChatListModel::data(const QModelIndex &index, int role) const
@@ -27,7 +31,7 @@ QVariant ChatListModel::data(const QModelIndex &index, int role) const
     if (!index.isValid())
         return QVariant{};
 
-    return chatItems_[index.row()]->data(role);
+    return chatModelItems_[index.row()]->data(role);
 }
 
 Qt::ItemFlags ChatListModel::flags(const QModelIndex &index) const
@@ -43,27 +47,54 @@ Qt::ItemFlags ChatListModel::flags(const QModelIndex &index) const
     return Qt::NoItemFlags;
 }
 
-void ChatListModel::addChatItem(const ChatModelItemPtr &item)
+void ChatListModel::addChatItem(const ChatItemPtr &item)
 {
-    const int row = chatItems_.count();
+    const int row = chatModelItems_.count();
     beginInsertRows(QModelIndex(), row, row);
-    chatItems_.append(item);
+    chatModelItems_.append(item);
     endInsertRows();
 }
 
-ChatModelItemPtr ChatListModel::chatItem(int row) const
+ChatModelItemPtr ChatListModel::chatModelItem(int row) const
 {
-    return chatItems_.at(row);
+    return chatModelItems_.at(row);
 }
 
-void ChatListModel::setChatItems(const QList<ChatModelItemPtr> &chatItems)
+int ChatListModel::rowByChatId(int id) const
 {
-    int oldSize = chatItems_.size();
-    chatItems_.clear();
-    chatItems_.reserve(chatItems.size() * 2 - 1);
+    int row = 0;
+    for (const auto &item : chatModelItems_) {
+        if ((item->data(ChatModelItem::Roles::Type).toInt() == ChatModelItem::Type::ChatItem)
+            && item->data(ChatItem::Roles::ChatId).toInt() == id) {
+            return row;
+        }
+        row++;
+    }
+    return -1;
+}
+
+void ChatListModel::setChatItems(const QList<ChatItemPtr> &chatItems)
+{
+    int oldSize = chatModelItems_.size();
+    chatModelItems_.clear();
+    chatModelItems_.reserve(chatItems.size());
     for (const auto &item : chatItems) {
-        chatItems_.append(item);
-        chatItems_.append(ChatModelItemPtr{new LineSeparatorItem});
+        chatModelItems_.append(item);
     }
     emit dataChanged(index(0, 0), index(oldSize, 0));
+}
+
+void ChatListModel::addFoundUserItems(const QList<FoundUserItemPtr> &foundUsers)
+{
+    const int row = chatModelItems_.count();
+    beginInsertRows(QModelIndex{}, row, row + foundUsers.count() - 1 + 1  /* string delim */);
+
+    chatModelItems_.reserve(chatModelItems_.count() + foundUsers.count() + 1);
+
+    chatModelItems_.append(ChatModelItemPtr{new SectionSeparator{tr("Global search result")}});
+    for (const auto &foundUser : foundUsers) {
+        chatModelItems_.append(foundUser);
+    }
+
+    endInsertRows();
 }

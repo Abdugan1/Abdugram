@@ -68,9 +68,9 @@ User DatabaseServer::getUserById(int userId)
     return UsersTable::getUserById(userId);
 }
 
-QList<User> DatabaseServer::getUsersByLikeSearch(const QString &likeSearch)
+QList<User> DatabaseServer::getUsersByLikeSearch(const QString &likeSearch, int ownId)
 {
-    return UsersTable::getUsersByLikeSearch(likeSearch);
+    return UsersTable::getUsersByLikeSearch(likeSearch, ownId);
 }
 
 QList<User> DatabaseServer::getUnsyncUsers(int userId, const QDateTime &lastUpdatedAt)

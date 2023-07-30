@@ -31,6 +31,9 @@ signals:
 
     void newChatItemAdded(const ChatItemPtr &chatItem);
 
+public slots:
+    void setToMainModelAndSelectChat(int chatId);
+
 private:
     void setupUi();
 

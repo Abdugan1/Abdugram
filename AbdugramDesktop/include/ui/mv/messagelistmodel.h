@@ -27,8 +27,9 @@ public:
 
     int chatId() const;
     void setChatId(int newChatId);
+    void setChatIdWithoutSelect(int newChatId);
 
-private slots:
+public slots:
     void onMessageAdded(const Message &message);
 
 private:

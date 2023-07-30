@@ -43,7 +43,7 @@ void ServerMessageVisitor::visit(const LoginRequest &request)
         networkHandler_->addSession(user.id(), client_);
     }
 
-    emit networkHandler_->requestLoginReply(client_, isUserExists, user);
+    networkHandler_->sendLoginReply(client_, isUserExists, user);
 }
 
 
@@ -67,7 +67,7 @@ void ServerMessageVisitor::visit(const RegisterRequest &request)
 
     user = database()->getUserById(addedUserId);
 
-    emit networkHandler_->requestRegisterReply(client_, !isUsernameExists, user);
+    networkHandler_->sendRegisterReply(client_, !isUsernameExists, user);
 }
 
 void ServerMessageVisitor::visit(const SyncUsersRequest &request)
@@ -77,7 +77,7 @@ void ServerMessageVisitor::visit(const SyncUsersRequest &request)
 
     const QList<User> unsyncUsers = database()->getUnsyncUsers(userId, lastUpdatedAt);
 
-    emit networkHandler_->requestSyncUsersReply(client_, unsyncUsers);
+    networkHandler_->sendSyncUsersReply(client_, unsyncUsers);
 }
 
 void ServerMessageVisitor::visit(const SyncChatsRequest &request)
@@ -93,7 +93,7 @@ void ServerMessageVisitor::visit(const SyncChatsRequest &request)
         unsyncChats.insert(chat, database()->getUnsyncChatUsers(userId, chat.id(), chatsLastUpdatedAt));
     }
 
-    emit networkHandler_->requestSyncChatsReply(client_, unsyncChats);
+    networkHandler_->sendSyncChatsReply(client_, unsyncChats);
 }
 
 void ServerMessageVisitor::visit(const SyncMessagesRequest &request)
@@ -103,16 +103,16 @@ void ServerMessageVisitor::visit(const SyncMessagesRequest &request)
 
     const QList<Message> unsyncMessages = database()->getUnsyncMessages(userId, lastUpdatedAt);
 
-    emit networkHandler_->requestSyncMessagesReply(client_, unsyncMessages);
+    networkHandler_->sendSyncMessagesReply(client_, unsyncMessages);
 }
 
 void ServerMessageVisitor::visit(const SearchRequest &request)
 {
     const QString searchText = request.searchText();
 
-    const QList<User> foundUsers = database()->getUsersByLikeSearch("%" + searchText + "%");
+    const QList<User> foundUsers = database()->getUsersByLikeSearch("%" + searchText + "%", client_->userId());
 
-    emit networkHandler_->requestSearchReply(client_, foundUsers);
+    networkHandler_->sendSearchReply(client_, foundUsers);
 }
 
 void ServerMessageVisitor::visit(const CreateChatRequest &message)
@@ -136,7 +136,7 @@ void ServerMessageVisitor::visit(const CreateChatRequest &message)
     }
 
     for (const auto &chatUser : addedChatUsers) {
-        emit networkHandler_->requestCreateChatReply(chatUser.userId(), addedChat, users, addedChatUsers);
+        networkHandler_->sendCreateChatReply(chatUser.userId(), addedChat, users, addedChatUsers);
     }
 }
 
@@ -153,7 +153,7 @@ void ServerMessageVisitor::visit(const SendMessageRequest &request)
     const QList<ChatUser> chatUsers = database()->getChatUsers(message.chatId());
 
     for (const auto &chatUser : chatUsers) {
-        emit networkHandler_->requestSendMessageReply(chatUser.userId(), addedMessage);
+        networkHandler_->sendSendMessageReply(chatUser.userId(), addedMessage);
     }
 }
 
@@ -161,7 +161,7 @@ void ServerMessageVisitor::visit(const LogoutRequest &request)
 {
     networkHandler_->removeSession(client_->userId());
 
-    emit networkHandler_->requestLogoutReply(client_);
+    networkHandler_->sendLogoutReply(client_);
 }
 
 void ServerMessageVisitor::visit(const CreatePrivateChatRequest &request)

@@ -11,8 +11,8 @@
 #include <QResizeEvent>
 #include <QDebug>
 
-const auto BlurStart = 0.0;
-const auto BlurEnd   = 5.0;
+const auto BlurStart = 1.0;
+const auto BlurEnd   = 2.0;
 
 MainPage::MainPage(QWidget *parent)
     : QWidget{parent}
@@ -21,6 +21,7 @@ MainPage::MainPage(QWidget *parent)
     
     connect(sidePanel_, &SidePanel::selectionWasChanged, conversationSide_, &ConversationSide::setCurrentChatItem);
     connect(sidePanel_, &SidePanel::newChatItemAdded,    conversationSide_, &ConversationSide::updateCurrentChatIfAddedChatIsEqualToAdded);
+    connect(conversationSide_, &ConversationSide::addedChatWasCurrent, sidePanel_, &SidePanel::setToMainModelAndSelectChat);
 }
 
 void MainPage::resizeEvent(QResizeEvent *event)
@@ -78,7 +79,7 @@ void MainPage::makeMainWidgetVisuallyInactive()
     blurAnimation->setStartValue(BlurStart);
     blurAnimation->setEndValue(BlurEnd);
     blurAnimation->setEasingCurve(QEasingCurve::OutQuint);
-    blurAnimation->setDuration(300);
+    blurAnimation->setDuration(100);
 
     blurAnimation->start(QAbstractAnimation::DeleteWhenStopped);
 }
@@ -89,7 +90,7 @@ void MainPage::makeMainWidgetNormal()
     blurAnimation->setStartValue(BlurEnd);
     blurAnimation->setEndValue(BlurStart);
     blurAnimation->setEasingCurve(QEasingCurve::OutQuint);
-    blurAnimation->setDuration(300);
+    blurAnimation->setDuration(100);
 
     blurAnimation->start(QAbstractAnimation::DeleteWhenStopped);
 }

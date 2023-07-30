@@ -3,27 +3,49 @@
 
 #include "net/networkhandler.h"
 
+#include <sql_client/databaseclient.h>
+
 SearchLineEdit::SearchLineEdit(QWidget *parent)
     : LineEdit{parent}
-    , searchServerTimer_{new QTimer}
+    , localSearchTimer_{new QTimer}
+    , serverSearchTimer_{new QTimer}
 {
-    searchServerTimer_->setInterval(200);
-    searchServerTimer_->setSingleShot(true);
+    localSearchTimer_->setInterval(50);
+    localSearchTimer_->setSingleShot(true);
 
-    connect(this, &SearchLineEdit::textEdited, this, [this]() {
-        if (!text().isEmpty()) {
-            searchServerTimer_->start();
-        } else {
-            searchServerTimer_->stop();
-            emit searchIsEmpty();
-        }
-    });
+    serverSearchTimer_->setInterval(100);
+    serverSearchTimer_->setSingleShot(true);
 
-    connect(searchServerTimer_, &QTimer::timeout, this, &SearchLineEdit::searchOnServer);
+    connect(this, &SearchLineEdit::textEdited, this, &SearchLineEdit::onTextEdited);
+
+    connect(localSearchTimer_, &QTimer::timeout, this, &SearchLineEdit::searchOnLocal);
+
+    connect(serverSearchTimer_, &QTimer::timeout, this, &SearchLineEdit::searchOnServer);
 }
 
+void SearchLineEdit::startSearchOnServer()
+{
+    if (text().length() < 4)
+        return;
+    serverSearchTimer_->start();
+}
+
+void SearchLineEdit::onTextEdited(const QString &text)
+{
+    if (!text.isEmpty()) {
+        localSearchTimer_->start();
+        serverSearchTimer_->stop();
+    } else {
+        localSearchTimer_->stop();
+        emit searchIsEmpty();
+    }
+}
+
+void SearchLineEdit::searchOnLocal()
+{
+    database()->likeSearch('%' + text() + '%');
+}
 void SearchLineEdit::searchOnServer()
 {
-    const QString searchText = text();
-    networkHandler()->sendSearchRequest(searchText);
+    networkHandler()->sendSearchRequest(text());
 }

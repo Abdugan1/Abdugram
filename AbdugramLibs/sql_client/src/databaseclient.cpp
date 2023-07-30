@@ -4,8 +4,11 @@
 
 #include "userstable.h"
 #include "chatstable.h"
+#include "chatsview.h"
 #include "chatuserstable.h"
 #include "messagestable.h"
+
+#include "data_structures/chatitem.h"
 
 #include <sql_common/data_structures/user.h>
 #include <sql_common/data_structures/chat.h>
@@ -141,12 +144,10 @@ QList<Chat> DatabaseClient::getAllChats()
     return ChatsTable::getAllChats();
 }
 
-SqlQuery DatabaseClient::getChatsView()
+QList<ChatViewItem> DatabaseClient::getChatsView()
 {
     QMutexLocker lock{&chatsView_};
-    SqlQuery query{"SELECT * FROM chats_view;"};
-    query.exec();
-    return query;
+    return ChatsView::getChatViews();
 }
 
 bool DatabaseClient::addOrUpdateMessage(const Message &message)
@@ -172,6 +173,17 @@ bool DatabaseClient::addOrUpdateChatUser(const ChatUser &chatUser)
     return ChatUsersTable::addOrUpdateChatUser(chatUser);
 }
 
+void DatabaseClient::likeSearch(const QString &likeSearch)
+{
+    emit foundChats(getChatsViewByLikeSearch(likeSearch));
+}
+
 DatabaseClient::DatabaseClient()
 {
+}
+
+QList<ChatViewItem> DatabaseClient::getChatsViewByLikeSearch(const QString &likeSearch)
+{
+    QMutexLocker lock{&chatsView_};
+    return ChatsView::getChatViewsByLikeSearch(likeSearch);
 }

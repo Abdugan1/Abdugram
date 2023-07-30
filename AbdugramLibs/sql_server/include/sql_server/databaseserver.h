@@ -30,7 +30,7 @@ public:
     bool        addUser(const User &user, const QString &password);
     int         getUserIdByUsername(const QString &username);
     User        getUserById(int userId);
-    QList<User> getUsersByLikeSearch(const QString &likeSearch);
+    QList<User> getUsersByLikeSearch(const QString &likeSearch, int ownId);
     QList<User> getUnsyncUsers(int userId, const QDateTime &lastUpdatedAt);
 
 

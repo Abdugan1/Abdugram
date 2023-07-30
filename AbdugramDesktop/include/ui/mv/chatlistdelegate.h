@@ -26,10 +26,12 @@ private:
     void drawUsername(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     void drawAvatar(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
-    void drawLineSeparator(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    void drawSectionSeparator(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    void drawSectionBackground(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    void drawSectionName(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
     QSize chatItemSizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
-    QSize lineSeparatorSizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    QSize sectionSeparatorSizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
     QString dateTimeToString(const QDateTime &dateTime) const;
 };

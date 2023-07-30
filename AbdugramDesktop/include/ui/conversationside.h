@@ -2,8 +2,8 @@
 #define CONVERSATIONSIDE_H
 
 #include <QWidget>
+#include <QModelIndex>
 
-#include "mv/chatitem.h"
 #include <net_common/messages/messagesforwarddeclaration.h>
 
 class ChatHeader;
@@ -13,13 +13,17 @@ class MessageTextEdit;
 class ChatModelItem;
 using ChatModelItemPtr = std::shared_ptr<ChatModelItem>;
 
+class ChatItem;
+using ChatItemPtr = std::shared_ptr<ChatItem>;
+
 class ConversationSide : public QWidget
 {
     Q_OBJECT
 public:
     explicit ConversationSide(QWidget *parent = nullptr);
 
-    ChatModelItemPtr currentChat() const;
+signals:
+    void addedChatWasCurrent(int chatId);
 
 protected:
     void paintEvent(QPaintEvent *event) override;

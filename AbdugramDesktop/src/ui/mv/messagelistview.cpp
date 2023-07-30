@@ -33,6 +33,12 @@ void MessageListView::setChatId(int chatId)
     scrollToBottom();
 }
 
+void MessageListView::setChatIdWithoutSelect(int chatId)
+{
+    model_->setChatIdWithoutSelect(chatId);
+    scrollToBottom();
+}
+
 void MessageListView::scrollToBottomIfSenderIsMe(const Message &message)
 {
     if (message.senderId() == networkHandler()->userId()) {
