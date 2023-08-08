@@ -3,7 +3,7 @@
 
 #include "abdumessage.h"
 
-class LogoutRequest : public AbduMessage
+class NETCOMMON_EXPORT LogoutRequest : public AbduMessage
 {
 public:
     explicit LogoutRequest();

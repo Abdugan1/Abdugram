@@ -1,8 +1,9 @@
 #include "application.h"
 #include "settings.h"
 
+#include "ui/components/colorrepository.h"
+
 #include "ui/mainwindow.h"
-#include "ui/colorrepository.h"
 
 #include "net/networkhandler.h"
 
@@ -42,12 +43,10 @@ Application::Application(int &argc, char **argv)
 {
     initMetaTypes();
     initThreads();
-
     Logger::init();
     Logger::setEchoMode(true);
 
     setupFont();
-    setupStyleSheet(":/qss/style.qss");
     setupSettings();
 
     mainWindow_ = std::unique_ptr<MainWindow>(new MainWindow);
@@ -72,27 +71,11 @@ void Application::removeLoginData()
     settings.setValue(settings::net::Password, "");
 }
 
-void Application::setupStyleSheet(const QString &qssFileName)
-{
-    QFile qssFile(qssFileName);
-    if (!qssFile.open(QFile::ReadOnly)) {
-        qDebug() << "Could not read file";
-        return;
-    }
-    QString rawStyleSheet = qssFile.readAll();
-
-    for (auto it = Colors.begin(); it != Colors.end(); ++it) {
-        rawStyleSheet.replace('@' + it.key(), it.value().name());
-    }
-
-    setStyleSheet(rawStyleSheet);
-}
-
 void Application::setupFont()
 {
     QFontDatabase::addApplicationFont(":/fonts/Montserrat-Regular.ttf");
     QFontDatabase db;
-    setFont(QFont{"Montserrat", 12, QFont::Medium});
+    setFont(QFont{"Montserrat", 11, QFont::Medium});
 }
 
 void Application::setupSettings()

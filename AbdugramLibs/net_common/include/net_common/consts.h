@@ -11,7 +11,6 @@
 namespace consts {
 
 namespace server {
-
     CONST_STR Address;
     CONST_INT Port;
 };

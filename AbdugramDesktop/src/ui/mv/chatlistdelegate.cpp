@@ -3,7 +3,7 @@
 #include "ui/mv/founduseritem.h"
 #include "ui/mv/sectionseparator.h"
 
-#include "ui/colorrepository.h"
+#include "ui/components/colorrepository.h"
 
 #include <QPainter>
 #include <QDebug>

@@ -23,11 +23,6 @@ private slots:
 private:
     MessageListModel    *model_     = nullptr;
     MessageListDelegate *delegate_ = nullptr;
-
-    // for delegate
-    QColor backgroundColor_ = Qt::black;
-    QColor textColor_       = Qt::black;
-    QColor timeColor_       = Qt::black;
 };
 
 #endif // MESSAGELISTVIEW_H

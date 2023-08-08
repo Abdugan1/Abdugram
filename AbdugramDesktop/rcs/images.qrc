@@ -5,5 +5,14 @@
         <file>images/back_button.png</file>
         <file>images/drawer_button.png</file>
         <file>images/logout.png</file>
+        <file>images/send.png</file>
+        <file>images/close.png</file>
+        <file>images/close_hover.png</file>
+        <file>images/maximize.png</file>
+        <file>images/maximize_hover.png</file>
+        <file>images/minimize.png</file>
+        <file>images/minimize_hover.png</file>
+        <file>images/show_normal.png</file>
+        <file>images/show_normal_hover.png</file>
     </qresource>
 </RCC>

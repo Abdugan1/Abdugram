@@ -1,10 +1,13 @@
 #include "ui/mainwindow.h"
-#include "ui/stackedwidget.h"
-#include "ui/hellopage.h"
-#include "ui/loginpage.h"
-#include "ui/registrationpage.h"
-#include "ui/mainpage.h"
-#include "ui/problemwidget.h"
+
+#include "ui/components/stackedwidget.h"
+#include "ui/components/problemwidget.h"
+#include "ui/components/titlebar.h"
+
+#include "ui/pages/hellopage.h"
+#include "ui/pages/loginpage.h"
+#include "ui/pages/registrationpage.h"
+#include "ui/pages/mainpage.h"
 
 #include "sectimer.h"
 
@@ -13,11 +16,18 @@
 #include <net_common/tcpsession.h>
 #include <net_common/consts.h>
 
+#include <FramelessHelper/Widgets/framelesswidgetshelper.h>
+#include <FramelessHelper/Widgets/standardtitlebar.h>
+#include <FramelessHelper/Widgets/standardsystembutton.h>
+
 #include <QSettings>
 #include <QLabel>
 #include <QMovie>
 #include <QTimer>
+#include <QBoxLayout>
 #include <QDebug>
+
+FRAMELESSHELPER_USE_NAMESPACE
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow{parent}
@@ -95,6 +105,12 @@ void MainWindow::onRegisterResult(bool success)
 
 void MainWindow::setupUi()
 {
+    auto framelessHelper = FramelessWidgetsHelper::get(this);
+    framelessHelper->extendsContentIntoTitleBar();
+
+    auto titleBar = new TitleBar{this};
+    framelessHelper->setTitleBarWidget(titleBar);
+
     helloPage_ = new HelloPage;
 
     registrationPage_ = new RegistrationPage;
@@ -111,6 +127,7 @@ void MainWindow::setupUi()
     stackedWidget_->setCurrentWidget(helloPage_);
 
     setCentralWidget(stackedWidget_);
+    setMenuWidget(titleBar);
 
     connectionProblem_ = new ProblemWidget{this};
     connectionProblem_->hide();

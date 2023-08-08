@@ -2,6 +2,8 @@
 #include "ui/mv/messagelistmodel.h"
 #include "ui/mv/messagelistdelegate.h"
 
+#include "ui/components/scrollbar.h"
+
 #include "net/networkhandler.h"
 
 #include <sql_common/data_structures/message.h>
@@ -23,6 +25,7 @@ MessageListView::MessageListView(QWidget *parent)
 
     setVerticalScrollMode(QListView::ScrollPerPixel);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setVerticalScrollBar(new ScrollBar{Qt::Vertical, this});
 
     setContentsMargins(0, 0, 0, 0);
 }

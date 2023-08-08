@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>../../AbdugramLibs/sql_server/sql/create/create.sql</file>
+    </qresource>
+</RCC>

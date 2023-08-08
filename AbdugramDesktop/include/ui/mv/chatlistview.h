@@ -47,6 +47,12 @@ public slots:
 protected slots:
     void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override;
 
+protected:
+    void mouseMoveEvent(QMouseEvent *event) override;
+
+    void enterEvent(QEvent *event) override;
+    void leaveEvent(QEvent *event) override;
+
 private slots:
     void initMainModel();
     void updateMainModel();
@@ -64,6 +70,8 @@ private:
     ChatListDelegate *delegate_  = nullptr;
 
     bool selectionByUser_ = true;
+
+    QCursor cursorBeforeEnter_ = Qt::ArrowCursor;
 };
 
 #endif // CHATLISTVIEW_H

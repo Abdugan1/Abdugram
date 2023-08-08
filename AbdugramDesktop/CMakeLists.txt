@@ -2,15 +2,18 @@ cmake_minimum_required(VERSION 3.15)
 set(APP_NAME AbdugramDesktop)
 project(${APP_NAME} VERSION 0.0.1 LANGUAGES CXX)
 
-set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+#find Qt
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Sql Network)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Sql Network)
+
+#find FramelessHelper
+find_package(FramelessHelper REQUIRED COMPONENTS Core Widgets)
 
 set(HEADERS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(SOURCES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
@@ -21,22 +24,34 @@ set(SQL_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/.sql)
 set(HEADERS
     ${HEADERS_DIR}/net/clientmessagevisitor.h
     ${HEADERS_DIR}/net/networkhandler.h
-    ${HEADERS_DIR}/sectimer.h
-    ${HEADERS_DIR}/application.h
-    ${HEADERS_DIR}/settings.h
-    ${HEADERS_DIR}/ui/welcomebutton.h
-    ${HEADERS_DIR}/ui/chatheader.h
-    ${HEADERS_DIR}/ui/conversationside.h
-    ${HEADERS_DIR}/ui/fieldlineedit.h
-    ${HEADERS_DIR}/ui/headerlabel.h
-    ${HEADERS_DIR}/ui/hellopage.h
-    ${HEADERS_DIR}/ui/imagebutton.h
-    ${HEADERS_DIR}/ui/lineedit.h
-    ${HEADERS_DIR}/ui/loginpage.h
-    ${HEADERS_DIR}/ui/mainlabel.h
-    ${HEADERS_DIR}/ui/mainpage.h
-    ${HEADERS_DIR}/ui/mainwindow.h
-    ${HEADERS_DIR}/ui/messagetextedit.h
+
+    ${HEADERS_DIR}/ui/components/welcomebutton.h
+    ${HEADERS_DIR}/ui/components/chatheader.h
+    ${HEADERS_DIR}/ui/components/conversationside.h
+    ${HEADERS_DIR}/ui/components/fieldlineedit.h
+    ${HEADERS_DIR}/ui/components/headerlabel.h
+    ${HEADERS_DIR}/ui/components/iconbutton.h
+    ${HEADERS_DIR}/ui/components/mainlabel.h
+    ${HEADERS_DIR}/ui/components/titlebar.h
+    ${HEADERS_DIR}/ui/components/messagetextedit.h
+    ${HEADERS_DIR}/ui/components/passwordlineedit.h
+    ${HEADERS_DIR}/ui/components/phonelineedit.h
+    ${HEADERS_DIR}/ui/components/problemwidget.h
+    ${HEADERS_DIR}/ui/components/regexes.h
+    ${HEADERS_DIR}/ui/components/searchlineedit.h
+    ${HEADERS_DIR}/ui/components/secondarylabel.h
+    ${HEADERS_DIR}/ui/components/sidepanel.h
+    ${HEADERS_DIR}/ui/components/stackedwidget.h
+    ${HEADERS_DIR}/ui/components/sidemenu.h
+    ${HEADERS_DIR}/ui/components/sidemenubutton.h
+    ${HEADERS_DIR}/ui/components/colorrepository.h
+    ${HEADERS_DIR}/ui/components/scrollbar.h
+    ${HEADERS_DIR}/ui/components/widget.h
+
+    ${HEADERS_DIR}/ui/styles/style.h
+
+    ${HEADERS_DIR}/ui/effects/rippleanimation.h
+
     ${HEADERS_DIR}/ui/mv/chatmodelitem.h
     ${HEADERS_DIR}/ui/mv/chatitem.h
     ${HEADERS_DIR}/ui/mv/chatlistdelegate.h
@@ -50,42 +65,50 @@ set(HEADERS
     ${HEADERS_DIR}/ui/mv/messagelistdelegate.h
     ${HEADERS_DIR}/ui/mv/messagelistmodel.h
     ${HEADERS_DIR}/ui/mv/messagelistview.h
-    ${HEADERS_DIR}/ui/passwordlineedit.h
-    ${HEADERS_DIR}/ui/phonelineedit.h
-    ${HEADERS_DIR}/ui/problemwidget.h
-    ${HEADERS_DIR}/ui/regexes.h
-    ${HEADERS_DIR}/ui/registrationpage.h
-    ${HEADERS_DIR}/ui/rippleanimation.h
-    ${HEADERS_DIR}/ui/searchlineedit.h
-    ${HEADERS_DIR}/ui/secondarylabel.h
-    ${HEADERS_DIR}/ui/sidepanel.h
-    ${HEADERS_DIR}/ui/stackedwidget.h
-    ${HEADERS_DIR}/ui/textedit.h
-    ${HEADERS_DIR}/ui/sidemenu.h
-    ${HEADERS_DIR}/ui/sidemenubutton.h
-    ${HEADERS_DIR}/ui/colorrepository.h
+
+    ${HEADERS_DIR}/ui/pages/hellopage.h
+    ${HEADERS_DIR}/ui/pages/loginpage.h
+    ${HEADERS_DIR}/ui/pages/mainpage.h
+    ${HEADERS_DIR}/ui/pages/registrationpage.h
+
+    ${HEADERS_DIR}/ui/mainwindow.h
+
+    ${HEADERS_DIR}/sectimer.h
+    ${HEADERS_DIR}/application.h
+    ${HEADERS_DIR}/settings.h
 )
 
 set(SOURCES
-    ${SOURCES_DIR}/main.cpp
     ${SOURCES_DIR}/net/clientmessagevisitor.cpp
     ${SOURCES_DIR}/net/networkhandler.cpp
-    ${SOURCES_DIR}/sectimer.cpp
-    ${SOURCES_DIR}/application.cpp
-    ${SOURCES_DIR}/settings.cpp
-    ${SOURCES_DIR}/ui/welcomebutton.cpp
-    ${SOURCES_DIR}/ui/chatheader.cpp
-    ${SOURCES_DIR}/ui/conversationside.cpp
-    ${SOURCES_DIR}/ui/fieldlineedit.cpp
-    ${SOURCES_DIR}/ui/headerlabel.cpp
-    ${SOURCES_DIR}/ui/hellopage.cpp
-    ${SOURCES_DIR}/ui/imagebutton.cpp
-    ${SOURCES_DIR}/ui/lineedit.cpp
-    ${SOURCES_DIR}/ui/loginpage.cpp
-    ${SOURCES_DIR}/ui/mainlabel.cpp
-    ${SOURCES_DIR}/ui/mainpage.cpp
-    ${SOURCES_DIR}/ui/mainwindow.cpp
-    ${SOURCES_DIR}/ui/messagetextedit.cpp
+
+    ${SOURCES_DIR}/ui/components/welcomebutton.cpp
+    ${SOURCES_DIR}/ui/components/chatheader.cpp
+    ${SOURCES_DIR}/ui/components/conversationside.cpp
+    ${SOURCES_DIR}/ui/components/fieldlineedit.cpp
+    ${SOURCES_DIR}/ui/components/headerlabel.cpp
+    ${SOURCES_DIR}/ui/components/iconbutton.cpp
+    ${SOURCES_DIR}/ui/components/mainlabel.cpp
+    ${SOURCES_DIR}/ui/components/titlebar.cpp
+    ${SOURCES_DIR}/ui/components/messagetextedit.cpp
+    ${SOURCES_DIR}/ui/components/passwordlineedit.cpp
+    ${SOURCES_DIR}/ui/components/phonelineedit.cpp
+    ${SOURCES_DIR}/ui/components/problemwidget.cpp
+    ${SOURCES_DIR}/ui/components/regexes.cpp
+    ${SOURCES_DIR}/ui/components/searchlineedit.cpp
+    ${SOURCES_DIR}/ui/components/secondarylabel.cpp
+    ${SOURCES_DIR}/ui/components/sidepanel.cpp
+    ${SOURCES_DIR}/ui/components/stackedwidget.cpp
+    ${SOURCES_DIR}/ui/components/sidemenu.cpp
+    ${SOURCES_DIR}/ui/components/sidemenubutton.cpp
+    ${SOURCES_DIR}/ui/components/colorrepository.cpp
+    ${SOURCES_DIR}/ui/components/scrollbar.cpp
+    ${SOURCES_DIR}/ui/components/widget.cpp
+
+    ${SOURCES_DIR}/ui/styles/style.cpp
+
+    ${SOURCES_DIR}/ui/effects/rippleanimation.cpp
+
     ${SOURCES_DIR}/ui/mv/chatmodelitem.cpp
     ${SOURCES_DIR}/ui/mv/chatitem.cpp
     ${SOURCES_DIR}/ui/mv/chatlistdelegate.cpp
@@ -99,29 +122,26 @@ set(SOURCES
     ${SOURCES_DIR}/ui/mv/messagelistdelegate.cpp
     ${SOURCES_DIR}/ui/mv/messagelistmodel.cpp
     ${SOURCES_DIR}/ui/mv/messagelistview.cpp
-    ${SOURCES_DIR}/ui/passwordlineedit.cpp
-    ${SOURCES_DIR}/ui/phonelineedit.cpp
-    ${SOURCES_DIR}/ui/problemwidget.cpp
-    ${SOURCES_DIR}/ui/regexes.cpp
-    ${SOURCES_DIR}/ui/registrationpage.cpp
-    ${SOURCES_DIR}/ui/rippleanimation.cpp
-    ${SOURCES_DIR}/ui/searchlineedit.cpp
-    ${SOURCES_DIR}/ui/secondarylabel.cpp
-    ${SOURCES_DIR}/ui/sidepanel.cpp
-    ${SOURCES_DIR}/ui/stackedwidget.cpp
-    ${SOURCES_DIR}/ui/textedit.cpp
-    ${SOURCES_DIR}/ui/sidemenu.cpp
-    ${SOURCES_DIR}/ui/sidemenubutton.cpp
-    ${SOURCES_DIR}/ui/colorrepository.cpp
+
+    ${SOURCES_DIR}/ui/pages/hellopage.cpp
+    ${SOURCES_DIR}/ui/pages/loginpage.cpp
+    ${SOURCES_DIR}/ui/pages/mainpage.cpp
+    ${SOURCES_DIR}/ui/pages/registrationpage.cpp
+
+    ${SOURCES_DIR}/ui/mainwindow.cpp
+
+    ${SOURCES_DIR}/sectimer.cpp
+    ${SOURCES_DIR}/application.cpp
+    ${SOURCES_DIR}/settings.cpp
+    ${SOURCES_DIR}/main.cpp
 )
 
 set(RESOURCES
     rcs/fonts.qrc
     rcs/images.qrc
-    rcs/qss.qrc
 )
 
-add_executable(${APP_NAME} ${HEADERS} ${SOURCES} ${RESOURCES})
+add_executable(${APP_NAME} ${SOURCES} ${RESOURCES})
 
 target_sources(${APP_NAME} PRIVATE ${HEADERS} ${SOURCES})
 
@@ -137,6 +157,11 @@ target_link_libraries(${APP_NAME} PRIVATE
     logger
     sql_client
     net_common
+)
+
+target_link_libraries(${APP_NAME} PRIVATE
+    FramelessHelper::FramelessHelperCore
+    FramelessHelper::FramelessHelperWidgets
 )
 
 file (GLOB SQL_FILES ${SQL_SOURCE_DIR}/*)

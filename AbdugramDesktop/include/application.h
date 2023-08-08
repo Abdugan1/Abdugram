@@ -24,7 +24,6 @@ private slots:
     void removeLoginData();
 
 private:
-    void setupStyleSheet(const QString &qssFileName);
     void setupFont();
     void setupSettings();
 

@@ -4,6 +4,8 @@
 #include "ui/mv/chatitem.h"
 #include "ui/mv/founduseritem.h"
 
+#include "ui/components/scrollbar.h"
+
 #include "net/networkhandler.h"
 
 #include <sql_common/data_structures/user.h>
@@ -15,6 +17,7 @@
 #include <QSqlRecord>
 #include <QVariant>
 #include <QPainter>
+#include <QMouseEvent>
 
 ChatListView::ChatListView(QWidget *parent)
     : QListView{parent}
@@ -33,15 +36,17 @@ ChatListView::ChatListView(QWidget *parent)
     setModel(mainModel_);
     setItemDelegate(delegate_);
 
-    viewport()->setAttribute(Qt::WA_Hover);
+    setMouseTracking(true);
 
     setSelectionMode(QAbstractItemView::SingleSelection);
     setSelectionBehavior(QAbstractItemView::SelectRows);
 
+    setVerticalScrollBar(new ScrollBar{Qt::Vertical, this});
     setVerticalScrollMode(QListView::ScrollPerPixel);
-    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);    
 
     setContentsMargins(0, 0, 0, 0);
+    setFrameShape(NoFrame);
 }
 
 void ChatListView::setMainModel()
@@ -98,6 +103,40 @@ void ChatListView::selectionChanged(const QItemSelection &selected, const QItemS
     }
 
     emit chatSelected(model->chatModelItem(selectedIndex.row()));
+}
+
+void ChatListView::mouseMoveEvent(QMouseEvent *event)
+{
+    const auto index = indexAt(event->pos());
+
+    if (!index.isValid()) {
+        setCursor(Qt::ArrowCursor);
+    } else {
+        const int type = index.data(ChatModelItem::Roles::Type).toInt();
+        switch (type) {
+        case ChatModelItem::Type::ChatItem:
+        case ChatModelItem::Type::FoundUserItem:
+            setCursor(Qt::PointingHandCursor);
+            break;
+        default:
+            setCursor(Qt::ArrowCursor);
+            break;
+        }
+    }
+
+    QListView::mouseMoveEvent(event);
+}
+
+void ChatListView::enterEvent(QEvent *event)
+{
+    cursorBeforeEnter_ = cursor();
+    QListView::enterEvent(event);
+}
+
+void ChatListView::leaveEvent(QEvent *event)
+{
+    setCursor(cursorBeforeEnter_);
+    QListView::leaveEvent(event);
 }
 
 void ChatListView::initMainModel()

@@ -2,7 +2,7 @@
 #include "ui/mv/messageitem.h"
 #include "ui/mv/dateseparatoritem.h"
 
-#include "ui/colorrepository.h"
+#include "ui/components/colorrepository.h"
 
 #include "net/networkhandler.h"
 
@@ -16,16 +16,16 @@
 
 const int MaxWidth = 400;
 
-const int MessageBackgroundRadius = 22;
+const int MessageBackgroundRadius = 21;
 
 const int HSpacingMessage = 7;
-const int VSpacingMessage = 2;
+const int VSpacingMessage = 1;
 
-const int VSpacingDateSeparator_ = 5;
+const int VSpacingDateSeparator = 7;
 
-const int TimeSpacing = 10;
+const int TimeSpacing = 7;
 
-const QMargins MessagePaddings       = QMargins{15, 15, 15, 15};
+const QMargins MessagePaddings       = QMargins{17, 10, 17, 10};
 const QMargins DateSeparatorPaddings = QMargins{17, 5, 17, 5};
 
 inline QColor messageBackgroundColorWhenSenderIsMe()
@@ -222,6 +222,9 @@ void MessageListDelegate::drawMessageTime(QPainter *painter, const QStyleOptionV
 
     timeRect.moveBottom(lastLineBoundingRect.bottom() + TimeSpacing);
 
+    QFont f = option.font;
+    f.setPointSizeF(10.5);
+    painter->setFont(f);
     painter->setPen(messageTimeColor());
     painter->drawText(timeRect, time);
 
@@ -232,7 +235,7 @@ void MessageListDelegate::setPainterOriginOnDateSeparator(QPainter *painter, con
 {
     const auto bgRect = getDateSeparatorBackgroundRect(option, index);
     painter->translate(option.rect.width() / 2 - bgRect.width() / 2,
-                       option.rect.top() + VSpacingDateSeparator_);
+                       option.rect.top() + VSpacingDateSeparator);
 }
 
 void MessageListDelegate::drawDateSeparatorItem(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -284,7 +287,7 @@ QSize MessageListDelegate::messageSizeHint(const QStyleOptionViewItem &option, c
 QSize MessageListDelegate::dateSeparatorSizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     const auto bgRect = getDateSeparatorBackgroundRect(option, index);
-    return QSize{bgRect.width(), bgRect.height() + VSpacingDateSeparator_ * 2};
+    return QSize{bgRect.width(), bgRect.height() + VSpacingDateSeparator * 2};
 }
 
 QRect MessageListDelegate::getMessageBackgroundRect(const QStyleOptionViewItem &option, const QModelIndex &index) const
