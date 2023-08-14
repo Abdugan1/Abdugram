@@ -5,10 +5,12 @@
 #include "ui/mv/founduseritem.h"
 
 #include "ui/components/scrollbar.h"
+#include "ui/components/notificationmanager.h"
 
 #include "net/networkhandler.h"
 
 #include <sql_common/data_structures/user.h>
+#include <sql_common/data_structures/message.h>
 
 #include <sql_client/databaseclient.h>
 #include <sql_client/sqlquery.h>
@@ -33,6 +35,10 @@ ChatListView::ChatListView(QWidget *parent)
 
     connect(database(), &DatabaseClient::foundChats, this, &ChatListView::onChatsFound);
 
+    connect(notificationManager(), &NotificationManager::pressed, this, [this](const Message &message) {
+        setCurrentIndex(mainModel_->index(mainModel_->rowByChatId(message.chatId())));
+    });
+
     setModel(mainModel_);
     setItemDelegate(delegate_);
 
@@ -47,6 +53,7 @@ ChatListView::ChatListView(QWidget *parent)
 
     setContentsMargins(0, 0, 0, 0);
     setFrameShape(NoFrame);
+    setFocusPolicy(Qt::NoFocus);
 }
 
 void ChatListView::setMainModel()
@@ -173,7 +180,8 @@ void ChatListView::updateMainModel()
     mainModel_->setChatItems(chatItems);
 
     selectionByUser_ = false;
-    setCurrentIndex(mainModel_->index(indexWithPrevSelectedChatId));
+    if (indexWithPrevSelectedChatId != -1)
+        setCurrentIndex(mainModel_->index(indexWithPrevSelectedChatId));
     selectionByUser_ = true;
 }
 

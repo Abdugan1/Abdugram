@@ -1,8 +1,6 @@
 #include "application.h"
 #include "settings.h"
 
-#include "ui/components/colorrepository.h"
-
 #include "ui/mainwindow.h"
 
 #include "net/networkhandler.h"

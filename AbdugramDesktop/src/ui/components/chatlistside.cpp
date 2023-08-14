@@ -1,4 +1,4 @@
-#include "ui/components/sidepanel.h"
+#include "ui/components/chatlistside.h"
 #include "ui/components/iconbutton.h"
 #include "ui/components/searchlineedit.h"
 
@@ -13,40 +13,41 @@
 #include <QBoxLayout>
 #include <QDebug>
 
-SidePanel::SidePanel(QWidget *parent)
-    : QWidget{parent}
+ChatListSide::ChatListSide(QWidget *parent)
+    : Widget{parent}
 {
     setupUi();
 
     connect(searchLineEdit_, &SearchLineEdit::searchIsEmpty, chatListView_, &ChatListView::setMainModel);
     
     connect(chatListView_, &ChatListView::chatSelected, searchLineEdit_, &SearchLineEdit::clear);
-
-    connect(chatListView_, &ChatListView::chatSelected, this, &SidePanel::selectionWasChanged);
-
-    connect(chatListView_, &ChatListView::foundUserSelected, this, &SidePanel::selectionWasChanged);
-
-    connect(chatListView_, &ChatListView::newChatItemAdded, this, &SidePanel::newChatItemAdded);
+    
+    connect(chatListView_, &ChatListView::chatSelected, this, &ChatListSide::selectionWasChanged);
+    
+    connect(chatListView_, &ChatListView::foundUserSelected, this, &ChatListSide::selectionWasChanged);
+    
+    connect(chatListView_, &ChatListView::newChatItemAdded, this, &ChatListSide::newChatItemAdded);
 
     connect(chatListView_, &ChatListView::localSearchFinished, searchLineEdit_, &SearchLineEdit::startSearchOnServer);
 }
 
-void SidePanel::clearChatSelection()
+void ChatListSide::clearChatSelection()
 {
     const auto prevIndex = chatListView_->currentIndex();
     chatListView_->clearSelection();
+    chatListView_->setCurrentIndex(QModelIndex{});
     chatListView_->update(prevIndex);
 }
 
-void SidePanel::setToMainModelAndSelectChat(int chatId)
+void ChatListSide::setToMainModelAndSelectChat(int chatId)
 {
     chatListView_->setMainModelSelected(chatId);
 }
 
-void SidePanel::setupUi()
+void ChatListSide::setupUi()
 {
     sideMenuButton_ = new IconButton{QPixmap{":/images/drawer_button.png"}};
-    connect(sideMenuButton_, &IconButton::clicked, this, &SidePanel::sideMenuRequested);
+    connect(sideMenuButton_, &IconButton::clicked, this, &ChatListSide::sideMenuRequested);
 
     searchLineEdit_ = new SearchLineEdit;
     searchLineEdit_->setPlaceholderText(tr("Search"));
@@ -71,9 +72,6 @@ void SidePanel::setupUi()
 
     setLayout(vLayout);
 
-    QPalette p = palette();
-    p.setColor(QPalette::Window, Colors.value(colornames::backgroundLighterHelper1));
-    p.setColor(QPalette::Base, p.window().color());
-    setPalette(p);
-    head->setBackgroundColor(p.window().color());
+    setBackgroundColor(Colors.value(colornames::backgroundLighterHelper1));
+    head->setBackgroundColor(palette().window().color());
 }

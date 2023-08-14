@@ -9,7 +9,7 @@ class QSplitter;
 class QGraphicsBlurEffect;
 
 class SideMenu;
-class SidePanel;
+class ChatListSide;
 class ConversationSide;
 
 class MainPage : public Widget
@@ -25,13 +25,14 @@ protected:
 private slots:
     void makeMainWidgetVisuallyInactive();
     void makeMainWidgetNormal();
+    void unselectChat();
 
 private:
     void setupUi();
 
 private:
     QSplitter        *splitter_         = nullptr;
-    SidePanel        *sidePanel_        = nullptr;
+    ChatListSide     *chatListSide_     = nullptr;
     ConversationSide *conversationSide_ = nullptr;
 
     SideMenu *sideMenu_ = nullptr;

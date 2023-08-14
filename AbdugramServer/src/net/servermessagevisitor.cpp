@@ -142,6 +142,7 @@ void ServerMessageVisitor::visit(const CreateChatRequest &message)
 
 void ServerMessageVisitor::visit(const SendMessageRequest &request)
 {
+    qDebug() << "send message request";
     const Message message = request.message();
 
     if (!database()->addMessage(message))
@@ -152,14 +153,17 @@ void ServerMessageVisitor::visit(const SendMessageRequest &request)
 
     const QList<ChatUser> chatUsers = database()->getChatUsers(message.chatId());
 
+    qDebug() << "chatUsers size:" << chatUsers.size();
+
     for (const auto &chatUser : chatUsers) {
+        qDebug() << chatUser.userId();
         networkHandler_->sendSendMessageReply(chatUser.userId(), addedMessage);
     }
 }
 
 void ServerMessageVisitor::visit(const LogoutRequest &request)
 {
-    networkHandler_->removeSession(client_->userId());
+    networkHandler_->removeSession(client_);
 
     networkHandler_->sendLogoutReply(client_);
 }

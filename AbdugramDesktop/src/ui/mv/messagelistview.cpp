@@ -3,6 +3,7 @@
 #include "ui/mv/messagelistdelegate.h"
 
 #include "ui/components/scrollbar.h"
+#include "ui/components/notificationmanager.h"
 
 #include "net/networkhandler.h"
 
@@ -18,7 +19,15 @@ MessageListView::MessageListView(QWidget *parent)
     , model_{new MessageListModel{this}}
     , delegate_{new MessageListDelegate{this}}
 {
-    connect(database(), &DatabaseClient::messageAdded, this, &MessageListView::scrollToBottomIfSenderIsMe);
+    connect(database(), &DatabaseClient::messageAdded, this, &MessageListView::scrollToBottomIfSenderIsMeOrIfShouldScroll);
+
+    connect(networkHandler(), &NetworkHandler::syncFinished, this, [this]() {
+        connect(database(), &DatabaseClient::messageAdded, this, &MessageListView::showNotificationIfMessageIdIsNotCurrent);
+    });
+
+    connect(networkHandler(), &NetworkHandler::loggedOut, this, [this]() {
+        disconnect(database(), &DatabaseClient::messageAdded, this, &MessageListView::showNotificationIfMessageIdIsNotCurrent);
+    });
 
     setModel(model_);
     setItemDelegate(delegate_);
@@ -26,8 +35,13 @@ MessageListView::MessageListView(QWidget *parent)
     setVerticalScrollMode(QListView::ScrollPerPixel);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBar(new ScrollBar{Qt::Vertical, this});
+    setFocusPolicy(Qt::NoFocus);
 
     setContentsMargins(0, 0, 0, 0);
+
+    connect(verticalScrollBar(), &ScrollBar::valueChanged, this, [this](int value) {
+        shouldScroll_ = (value == verticalScrollBar()->maximum());
+    });
 }
 
 void MessageListView::setChatId(int chatId)
@@ -42,9 +56,19 @@ void MessageListView::setChatIdWithoutSelect(int chatId)
     scrollToBottom();
 }
 
-void MessageListView::scrollToBottomIfSenderIsMe(const Message &message)
+void MessageListView::scrollToBottomIfSenderIsMeOrIfShouldScroll(const Message &message)
 {
-    if (message.senderId() == networkHandler()->userId()) {
+    if (shouldScroll_ || message.senderId() == networkHandler()->userId()) {
         scrollToBottom();
     }
+}
+
+void MessageListView::showNotificationIfMessageIdIsNotCurrent(const Message &message)
+{
+    if (message.senderId() == networkHandler()->userId() || message.chatId() == model_->chatId())
+        return;
+
+    emit notificationRequested(message);
+
+    notificationManager()->addNotification(message);
 }

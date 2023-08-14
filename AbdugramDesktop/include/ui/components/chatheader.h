@@ -1,12 +1,12 @@
 #ifndef CHATHEADER_H
 #define CHATHEADER_H
 
-#include <QFrame>
+#include "ui/components/widget.h"
 
 class MainLabel;
 class SecondaryLabel;
 
-class ChatHeader : public QFrame
+class ChatHeader : public Widget
 {
     Q_OBJECT
 public:

@@ -1,6 +1,6 @@
 #include "ui/components/chatheader.h"
 #include "ui/components/conversationside.h"
-#include "ui/components/messagetextedit.h"
+#include "ui/components/messageeditside.h"
 #include "ui/components/colorrepository.h"
 
 #include "ui/mv/messagelistview.h"
@@ -26,9 +26,11 @@ ConversationSide::ConversationSide(QWidget *parent)
     : QWidget{parent}
 {
     setupUi();
-
-    connect(messageEdit_, &MessageTextEdit::sendMessageRequest,
+    
+    connect(messageEdit_, &MessageEditSide::sendMessageRequest,
             this,         &ConversationSide::onSendMessageRequested);
+
+    connect(messageEdit_, &MessageEditSide::escapePressed, this, &ConversationSide::escapePressed);
 
     connect(networkHandler(), &NetworkHandler::loggedOut, this, &ConversationSide::unsetCurrentChatItem);
 }
@@ -49,11 +51,12 @@ void ConversationSide::setCurrentChatItem(const ChatModelItemPtr &chat)
 
     if (!currentChatItem_) {
         hideAll();
+        messageView_->setChatIdWithoutSelect(-1);
         return;
     } else {
         if (!messageView_->isVisible())
             showAll();
-        messageEdit_->setFocus(Qt::MouseFocusReason);
+        messageEdit_->setFocusToTextEdit();
     }
 
     const int type = chat->data(ChatModelItem::Roles::Type).toInt();
@@ -141,7 +144,7 @@ void ConversationSide::setupUi()
 {
     chatHeader_  = new ChatHeader;
     messageView_ = new MessageListView;
-    messageEdit_ = new MessageTextEdit;
+    messageEdit_ = new MessageEditSide;
 
     hideAll();
 

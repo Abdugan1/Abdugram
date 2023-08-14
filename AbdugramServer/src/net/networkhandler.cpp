@@ -20,13 +20,20 @@ NetworkHandler::NetworkHandler(QObject *parent)
 
 void NetworkHandler::addSession(int userId, Session *session)
 {
+    qDebug() << "addSession";
     session->setUserId(userId);
-    sessions_.insert(userId, session);
+    if (sessions_.contains(userId)) {
+        qDebug() << "append";
+        sessions_[userId].append(session);
+    } else {
+        qDebug() << "init";
+        sessions_[userId] = {session};
+    }
 }
 
-void NetworkHandler::removeSession(int userId)
+void NetworkHandler::removeSession(Session *session)
 {
-    sessions_.remove(userId);
+    sessions_[session->userId()].removeAll(session);
 }
 
 void NetworkHandler::sendLoginReply(Session* session, bool success, const User &user)
@@ -109,7 +116,11 @@ void NetworkHandler::send(int userId, const AbduMessagePtr &message)
     if (!sessions_.contains(userId))
         return;
 
-    sessions_[userId]->send(message);
+    const auto sessions = sessions_[userId];
+    qDebug() << sessions.size();
+    for (auto session : sessions) {
+        session->send(message);
+    }
 }
 
 void NetworkHandler::send(Session *session, const AbduMessagePtr &message)

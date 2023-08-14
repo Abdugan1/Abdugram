@@ -1,5 +1,5 @@
-#ifndef SIDEPANEL_H
-#define SIDEPANEL_H
+#ifndef CHATLISTSIDE_H
+#define CHATLISTSIDE_H
 
 #include "ui/components/widget.h"
 
@@ -16,11 +16,11 @@ class ChatListView;
 class ChatModelItem;
 using ChatModelItemPtr = std::shared_ptr<ChatModelItem>;
 
-class SidePanel : public QWidget
+class ChatListSide : public Widget
 {
     Q_OBJECT
 public:
-    explicit SidePanel(QWidget *parent = nullptr);
+    explicit ChatListSide(QWidget *parent = nullptr);
 
     void clearChatSelection();
 
@@ -43,4 +43,4 @@ private:
     ChatListView   *chatListView_   = nullptr;
 };
 
-#endif // SIDEPANEL_H
+#endif // CHATLISTSIDE_H

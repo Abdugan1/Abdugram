@@ -4,6 +4,8 @@
 #include "ui/components/problemwidget.h"
 #include "ui/components/titlebar.h"
 
+#include "ui/components/notificationmanager.h"
+
 #include "ui/pages/hellopage.h"
 #include "ui/pages/loginpage.h"
 #include "ui/pages/registrationpage.h"
@@ -36,6 +38,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     connectUiLogic();
     connectTcpLogic();
+
+    notificationManager()->init(this);
+    connect(notificationManager(), &NotificationManager::pressed, this, &MainWindow::bringToFront);
 }
 
 void MainWindow::resizeEvent(QResizeEvent *event)
@@ -103,6 +108,13 @@ void MainWindow::onRegisterResult(bool success)
     }
 }
 
+void MainWindow::bringToFront()
+{
+    setWindowState( (windowState() & ~Qt::WindowMinimized) | Qt::WindowActive);
+    raise();
+    activateWindow();
+}
+
 void MainWindow::setupUi()
 {
     auto framelessHelper = FramelessWidgetsHelper::get(this);
@@ -133,6 +145,8 @@ void MainWindow::setupUi()
     connectionProblem_->hide();
 
     resize(1280, 720);
+
+    setWindowIcon(QIcon{":/images/logo_256.png"});
 }
 
 void MainWindow::connectUiLogic()

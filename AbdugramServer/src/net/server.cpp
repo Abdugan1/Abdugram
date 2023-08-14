@@ -77,7 +77,7 @@ void Server::onClientDisconected()
 {
     auto session = qobject_cast<Session *>(sender());
     if (session->userId() > 0) {
-        networkHandler_->removeSession(session->userId());
+        networkHandler_->removeSession(session);
     }
     session->deleteLater();
 }

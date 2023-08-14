@@ -2,17 +2,18 @@
 #include "ui/components/mainlabel.h"
 #include "ui/components/secondarylabel.h"
 
+#include "ui/components/colorrepository.h"
+
 #include "net/networkhandler.h"
 
 #include <QVBoxLayout>
 
 ChatHeader::ChatHeader(QWidget *parent)
-    : QFrame{parent}
+    : Widget{parent}
 {
     setupUi();
 
     connect(networkHandler(), &NetworkHandler::connectionError, this, &ChatHeader::setLastOnlineLabelAsConnecting);
-//    connect(networkHandler(), &NetworkHandler::connectedSucessfully, this, )
 }
 
 void ChatHeader::setChatName(const QString &text)
@@ -43,4 +44,5 @@ void ChatHeader::setupUi()
     vLayout->addWidget(lastOnlineLabel_);
 
     setLayout(vLayout);
+    setBackgroundColor(Colors.value(colornames::backgroundLighterHelper1));
 }

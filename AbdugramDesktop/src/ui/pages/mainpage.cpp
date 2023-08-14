@@ -1,7 +1,7 @@
 #include "ui/pages/mainpage.h"
 
 #include "ui/components/sidemenu.h"
-#include "ui/components/sidepanel.h"
+#include "ui/components/chatlistside.h"
 #include "ui/components/conversationside.h"
 
 #include <QPropertyAnimation>
@@ -20,9 +20,11 @@ MainPage::MainPage(QWidget *parent)
 {
     setupUi();
     
-    connect(sidePanel_, &SidePanel::selectionWasChanged, conversationSide_, &ConversationSide::setCurrentChatItem);
-    connect(sidePanel_, &SidePanel::newChatItemAdded,    conversationSide_, &ConversationSide::updateCurrentChatIfAddedChatIsEqualToAdded);
-    connect(conversationSide_, &ConversationSide::addedChatWasCurrent, sidePanel_, &SidePanel::setToMainModelAndSelectChat);
+    connect(chatListSide_, &ChatListSide::selectionWasChanged, conversationSide_, &ConversationSide::setCurrentChatItem);
+    connect(chatListSide_, &ChatListSide::newChatItemAdded,    conversationSide_, &ConversationSide::updateCurrentChatIfAddedChatIsEqualToAdded);
+
+    connect(conversationSide_, &ConversationSide::addedChatWasCurrent, chatListSide_, &ChatListSide::setToMainModelAndSelectChat);
+    connect(conversationSide_, &ConversationSide::escapePressed, this, &MainPage::unselectChat);
 }
 
 void MainPage::resizeEvent(QResizeEvent *event)
@@ -34,8 +36,7 @@ void MainPage::resizeEvent(QResizeEvent *event)
 void MainPage::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_Escape) {
-        conversationSide_->unsetCurrentChatItem();
-        sidePanel_->clearChatSelection();
+        unselectChat();
     }
     Widget::keyPressEvent(event);
 }
@@ -47,14 +48,14 @@ void MainPage::setupUi()
     connect(sideMenu_, &SideMenu::aboutToShow, this, &MainPage::makeMainWidgetVisuallyInactive);
     connect(sideMenu_, &SideMenu::aboutToClose, this, &MainPage::makeMainWidgetNormal);
 
-    sidePanel_        = new SidePanel;
-    connect(sidePanel_, &SidePanel::sideMenuRequested, sideMenu_, &SideMenu::show);
+    chatListSide_        = new ChatListSide;
+    connect(chatListSide_, &ChatListSide::sideMenuRequested, sideMenu_, &SideMenu::show);
 
     conversationSide_ = new ConversationSide;
 
     splitter_ = new QSplitter;
 
-    splitter_->addWidget(sidePanel_);
+    splitter_->addWidget(chatListSide_);
     splitter_->addWidget(conversationSide_);
 
     splitter_->setHandleWidth(1);
@@ -72,6 +73,12 @@ void MainPage::setupUi()
     hLayout->addWidget(splitter_);
 
     setLayout(hLayout);
+}
+
+void MainPage::unselectChat()
+{
+    conversationSide_->unsetCurrentChatItem();
+    chatListSide_->clearChatSelection();
 }
 
 void MainPage::makeMainWidgetVisuallyInactive()

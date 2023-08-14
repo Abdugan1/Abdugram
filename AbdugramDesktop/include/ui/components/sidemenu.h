@@ -5,7 +5,7 @@
 
 class QLabel;
 
-class SideMenuButton;
+class Button;
 class MainLabel;
 class SecondaryLabel;
 class Widget;
@@ -52,8 +52,8 @@ private:
 
     QLabel    *avatar_   = nullptr;
     MainLabel *username_ = nullptr;
-
-    SideMenuButton *logoutButton_ = nullptr;
+    
+    Button *logoutButton_ = nullptr;
 
     SecondaryLabel *appName_    = nullptr;
     SecondaryLabel *appVersion_ = nullptr;

@@ -8,7 +8,7 @@
 
 class ChatHeader;
 class MessageListView;
-class MessageTextEdit;
+class MessageEditSide;
 
 class ChatModelItem;
 using ChatModelItemPtr = std::shared_ptr<ChatModelItem>;
@@ -24,6 +24,7 @@ public:
 
 signals:
     void addedChatWasCurrent(int chatId);
+    void escapePressed();
 
 protected:
     void paintEvent(QPaintEvent *event) override;
@@ -51,7 +52,7 @@ private:
 private:
     ChatHeader      *chatHeader_  = nullptr;
     MessageListView *messageView_ = nullptr;
-    MessageTextEdit *messageEdit_ = nullptr;
+    MessageEditSide *messageEdit_ = nullptr;
 
     ChatModelItemPtr currentChatItem_;
 };

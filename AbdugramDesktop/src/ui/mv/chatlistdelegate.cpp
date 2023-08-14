@@ -146,7 +146,7 @@ void ChatListDelegate::drawChatPicture(QPainter *painter, const QStyleOptionView
     const int x = AvatarMargins.left();
     const int y = AvatarMargins.top();
 
-    const QPixmap avatar = QPixmap{":/images/avatar.png"}.scaled(AvatarSize);
+    const QPixmap avatar = QPixmap{":/images/bear_64.png"}.scaled(AvatarSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     painter->drawPixmap(x, y, avatar);
 
     painter->restore();

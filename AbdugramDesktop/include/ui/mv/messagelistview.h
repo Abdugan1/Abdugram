@@ -17,12 +17,18 @@ public:
     void setChatId(int chatId);
     void setChatIdWithoutSelect(int chatId);
 
+signals:
+    void notificationRequested(const Message &message);
+
 private slots:
-    void scrollToBottomIfSenderIsMe(const Message &message);
+    void scrollToBottomIfSenderIsMeOrIfShouldScroll(const Message &message);
+    void showNotificationIfMessageIdIsNotCurrent(const Message &message);
 
 private:
     MessageListModel    *model_     = nullptr;
     MessageListDelegate *delegate_ = nullptr;
+
+    bool shouldScroll_ = true;
 };
 
 #endif // MESSAGELISTVIEW_H

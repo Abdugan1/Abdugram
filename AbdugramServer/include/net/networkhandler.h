@@ -20,7 +20,7 @@ public:
     explicit NetworkHandler(QObject *parent = nullptr);
 
     void addSession(int userId, Session *session);
-    void removeSession(int userId);
+    void removeSession(Session *session);
 
 public:
     void sendLoginReply(Session *session, bool success, const User &user);
@@ -38,7 +38,7 @@ private:
     void send(Session* session, const AbduMessagePtr &message);
 
 private:
-    QHash<int, Session *> sessions_;
+    QHash<int, QList<Session *>> sessions_;
 
 };
 

@@ -46,6 +46,8 @@ private slots:
     void onLoginResult(bool success);
     void onRegisterResult(bool success);
 
+    void bringToFront();
+
 private:
     void setupUi();
 

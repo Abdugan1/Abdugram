@@ -1,5 +1,5 @@
 #include "ui/components/sidemenu.h"
-#include "ui/components/sidemenubutton.h"
+#include "ui/components/button.h"
 #include "ui/components/mainlabel.h"
 #include "ui/components/secondarylabel.h"
 #include "ui/components/widget.h"
@@ -21,9 +21,9 @@ SideMenu::SideMenu(QWidget *parent)
     : QWidget{parent}
 {
     setupUi();
-
-    connect(logoutButton_, &SideMenuButton::clicked, this, []() {networkHandler()->sendLogoutRequest();});
-    connect(logoutButton_, &SideMenuButton::clicked, this, &SideMenu::close);
+    
+    connect(logoutButton_, &Button::clicked, this, []() {networkHandler()->sendLogoutRequest();});
+    connect(logoutButton_, &Button::clicked, this, &SideMenu::close);
     connect(networkHandler(), &NetworkHandler::syncFinished, this, &SideMenu::onSyncFinished);
 
     parent->installEventFilter(this);
@@ -104,7 +104,7 @@ void SideMenu::onSyncFinished()
 void SideMenu::setupUi()
 {
     avatar_ = new QLabel;
-    avatar_->setPixmap(QPixmap{":/images/avatar.png"});
+    avatar_->setPixmap(QPixmap{":/images/bear_64.png"}.scaled(QSize{50, 50}, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
 
     username_ = new MainLabel;
 
@@ -124,8 +124,8 @@ void SideMenu::setupUi()
     userInfoLayout->setSpacing(0);
     userInfoLayout->addLayout(avatarLayout);
     userInfoLayout->addWidget(username_);
-
-    logoutButton_ = new SideMenuButton{tr("Log out"), QIcon{":/images/logout.png"}};
+    
+    logoutButton_ = new Button{tr("Log out"), QIcon{":/images/logout.png"}};
     logoutButton_->setTextColor("#F64650");
 
     appName_ = new SecondaryLabel{"Abdugram Desktop"};
