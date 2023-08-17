@@ -7,6 +7,7 @@
 
 #include <logger/logger.h>
 
+#include <sql_client/data_structures/chatitem.h>
 #include <sql_client/databaseclient.h>
 
 #include <net_common/messages/abdumessage.h>
@@ -37,7 +38,7 @@ thread_unique_ptr createThread(QObject *parent)
 }
 
 Application::Application(int &argc, char **argv)
-    : QApplication{argc, argv}
+    : app_{argc, argv}
 {
     initMetaTypes();
     initThreads();
@@ -51,6 +52,11 @@ Application::Application(int &argc, char **argv)
     mainWindowShowLogic();
 
     networkHandler()->connectToServer();
+}
+
+int Application::exec()
+{
+    return app_.exec();
 }
 
 void Application::saveLoginDataOnSuccess(bool success)
@@ -72,15 +78,14 @@ void Application::removeLoginData()
 void Application::setupFont()
 {
     QFontDatabase::addApplicationFont(":/fonts/Montserrat-Regular.ttf");
-    QFontDatabase db;
-    setFont(QFont{"Montserrat", 11, QFont::Medium});
+    app_.setFont(QFont{"Montserrat", 11, QFont::Medium});
 }
 
 void Application::setupSettings()
 {
-    setOrganizationName("Abdu Softwares");
-    setOrganizationDomain("abdu.kz");
-    setApplicationName("Abdugram");
+    app_.setOrganizationName("Abdu Softwares");
+    app_.setOrganizationDomain("abdu.kz");
+    app_.setApplicationName("Abdugram");
 
     connect(networkHandler(), &NetworkHandler::loginResult, this, &Application::saveLoginDataOnSuccess);
     connect(networkHandler(), &NetworkHandler::registerResult, this, &Application::saveLoginDataOnSuccess);
@@ -101,12 +106,16 @@ void Application::initThreads()
 void Application::initMetaTypes()
 {
     qRegisterMetaType<AbduMessagePtr>("AbduMessagePtr");
+    qRegisterMetaType<AbduMessage>("AbduMessage");
+
     qRegisterMetaType<Chat>("Chat");
     qRegisterMetaType<ChatUser>("ChatUser");
     qRegisterMetaType<Message>("Message");
     qRegisterMetaType<User>("User");
-
     qRegisterMetaType<QList<User>>();
+
+    qRegisterMetaType<ChatViewItem>("ChatViewItem");
+    qRegisterMetaType<QList<ChatViewItem>>();
 }
 
 void Application::mainWindowShowLogic()

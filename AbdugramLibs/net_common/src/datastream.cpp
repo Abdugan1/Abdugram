@@ -11,7 +11,7 @@ DataStream::DataStream(QIODevice *d)
     setVersion(Qt_5_15);
 }
 
-DataStream::DataStream(QByteArray *d, QIODevice::OpenMode flags)
+DataStream::DataStream(QByteArray *d, OpenMode flags)
     : QDataStream{d, flags}
 {
     setVersion(Qt_5_15);

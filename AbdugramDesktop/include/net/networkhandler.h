@@ -6,6 +6,8 @@
 #include <net_common/messages/messagesforwarddeclaration.h>
 #include <net_common/tcpsession.h>
 
+#include <sql_common/data_structures/user.h>
+
 class TcpSession;
 
 class User;

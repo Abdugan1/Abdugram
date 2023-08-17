@@ -3,7 +3,7 @@
 
 #include "abdumessage.h"
 
-class User;
+#include <sql_common/data_structures/user.h>
 
 class NETCOMMON_EXPORT SearchUsersReply : public AbduMessage
 {

@@ -23,6 +23,11 @@
 #include <QHash>
 #include <QDebug>
 
+inline QDateTime lastUpdate(const QDateTime &dt)
+{
+    return dt.isValid() ? dt : QDateTime{QDate{2023, 1, 1}, QTime{}};
+}
+
 ServerMessageVisitor::ServerMessageVisitor(NetworkHandler *networkHandler, Session *client)
     : networkHandler_{networkHandler}
     , client_{client}
@@ -73,7 +78,7 @@ void ServerMessageVisitor::visit(const RegisterRequest &request)
 void ServerMessageVisitor::visit(const SyncUsersRequest &request)
 {
     const int       userId        = request.userId();
-    const QDateTime lastUpdatedAt = request.lastUpdatedAt();
+    const QDateTime lastUpdatedAt = lastUpdate(request.lastUpdatedAt());
 
     const QList<User> unsyncUsers = database()->getUnsyncUsers(userId, lastUpdatedAt);
 
@@ -83,8 +88,8 @@ void ServerMessageVisitor::visit(const SyncUsersRequest &request)
 void ServerMessageVisitor::visit(const SyncChatsRequest &request)
 {
     const int       userId                 = request.userId();
-    const QDateTime chatsLastUpdatedAt     = request.chatsLastUpdatedAt();
-    const QDateTime chatUsersLastUpdatedAt = request.chatUsersLastUpdatedAt();
+    const QDateTime chatsLastUpdatedAt     = lastUpdate(request.chatsLastUpdatedAt());
+    const QDateTime chatUsersLastUpdatedAt = lastUpdate(request.chatUsersLastUpdatedAt());
 
     const QList<Chat> chats = database()->getUnsyncChats(userId, chatsLastUpdatedAt);
 
@@ -99,7 +104,7 @@ void ServerMessageVisitor::visit(const SyncChatsRequest &request)
 void ServerMessageVisitor::visit(const SyncMessagesRequest &request)
 {
     const int       userId        = request.userId();
-    const QDateTime lastUpdatedAt = request.lastUpdatedAt();
+    const QDateTime lastUpdatedAt = lastUpdate(request.lastUpdatedAt());
 
     const QList<Message> unsyncMessages = database()->getUnsyncMessages(userId, lastUpdatedAt);
 
@@ -142,7 +147,6 @@ void ServerMessageVisitor::visit(const CreateChatRequest &message)
 
 void ServerMessageVisitor::visit(const SendMessageRequest &request)
 {
-    qDebug() << "send message request";
     const Message message = request.message();
 
     if (!database()->addMessage(message))
@@ -153,10 +157,7 @@ void ServerMessageVisitor::visit(const SendMessageRequest &request)
 
     const QList<ChatUser> chatUsers = database()->getChatUsers(message.chatId());
 
-    qDebug() << "chatUsers size:" << chatUsers.size();
-
     for (const auto &chatUser : chatUsers) {
-        qDebug() << chatUser.userId();
         networkHandler_->sendSendMessageReply(chatUser.userId(), addedMessage);
     }
 }

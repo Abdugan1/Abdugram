@@ -3,8 +3,9 @@
 
 #include <QObject>
 #include <QString>
-#include <QList>
 #include <memory>
+
+#include <list>
 
 class QWidget;
 

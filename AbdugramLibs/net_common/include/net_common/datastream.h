@@ -10,7 +10,7 @@ class NETCOMMON_EXPORT DataStream : public QDataStream
 public:
     DataStream();
     explicit DataStream(QIODevice *d);
-    DataStream(QByteArray *d, QIODevice::OpenMode flags);
+    DataStream(QByteArray *d, OpenMode flags);
     DataStream(const QByteArray &d);
 };
 

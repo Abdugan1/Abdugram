@@ -6,6 +6,8 @@
 #include "NetCommon_global.h"
 #include "messages/messagesforwarddeclaration.h"
 
+#include "messages/abdumessage.h"
+
 class NETCOMMON_EXPORT TcpSession : public QTcpSocket
 {
     Q_OBJECT

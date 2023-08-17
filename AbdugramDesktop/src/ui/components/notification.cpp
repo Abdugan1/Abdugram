@@ -19,7 +19,7 @@
 #include <QParallelAnimationGroup>
 #include <QGraphicsOpacityEffect>
 #include <QTimer>
-#include <QSound>
+#include <QSoundEffect>
 #include <QDebug>
 
 const auto RightMargin  = 3;
@@ -45,7 +45,7 @@ void Notification::showEvent(QShowEvent *event)
     Widget::showEvent(event);
 }
 
-void Notification::enterEvent(QEvent *event)
+void Notification::enterEvent(QEnterEvent *event)
 {
     emit mouseEntered();
     disappearTimer_->stop();
@@ -75,7 +75,9 @@ void Notification::mousePressEvent(QMouseEvent *event)
 
 void Notification::playSound()
 {
-    QSound::play("qrc:/sounds/notification.wav");
+    static QSoundEffect sound;
+    sound.setSource(QUrl{"qrc:/sounds/notification.wav"});
+    sound.play();
 }
 
 void Notification::setupUi()

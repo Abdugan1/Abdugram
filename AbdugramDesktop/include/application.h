@@ -13,11 +13,12 @@ class QThread;
 
 using thread_unique_ptr = std::shared_ptr<QThread>;
 
-class Application : public QApplication
+class Application : public QObject
 {
-    Q_OBJECT
 public:
     explicit Application(int &argc, char **argv);
+
+    int exec();
 
 private slots:
     void saveLoginDataOnSuccess(bool success);
@@ -37,6 +38,8 @@ private:
 private:
     std::unique_ptr<MainWindow> mainWindow_;
     QVector<thread_unique_ptr> threads_;
+
+    QApplication app_;
 };
 
 #endif // APPLICATION_H

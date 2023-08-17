@@ -134,7 +134,7 @@ void ChatListView::mouseMoveEvent(QMouseEvent *event)
     QListView::mouseMoveEvent(event);
 }
 
-void ChatListView::enterEvent(QEvent *event)
+void ChatListView::enterEvent(QEnterEvent *event)
 {
     cursorBeforeEnter_ = cursor();
     QListView::enterEvent(event);

@@ -3,6 +3,8 @@
 
 #include "SqlClient_global.h"
 
+#include "data_structures/chatitem.h"
+
 #include <QObject>
 #include <QList>
 #include <QThreadStorage>
@@ -18,7 +20,6 @@ class User;
 class Chat;
 class ChatUser;
 class Message;
-class ChatViewItem;
 
 class SQLCLIENT_EXPORT DatabaseClient : public QObject
 {

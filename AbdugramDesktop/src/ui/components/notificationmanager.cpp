@@ -37,7 +37,7 @@ void NotificationManager::addNotification(const Message &message)
     connect(notification, &Notification::pressed, this, [this](const Message &message) {
         removeNotificationsWithChatId(message.chatId());
     });
-    notifications_.prepend(notification);
+    notifications_.push_front(notification);
 
     updateNotificationsPosition();
 
@@ -52,8 +52,8 @@ void NotificationManager::removeNotificationsWithChatId(int chatId)
         return notification->message().chatId() == chatId;
     });
 
-    for (auto it = begin; it != notifications_.end(); ++it) {
-        it.i->t()->deleteLater();
+    for (auto it = notifications_.begin(); it != notifications_.end(); ++it) {
+        (*it)->deleteLater();
     }
 
     notifications_.erase(begin, notifications_.end());
@@ -85,7 +85,7 @@ void NotificationManager::updateNotificationsPosition()
         return;
     }
 
-    const bool disappearing = notifications_.count() <= 1;
+    const bool disappearing = notifications_.size() <= 1;
     int i = 1;
     const QPoint startPos = getStartAppearPosition();
     for (auto notification : qAsConst(notifications_)) {

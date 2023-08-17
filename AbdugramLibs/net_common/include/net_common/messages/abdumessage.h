@@ -4,6 +4,7 @@
 #include "../NetCommon_global.h"
 
 #include <QString>
+#include <QMetaType>
 #include "../datastream.h"
 #include "messagesforwarddeclaration.h"
 

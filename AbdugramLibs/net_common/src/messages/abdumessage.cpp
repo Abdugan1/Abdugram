@@ -27,7 +27,7 @@ void AbduMessage::fromData(const QByteArray &data)
 QByteArray AbduMessage::toData() const
 {
     QByteArray data;
-    DataStream stream(&data, QIODevice::WriteOnly);
+    DataStream stream(&data, QIODeviceBase::WriteOnly);
 
     writeHeaderData(&stream);
     writeBodyData(&stream);

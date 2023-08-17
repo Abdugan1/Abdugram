@@ -9,8 +9,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 #find Qt
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Sql Network Multimedia)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Sql Network Multimedia)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Sql Network Multimedia StateMachine)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Sql Network Multimedia StateMachine)
 
 #find FramelessHelper
 find_package(FramelessHelper REQUIRED COMPONENTS Core Widgets)
@@ -157,6 +157,7 @@ target_link_libraries(${APP_NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::Sql
     Qt${QT_VERSION_MAJOR}::Network
     Qt${QT_VERSION_MAJOR}::Multimedia
+    Qt${QT_VERSION_MAJOR}::StateMachine
 )
 
 target_link_libraries(${APP_NAME} PRIVATE
