@@ -17,12 +17,18 @@ class MessageItem : public MessageModelItem
 {
 public:
     enum Roles {
-        SenderId = static_cast<int>(MessageModelItem::Roles::UserRole) + 1,
+        MessageId = static_cast<int>(MessageModelItem::Roles::UserRole) + 1,
+        SenderId,
         Text,
-        DateTime
+        DateTime,
+        IsRead,
+        IsEdited
     };
 
     explicit MessageItem();
+
+    int messageId() const;
+    void setMessageId(int newMessageId);
 
     int senderId() const;
     void setSenderId(int newSenderId);
@@ -33,15 +39,26 @@ public:
     QDateTime dateTime() const;
     void setDateTime(const QDateTime &newDateTime);
 
+    bool isRead() const;
+    void setIsRead(bool newIsRead);
+
+    bool isEdited() const;
+    void setIsEdited(bool newIsEdited);
+
+    void setData(int role, const QVariant &data) override;
+
     static MessageItemPtr fromMessage(const Message &message);
 
 protected:
     QVariant dataImp(int role) const override;
 
 private:
+    int messageId_ = -1;
     int senderId_ = -1;
     QString text_;
     QDateTime dateTime_;
+    bool isRead_ = false;
+    bool isEdited_ = false;
 };
 
 #endif // MESSAGEITEM_H

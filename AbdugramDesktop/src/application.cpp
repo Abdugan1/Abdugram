@@ -16,6 +16,7 @@
 #include <sql_common/data_structures/chatuser.h>
 #include <sql_common/data_structures/message.h>
 #include <sql_common/data_structures/user.h>
+#include <sql_common/data_structures/messagereads.h>
 
 #include <QRegularExpression>
 #include <QRegularExpressionMatch>
@@ -113,6 +114,8 @@ void Application::initMetaTypes()
     qRegisterMetaType<Message>("Message");
     qRegisterMetaType<User>("User");
     qRegisterMetaType<QList<User>>();
+    qRegisterMetaType<MessageRead>("MessageRead");
+    qRegisterMetaType<QList<MessageRead>>("");
 
     qRegisterMetaType<ChatViewItem>("ChatViewItem");
     qRegisterMetaType<QList<ChatViewItem>>();

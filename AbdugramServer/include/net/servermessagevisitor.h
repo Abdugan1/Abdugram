@@ -13,14 +13,18 @@ public:
     
     void visit(const LoginRequest             &request) override;
     void visit(const RegisterRequest          &request) override;
+
     void visit(const SyncUsersRequest         &request) override;
     void visit(const SyncChatsRequest         &request) override;
     void visit(const SyncMessagesRequest      &request) override;
+    void visit(const SyncMessageReadsRequest  &request) override;
+
     void visit(const SearchRequest            &request) override;
     void visit(const CreateChatRequest        &request) override;
     void visit(const SendMessageRequest       &request) override;
     void visit(const LogoutRequest            &request) override;
     void visit(const CreatePrivateChatRequest &request) override;
+    void visit(const MessageReadRequest       &request) override;
 
 private:
     NetworkHandler *networkHandler_ = nullptr;

@@ -81,6 +81,7 @@ void RippleAnimation::drawRipple(QPainter *painter) const
         return;
     }
     painter->save();
+    painter->setRenderHint(QPainter::Antialiasing);
 
     painter->setPen(Qt::NoPen);
     painter->setBrush(QColor{255, 255, 255, rippleOpacity_});

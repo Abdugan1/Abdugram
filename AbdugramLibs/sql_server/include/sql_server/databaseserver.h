@@ -9,6 +9,7 @@ class User;
 class Chat;
 class ChatUser;
 class Message;
+class MessageRead;
 
 class SQLSERVER_EXPORT DatabaseServer
 {
@@ -17,7 +18,8 @@ public:
         Users,
         Chats,
         ChatUsers,
-        Messages
+        Messages,
+        MessageReads
     };
 
     static DatabaseServer *instance();
@@ -49,9 +51,17 @@ public:
     bool           addMessage(const Message &message);
     Message        getMessageById(int id);
     QList<Message> getUnsyncMessages(int userId, const QDateTime &lastUpdatedAt);
+    bool           setIsReadOfMessageToTrue(int messageId);
+
+    // MessageReads
+    bool               addMessageReads(const QList<MessageRead> &messageReads);
+    QList<MessageRead> getUnsyncMessageReads(int userId, const QDateTime &lastUpdatedAt);
 
     // Common
     int lastInsertedId(Tables table);
+
+    //
+    int getCountOfMessageReadsOfSpecificMessage(int messageId);
 
 protected:
     void createTables();

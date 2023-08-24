@@ -4,14 +4,18 @@
 #include <net_common/messages/abdumessage.h>
 #include <net_common/messages/loginrequest.h>
 #include <net_common/messages/registerrequest.h>
+
 #include <net_common/messages/syncusersrequest.h>
 #include <net_common/messages/syncchatsrequest.h>
 #include <net_common/messages/syncmessagesrequest.h>
+#include <net_common/messages/syncmessagereadsrequest.h>
+
 #include <net_common/messages/searchrequest.h>
 #include <net_common/messages/createchatrequest.h>
 #include <net_common/messages/sendmessagerequest.h>
 #include <net_common/messages/logoutrequest.h>
 #include <net_common/messages/createprivatechatrequest.h>
+#include <net_common/messages/messagereadrequest.h>
 
 #include <net_common/consts.h>
 
@@ -35,6 +39,12 @@ NetworkHandler::NetworkHandler(QObject *parent)
 
     connect(this, &NetworkHandler::chatsAndChatUsersSyncFinished,
             this, &NetworkHandler::sendSyncMessagesRequest);
+
+    connect(this, &NetworkHandler::messagesSyncFinished,
+            this, &NetworkHandler::sendSyncMessageReadsRequest);
+
+    connect(this, &NetworkHandler::messageReadsSyncFinished,
+            this, &NetworkHandler::syncFinished);
 }
 
 QAbstractSocket::SocketState NetworkHandler::tcpState() const
@@ -141,6 +151,14 @@ void NetworkHandler::sendSendMessageRequest(const Message &message)
     sendToServer(static_cast<AbduMessagePtr>(sendMessage));
 }
 
+void NetworkHandler::sendMessageReadRequest(const QList<MessageRead> &messageReads)
+{
+    AnyMessagePtr<MessageReadRequest> messageReadRequest{new MessageReadRequest};
+    messageReadRequest->setMessageReads(messageReads);
+
+    sendToServer(static_cast<AbduMessagePtr>(messageReadRequest));
+}
+
 void NetworkHandler::startSync()
 {
     networkHandler()->sendSyncUsersRequest();
@@ -165,10 +183,9 @@ void NetworkHandler::sendSyncChatsRequest()
 
     const auto chatsLastUpdate     = database()->getLastUpdatedAt(DatabaseClient::Tables::Chats);
     const auto chatUsersLastUpdate = database()->getLastUpdatedAt(DatabaseClient::Tables::ChatUsers);
-    syncChats->setChatsLastUpdatedAt(chatsLastUpdate.isValid() ? chatsLastUpdate
-                                                               : QDateTime{QDate{0, 0, 0}, QTime{0, 0}});
-    syncChats->setChatUsersLastUpdatedAt(chatUsersLastUpdate.isValid() ? chatsLastUpdate
-                                                                       : QDateTime{QDate{0, 0, 0}, QTime{0, 0}});
+
+    syncChats->setChatsLastUpdatedAt(chatsLastUpdate);
+    syncChats->setChatUsersLastUpdatedAt(chatsLastUpdate);
 
     sendToServer(static_cast<AbduMessagePtr>(syncChats));
 }
@@ -179,10 +196,20 @@ void NetworkHandler::sendSyncMessagesRequest()
     syncMessages->setUserId(userId());
 
     const auto lastUpdate = database()->getLastUpdatedAt(DatabaseClient::Tables::Messages);
-    syncMessages->setLastUpdatedAt(lastUpdate.isValid() ? lastUpdate
-                                                        : QDateTime{QDate{0, 0, 0}, QTime{0, 0}});
+    syncMessages->setLastUpdatedAt(lastUpdate);
 
     sendToServer(static_cast<AbduMessagePtr>(syncMessages));
+}
+
+void NetworkHandler::sendSyncMessageReadsRequest()
+{
+    AnyMessagePtr<SyncMessageReadsRequest> syncMessageReadsRequest{new SyncMessageReadsRequest};
+    syncMessageReadsRequest->setUserId(userId());
+
+    const auto lastUpdate = database()->getLastUpdatedAt(DatabaseClient::Tables::Messages);
+    syncMessageReadsRequest->setLastUpdatedAt(lastUpdate);
+
+    sendToServer(static_cast<AbduMessagePtr>(syncMessageReadsRequest));
 }
 
 void NetworkHandler::sendLogoutRequest()

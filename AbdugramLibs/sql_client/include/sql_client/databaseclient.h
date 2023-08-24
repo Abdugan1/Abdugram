@@ -5,6 +5,8 @@
 
 #include "data_structures/chatitem.h"
 
+#include <sql_common/data_structures/message.h>
+
 #include <QObject>
 #include <QList>
 #include <QThreadStorage>
@@ -19,7 +21,8 @@ class SqlDatabase;
 class User;
 class Chat;
 class ChatUser;
-class Message;
+class MessageRead;
+
 
 class SQLCLIENT_EXPORT DatabaseClient : public QObject
 {
@@ -30,6 +33,7 @@ public:
         Chats,
         ChatUsers,
         Messages,
+        MessageReads
     };
 
     static DatabaseClient *instance();
@@ -46,19 +50,24 @@ public:
     User getUserById(int userId);
 
     // Chats
-    bool addOrUpdateChat(const Chat &chat);
-    bool addChat(Chat chat, const QList<ChatUser> &chatUsers, int ownUserId);
+    bool        addOrUpdateChat(const Chat &chat);
+    bool        addChat(Chat chat, const QList<ChatUser> &chatUsers, int ownUserId);
     QList<Chat> getAllChats();
 
     // ChatsView
     QList<ChatViewItem> getChatsView();
 
     // Messages
-    bool addOrUpdateMessage(const Message &message);
+    bool           addOrUpdateMessage(const Message &message);
     QList<Message> getMessages(int chatId);
+    Message        getMessageById(int id);
+    bool           updateMessages(const QList<Message> &messages);
 
     // ChatUsers
     bool addOrUpdateChatUser(const ChatUser &chatUser);
+
+    // MessageReads
+    bool addOrUpdateMessageReads(const QList<MessageRead> &messageReads);
 
     //
     void likeSearch(const QString &likeSearch);
@@ -69,6 +78,8 @@ signals:
     void userAdded(const User &user);
     void chatAdded(const Chat &chat);
     void messageAdded(const Message &message);
+    void messageReadAdded(const MessageRead &messageReads);
+    void messagesUpdated(const QList<Message> &updatedMessages);
     
     void foundChats(const QList<ChatViewItem> &chatViews);
 
@@ -88,6 +99,7 @@ private:
     QMutex chatUsers_;
     QMutex chatsView_;
     QMutex messages_;
+    QMutex messageReads_;
 };
 
 inline DatabaseClient *database()

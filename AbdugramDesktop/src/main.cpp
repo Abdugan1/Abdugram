@@ -5,7 +5,7 @@ FRAMELESSHELPER_USE_NAMESPACE
 
 int main(int argc, char *argv[])
 {
-//    FramelessHelper::Widgets::initialize();
+    FramelessHelper::Widgets::initialize();
     Application app(argc, argv);
 
     return app.exec();

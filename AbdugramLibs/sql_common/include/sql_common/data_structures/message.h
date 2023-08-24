@@ -41,6 +41,9 @@ public:
     SQLCOMMON_EXPORT friend QDataStream &operator<<(QDataStream &out, const Message &message);
     SQLCOMMON_EXPORT friend QDataStream &operator>>(QDataStream &in, Message &message);
 
+    bool isRead() const;
+    void setIsRead(bool newIsRead);
+
 private:
     int id_ = -1;
     int chatId_ = -1;
@@ -48,6 +51,7 @@ private:
     int replyToId_ = -1;
     QString text_;
     bool isEdited_ = false;
+    bool isRead_ = false;
     QDateTime createdAt_;
     QDateTime updatedAt_;
 };

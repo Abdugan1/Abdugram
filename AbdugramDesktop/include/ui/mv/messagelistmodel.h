@@ -31,13 +31,18 @@ public:
 
 public slots:
     void onMessageAdded(const Message &message);
+    void onMessagesUpdated(const QList<Message> &updatedMessages);
 
 private:
     void addMessage(const Message &message);
 
+    void clear();
+
 private:
     using MessageModelItemPtr = std::shared_ptr<MessageModelItem>;
     using MessageModelItems = QVector<MessageModelItemPtr>;
+
+    QHash<int, int> messageIdToRow_;
     MessageModelItems messageModelItems_;
 
     int chatId_ = -1;

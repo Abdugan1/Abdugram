@@ -26,6 +26,7 @@ set(HEADERS
     ${HEADERS_DIR}/databaseserver.h
     ${HEADERS_DIR}/messagestable.h
     ${HEADERS_DIR}/userstable.h
+    ${HEADERS_DIR}/messagereadstable.h
 )
 
 set(SOURCES
@@ -34,6 +35,7 @@ set(SOURCES
     ${SOURCES_DIR}/userstable.cpp
     ${SOURCES_DIR}/chatstable.cpp
     ${SOURCES_DIR}/databaseserver.cpp
+    ${SOURCES_DIR}/messagereadstable.cpp
 )
 
 add_library(${LIBRARY_NAME} SHARED ${SOURCES})

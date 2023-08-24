@@ -12,6 +12,7 @@ class User;
 class Chat;
 class ChatUser;
 class Message;
+class MessageRead;
 
 class NetworkHandler : public QObject
 {
@@ -28,10 +29,13 @@ public:
     void sendSyncUsersReply(Session *session, const QList<User> &unsyncUsers);
     void sendSyncChatsReply(Session *session, const QHash<Chat, QList<ChatUser>> &unsyncChats);
     void sendSyncMessagesReply(Session *session, const QList<Message> &unsyncMessages);
+    void sendSyncMessageReadsReply(Session *session, const QList<MessageRead> &unsyncMessageReads);
     void sendSearchReply(Session* session, const QList<User> &foundUsers);
     void sendCreateChatReply(int userId, const Chat &chat, const QList<User> &users, const QList<ChatUser> &chatUsers);
     void sendSendMessageReply(int userId, const Message &message);
     void sendLogoutReply(Session *session);
+    void sendMessageReadsReply(int userId, const QList<MessageRead> &messageReads);
+    void sendMessagesUpdated(int userId, const QList<Message> &updatedMessages);
 
 private:
     void send(int userId, const AbduMessagePtr &message);

@@ -10,7 +10,11 @@ class SQLCLIENT_EXPORT MessagesTable
 public:
     static bool addOrUpdateMessage(const Message &message);
 
+    static Message getMessageById(int chatId);
+
     static QList<Message> getMessagesFromChat(int chatId);
+
+    static bool updateMessage(const Message &message);
 
     static int lastInsertedId();
 

@@ -12,9 +12,12 @@
 #include <net_common/messages/sendmessagerequest.h>
 #include <net_common/messages/logoutrequest.h>
 #include <net_common/messages/createprivatechatrequest.h>
+#include <net_common/messages/messagereadrequest.h>
+#include <net_common/messages/syncmessagereadsrequest.h>
 
 #include <sql_common/data_structures/user.h>
 #include <sql_common/data_structures/chatuser.h>
+#include <sql_common/data_structures/messagereads.h>
 #include <sql_common/functions.h>
 
 #include <sql_server/databaseserver.h>
@@ -111,6 +114,16 @@ void ServerMessageVisitor::visit(const SyncMessagesRequest &request)
     networkHandler_->sendSyncMessagesReply(client_, unsyncMessages);
 }
 
+void ServerMessageVisitor::visit(const SyncMessageReadsRequest &request)
+{
+    const int       userId        = request.userId();
+    const QDateTime lastUpdatedAt = lastUpdate(request.lastUpdatedAt());
+
+    const QList<MessageRead> unsyncMessageReads = database()->getUnsyncMessageReads(userId, lastUpdatedAt);
+
+    networkHandler_->sendSyncMessageReadsReply(client_, unsyncMessageReads);
+}
+
 void ServerMessageVisitor::visit(const SearchRequest &request)
 {
     const QString searchText = request.searchText();
@@ -182,4 +195,61 @@ void ServerMessageVisitor::visit(const CreatePrivateChatRequest &request)
     AnyMessagePtr<SendMessageRequest> sendMessageRequest{new SendMessageRequest};
     sendMessageRequest->setMessage(message);
     this->visit(*sendMessageRequest);
+}
+
+void ServerMessageVisitor::visit(const MessageReadRequest &request)
+{
+    QList<MessageRead> messageReads = request.messageReads();
+
+    QDateTime currentTime = QDateTime::currentDateTime();
+    for (auto &messageRead : messageReads) {
+        messageRead.setReadTime(currentTime);
+        messageRead.setCreatedAt(currentTime);
+        messageRead.setUpdatedAt(currentTime);
+    }
+
+    database()->addMessageReads(messageReads);
+
+    const Message message = database()->getMessageById(messageReads.first().messageId());
+
+    const QList<ChatUser> chatUsers = database()->getChatUsers(message.chatId());
+    for (const auto &chatUser : chatUsers) {
+        networkHandler_->sendMessageReadsReply(chatUser.userId(), messageReads);
+    }
+
+    //
+    QList<int> readedMessageIds;
+
+    const int countOfChatUsers = chatUsers.size();
+    qDebug() << "count of chat users:" << countOfChatUsers;
+    const bool success = executeTransaction(QSqlDatabase::database(), [&]()->bool {
+        for (const auto &messageRead : messageReads) {
+            const int messageId = messageRead.messageId();
+            const int countOfMessageReads = database()->getCountOfMessageReadsOfSpecificMessage(messageId);
+            qDebug() << "count of message reads:" << countOfMessageReads;
+            if (countOfMessageReads != countOfChatUsers - 1 /* Sender itself */) {
+                continue;
+            }
+            if (!database()->setIsReadOfMessageToTrue(messageId))
+                return false;
+            readedMessageIds.append(messageRead.messageId());
+        }
+        return true;
+    });
+
+    qDebug() << "success:" << success << "count of message ids:" << readedMessageIds.count();
+
+    if (!success || readedMessageIds.isEmpty())
+        return;
+
+    qDebug() << "dksaldklsakldsa";
+
+    QList<Message> messages;
+    for (int messageId : readedMessageIds) {
+        messages.append(database()->getMessageById(messageId));
+    }
+
+    for (const auto chatUser : chatUsers) {
+        networkHandler_->sendMessagesUpdated(chatUser.userId(), messages);
+    }
 }

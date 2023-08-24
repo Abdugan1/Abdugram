@@ -3,17 +3,22 @@
 
 #include <net_common/messages/loginreply.h>
 #include <net_common/messages/registerreply.h>
+
 #include <net_common/messages/syncusersreply.h>
 #include <net_common/messages/syncchatsreply.h>
 #include <net_common/messages/syncmessagesreply.h>
+#include <net_common/messages/syncmessagereadsreply.h>
+
 #include <net_common/messages/searchusersreply.h>
 #include <net_common/messages/createchatreply.h>
 #include <net_common/messages/sendmessagereply.h>
-
+#include <net_common/messages/messagereadreply.h>
+#include <net_common/messages/messagesupdated.h>
 
 #include <sql_common/data_structures/user.h>
 #include <sql_common/data_structures/chatuser.h>
 #include <sql_common/data_structures/message.h>
+#include <sql_common/data_structures/messagereads.h>
 #include <sql_common/functions.h>
 
 #include <sql_client/databaseclient.h>
@@ -88,7 +93,15 @@ void ClientMessageVisitor::visit(const SyncMessagesReply &reply)
         database()->addOrUpdateMessage(message);
     }
 
-    emit networkHandler()->syncFinished();
+    emit networkHandler()->messagesSyncFinished();
+}
+
+void ClientMessageVisitor::visit(const SyncMessageReadsReply &reply)
+{
+    const QList<MessageRead> unsyncMessageReads = reply.unsyncMessageReads();
+    database()->addOrUpdateMessageReads(unsyncMessageReads);
+
+    emit networkHandler()->messageReadsSyncFinished();
 }
 
 void ClientMessageVisitor::visit(const SearchUsersReply &reply)
@@ -134,4 +147,18 @@ void ClientMessageVisitor::visit(const LogoutReply &reply)
     database()->setOwnId(-1);
 
     emit networkHandler()->loggedOut();
+}
+
+void ClientMessageVisitor::visit(const MessageReadReply &reply)
+{
+    const QList<MessageRead> messageReads = reply.messageReads();
+
+    database()->addOrUpdateMessageReads(messageReads);
+}
+
+void ClientMessageVisitor::visit(const MessagesUpdated &reply)
+{
+    const QList<Message> messages = reply.messages();
+
+    database()->updateMessages(messages);
 }

@@ -17,6 +17,8 @@ public:
     QDate date() const;
     void setDateTime(const QDate &newDate);
 
+    void setData(int role, const QVariant &data) override;
+
 protected:
     QVariant dataImp(int role) const override;
 

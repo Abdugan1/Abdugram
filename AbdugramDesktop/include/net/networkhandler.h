@@ -14,6 +14,7 @@ class User;
 class Chat;
 class ChatUser;
 class Message;
+class MessageRead;
 
 class Application;
 
@@ -50,9 +51,12 @@ public:
 
     void sendSendMessageRequest(const Message &message);
 
-    void startSync();
+    void sendMessageReadRequest(const QList<MessageRead> &messageReads);
 
     void sendLogoutRequest();
+
+
+    void startSync();
 
 signals:
     void connectedSucessfully();
@@ -61,6 +65,8 @@ signals:
     void usersSyncFinished();
     void chatsAndChatUsersSyncFinished();
     void messagesSyncFinished();
+    void messageReadsSyncFinished();
+
     void syncFinished();
 
     void loginResult(bool success);
@@ -79,6 +85,7 @@ private slots:
     void sendSyncUsersRequest();
     void sendSyncChatsRequest();
     void sendSyncMessagesRequest();
+    void sendSyncMessageReadsRequest();
 
 private:
     explicit NetworkHandler(QObject *parent = nullptr);

@@ -63,10 +63,11 @@ CREATE TABLE IF NOT EXISTS message_deletions (
 
 
 CREATE TABLE IF NOT EXISTS message_reads (
-    id INT NOT NULL,
     message_id INT NOT NULL,
     user_id INT NOT NULL,
-    read_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    read_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT pk_message_reads PRIMARY KEY (user_id, message_id),
     CONSTRAINT fk_message_reads_user_id FOREIGN KEY (user_id) REFERENCES users(id),
     CONSTRAINT fk_message_reads_message_id FOREIGN KEY (message_id) REFERENCES messages(id)

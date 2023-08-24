@@ -18,20 +18,24 @@ set(INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(LIB_DIR ${CMAKE_CURRENT_BINARY_DIR}/lib)
 
 set(HEADERS
+    ${HEADERS_DIR}/SqlCommon_global.h
+    ${HEADERS_DIR}/functions.h
+
     ${HEADERS_DIR}/data_structures/chat.h
     ${HEADERS_DIR}/data_structures/chatuser.h
     ${HEADERS_DIR}/data_structures/message.h
     ${HEADERS_DIR}/data_structures/user.h
-    ${HEADERS_DIR}/SqlCommon_global.h
-    ${HEADERS_DIR}/functions.h
+    ${HEADERS_DIR}/data_structures/messagereads.h
 )
 
 set(SOURCES
+    ${SOURCES_DIR}/functions.cpp
+
     ${SOURCES_DIR}/data_structures/chat.cpp
     ${SOURCES_DIR}/data_structures/chatuser.cpp
     ${SOURCES_DIR}/data_structures/message.cpp
     ${SOURCES_DIR}/data_structures/user.cpp
-    ${SOURCES_DIR}/functions.cpp
+    ${SOURCES_DIR}/data_structures/messagereads.cpp
 )
 
 add_library(${LIBRARY_NAME} SHARED ${SOURCES})

@@ -21,6 +21,10 @@ set(SQL_BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/)
 
 # List the source files
 set(HEADERS
+    ${HEADERS_DIR}/data_structures/chatitem.h
+
+    ${HEADERS_DIR}/sqlquery.h
+
     ${HEADERS_DIR}/SqlClient_global.h
     ${HEADERS_DIR}/chatstable.h
     ${HEADERS_DIR}/chatsview.h
@@ -29,11 +33,14 @@ set(HEADERS
     ${HEADERS_DIR}/database.h
     ${HEADERS_DIR}/messagestable.h
     ${HEADERS_DIR}/userstable.h
-    ${HEADERS_DIR}/sqlquery.h
-    ${HEADERS_DIR}/data_structures/chatitem.h
+    ${HEADERS_DIR}/messagereadstable.h
 )
 
 set(SOURCES
+    ${SOURCES_DIR}/data_structures/chatitem.cpp
+
+    ${SOURCES_DIR}/sqlquery.cpp
+
     ${SOURCES_DIR}/chatstable.cpp
     ${SOURCES_DIR}/chatsview.cpp
     ${SOURCES_DIR}/chatuserstable.cpp
@@ -41,8 +48,7 @@ set(SOURCES
     ${SOURCES_DIR}/database.cpp
     ${SOURCES_DIR}/messagestable.cpp
     ${SOURCES_DIR}/userstable.cpp
-    ${SOURCES_DIR}/sqlquery.cpp
-    ${SOURCES_DIR}/data_structures/chatitem.cpp
+    ${SOURCES_DIR}/messagereadstable.cpp
 )
 
 add_library(${LIBRARY_NAME} SHARED ${SOURCES})

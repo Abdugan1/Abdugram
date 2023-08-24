@@ -17,6 +17,8 @@ public:
 
     static QList<Message> getUnsyncMessages(int userId, const QDateTime &lastUpdatedAt);
 
+    static bool setIsReadOfMessageToTrue(int messageId);
+
     static int lastInsertedId();
 
 private:

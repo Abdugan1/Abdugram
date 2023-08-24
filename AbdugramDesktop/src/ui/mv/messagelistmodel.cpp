@@ -11,7 +11,8 @@
 MessageListModel::MessageListModel(QObject *parent)
     : QAbstractListModel{parent}
 {
-    connect(database(), &DatabaseClient::messageAdded, this, &MessageListModel::onMessageAdded);
+    connect(database(), &DatabaseClient::messageAdded,    this, &MessageListModel::onMessageAdded);
+    connect(database(), &DatabaseClient::messagesUpdated, this, &MessageListModel::onMessagesUpdated);
 }
 
 int MessageListModel::rowCount(const QModelIndex &) const
@@ -42,8 +43,7 @@ void MessageListModel::setChatId(int newChatId)
     chatId_ = newChatId;
 
     const int prevSize = messageModelItems_.size();
-    messageModelItems_.clear();
-    lastDate_ = QDate{};
+    clear();
 
     QList<Message> messages = database()->getMessages(newChatId);
     for (const auto &message : messages) {
@@ -58,8 +58,7 @@ void MessageListModel::setChatIdWithoutSelect(int newChatId)
     chatId_ = newChatId;
 
     const int prevSize = messageModelItems_.size();
-    messageModelItems_.clear();
-    lastDate_ = QDate{};
+    clear();
 
     emit dataChanged(index(0, 0), index(prevSize, 0));
 }
@@ -75,6 +74,20 @@ void MessageListModel::onMessageAdded(const Message &message)
     endInsertRows();
 }
 
+void MessageListModel::onMessagesUpdated(const QList<Message> &updatedMessages)
+{
+    for (const auto &message : updatedMessages) {
+        const int row = messageIdToRow_.value(message.id());
+        auto messageItem = messageModelItems_[row];
+        messageItem->setData(MessageItem::MessageId,message.id());
+        messageItem->setData(MessageItem::SenderId, message.senderId());
+        messageItem->setData(MessageItem::Text,     message.text());
+        messageItem->setData(MessageItem::DateTime, message.createdAt());
+        messageItem->setData(MessageItem::IsRead,   message.isRead());
+        messageItem->setData(MessageItem::IsEdited, message.isEdited());
+    }
+}
+
 void MessageListModel::addMessage(const Message &message)
 {
     if (lastDate_ != message.createdAt().date()) {
@@ -82,4 +95,12 @@ void MessageListModel::addMessage(const Message &message)
         messageModelItems_.append(MessageModelItemPtr(new DateSeparatorItem{message.createdAt().date()}));
     }
     messageModelItems_.append(MessageItem::fromMessage(message));
+    messageIdToRow_[message.id()] = messageModelItems_.size() - 1;
+}
+
+void MessageListModel::clear()
+{
+    messageModelItems_.clear();
+    messageIdToRow_.clear();
+    lastDate_ = QDate{};
 }

@@ -19,6 +19,11 @@ void DateSeparatorItem::setDateTime(const QDate &newDate)
     date_ = newDate;
 }
 
+void DateSeparatorItem::setData(int role, const QVariant &data)
+{
+    Q_UNREACHABLE();
+}
+
 QVariant DateSeparatorItem::dataImp(int role) const
 {
     switch (static_cast<Roles>(role)) {

@@ -74,6 +74,15 @@ QList<Message> MessagesTable::getUnsyncMessages(int userId, const QDateTime &las
     return unsyncMessages;
 }
 
+bool MessagesTable::setIsReadOfMessageToTrue(int messageId)
+{
+    QSqlQuery query;
+    query.prepare("UPDATE messages SET is_read = TRUE WHERE id = :message_id");
+    query.bindValue(":message_id", messageId);
+
+    return executeQuery(query, ErrorImportance::Warning);
+}
+
 int MessagesTable::lastInsertedId()
 {
     return lastInsertedId_;

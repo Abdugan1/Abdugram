@@ -29,6 +29,8 @@ public:
         SendMessageRequest,
         LogoutRequest,
         CreatePrivateChatRequest,
+        MessageReadRequest,
+        SyncMessageReadsRequest,
 
         ServerSide = 1000000000,
         LoginReply = ServerSide + 1,
@@ -41,6 +43,9 @@ public:
         CreateChatResult,
         SendMessageResult,
         LogoutReply,
+        MessageReadReply,
+        SyncMessageReadsReply,
+        MessagesUpdated,
     };
 
 public:

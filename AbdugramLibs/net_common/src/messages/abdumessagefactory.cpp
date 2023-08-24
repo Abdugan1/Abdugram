@@ -10,6 +10,8 @@
 #include "messages/sendmessagerequest.h"
 #include "messages/logoutrequest.h"
 #include "messages/createprivatechatrequest.h"
+#include "messages/messagereadrequest.h"
+#include "messages/syncmessagereadsrequest.h"
 
 #include "messages/loginreply.h"
 #include "messages/registerreply.h"
@@ -20,6 +22,9 @@
 #include "messages/createchatreply.h"
 #include "messages/sendmessagereply.h"
 #include "messages/logoutreply.h"
+#include "messages/messagereadreply.h"
+#include "messages/syncmessagereadsreply.h"
+#include "messages/messagesupdated.h"
 
 #include <QDebug>
 
@@ -62,6 +67,12 @@ AbduMessagePtr AbduMessageFactory::fromData(const QByteArray &data)
     case AbduMessage::Type::CreatePrivateChatRequest:
         abduMessage = new CreatePrivateChatRequest;
         break;
+    case AbduMessage::Type::MessageReadRequest:
+        abduMessage = new MessageReadRequest;
+        break;
+    case AbduMessage::Type::SyncMessageReadsRequest:
+        abduMessage = new SyncMessageReadsRequest;
+        break;
         
     case AbduMessage::Type::LoginReply:
         abduMessage = new LoginReply;
@@ -89,6 +100,15 @@ AbduMessagePtr AbduMessageFactory::fromData(const QByteArray &data)
         break;
     case AbduMessage::Type::LogoutReply:
         abduMessage = new LogoutReply;
+        break;
+    case AbduMessage::Type::MessageReadReply:
+        abduMessage = new MessageReadReply;
+        break;
+    case AbduMessage::Type::SyncMessageReadsReply:
+        abduMessage = new SyncMessageReadsReply;
+        break;
+    case AbduMessage::Type::MessagesUpdated:
+        abduMessage = new MessagesUpdated;
         break;
     }
 

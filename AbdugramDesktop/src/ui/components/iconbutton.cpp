@@ -2,6 +2,7 @@
 
 #include "ui/effects/rippleanimation.h"
 
+#include <QStyleOptionButton>
 #include <QPainterPath>
 #include <QPainter>
 #include <QDebug>
@@ -14,22 +15,17 @@ IconButton::IconButton(const QPixmap &pixmap)
 void IconButton::paintEvent(QPaintEvent *event)
 {
     QPainter painter{this};
+    painter.setPen(Qt::NoPen);
 
-    QPixmap pixmap = icon().pixmap(iconSize());
+    drawBackground(&painter);
+    drawIcon(&painter);
+
 
     const auto r = rect();
-    const auto bw = r.width();
-    const auto bh = r.height();
-    const auto pw = pixmap.width();
-    const auto ph = pixmap.height();
-
-    const auto x = bw / 2 - pw / 2;
-    const auto y = bh / 2 - ph / 2;
-
-    painter.drawPixmap(x, y, pixmap);
+    const auto w = r.width();
 
     QPainterPath path;
-    path.addRoundedRect(r, bw / 2, bh / 2);
+    path.addRoundedRect(rect(), w / 2, w / 2);
     painter.setClipPath(path);
     painter.setClipping(true);
 
@@ -46,4 +42,54 @@ void IconButton::init(const QPixmap &pixmap)
     setFocusPolicy(Qt::NoFocus);
 
     rippleAnimation_ = new RippleAnimation{this};
+}
+
+void IconButton::drawBackground(QPainter *painter)
+{
+    painter->save();
+    painter->setRenderHint(QPainter::Antialiasing);
+
+    const auto r = rect();
+    const auto w = r.width();
+
+    QColor bgColor = backgroundColor_;
+
+    if (isEnabled()) {
+        QStyleOptionButton opt;
+        initStyleOption(&opt);
+
+        if (opt.state & QStyle::State_MouseOver) {
+            bgColor = bgColor.lighter(130);
+        }
+
+    }
+
+    painter->setBrush(bgColor);
+    painter->drawRoundedRect(r, w / 2, w / 2);
+
+    painter->restore();
+}
+
+void IconButton::drawIcon(QPainter *painter)
+{
+    const QPixmap pixmap = icon().pixmap(iconSize());
+
+    const auto r = rect();
+    const auto bw = r.width();
+    const auto pw = pixmap.width();
+
+    const auto x = bw / 2 - pw / 2;
+    const auto y = bw / 2 - pw / 2;
+
+    painter->drawPixmap(x, y, pixmap);
+}
+
+QColor IconButton::backgroundColor() const
+{
+    return backgroundColor_;
+}
+
+void IconButton::setBackgroundColor(const QColor &newBackgroundColor)
+{
+    backgroundColor_ = newBackgroundColor;
 }

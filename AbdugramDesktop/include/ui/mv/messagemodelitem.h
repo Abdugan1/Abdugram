@@ -6,29 +6,30 @@
 class MessageModelItem
 {
 public:
-    enum class Roles {
+    enum Roles {
         Type =  Qt::UserRole + 1,
 
         UserRole,
     };
 
-    enum class Type : int {
+    enum  Type : int {
         Unknown = -1,
         MessageItem,
         DateSeparatorItem,
     };
 
-    explicit MessageModelItem(Type type);
+    explicit MessageModelItem(enum Type type);
     virtual ~MessageModelItem() = default;
 
     QVariant data(int role) const;
+    virtual void setData(int role, const QVariant &data) = 0;
 
-    Type type() const;
+    enum Type type() const;
 protected:
     virtual QVariant dataImp(int role) const = 0;
 
 private:
-    Type type_ = Type::Unknown;
+    enum Type type_ = Type::Unknown;
 };
 
 #endif // MESSAGEMODELITEM_H

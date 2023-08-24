@@ -1,15 +1,17 @@
 #include "databaseserver.h"
 
+#include "userstable.h"
+#include "chatstable.h"
+#include "chatuserstable.h"
+#include "messagestable.h"
+#include "messagereadstable.h"
+
 #include <sql_common/functions.h>
 #include <sql_common/data_structures/user.h>
 #include <sql_common/data_structures/chat.h>
 #include <sql_common/data_structures/chatuser.h>
 #include <sql_common/data_structures/message.h>
-
-#include "userstable.h"
-#include "chatstable.h"
-#include "chatuserstable.h"
-#include "messagestable.h"
+#include <sql_common/data_structures/messagereads.h>
 
 #include <QDir>
 #include <QDirIterator>
@@ -130,16 +132,56 @@ QList<Message> DatabaseServer::getUnsyncMessages(int userId, const QDateTime &la
     return MessagesTable::getUnsyncMessages(userId, lastUpdatedAt);
 }
 
+bool DatabaseServer::setIsReadOfMessageToTrue(int messageId)
+{
+    return MessagesTable::setIsReadOfMessageToTrue(messageId);
+}
+
+bool DatabaseServer::addMessageReads(const QList<MessageRead> &messageReads)
+{
+    const bool success = executeTransaction(QSqlDatabase::database(), [this, &messageReads]()->bool {
+        for (const auto &messageRead : messageReads) {
+            if (!MessageReadsTable::addMessageReads(messageRead)) {
+                return false;
+            }
+        }
+        return true;
+    });
+
+    return success;
+}
+
+QList<MessageRead> DatabaseServer::getUnsyncMessageReads(int userId, const QDateTime &lastUpdatedAt)
+{
+    return MessageReadsTable::getUnsyncMessageReads(userId, lastUpdatedAt);
+}
+
 int DatabaseServer::lastInsertedId(Tables table)
 {
     switch (table) {
-    case Tables::Users:     return UsersTable::lastInsertedId();    break;
-    case Tables::Chats:     return ChatsTable::lastInsertedId();    break;
-    case Tables::ChatUsers: break;
-    case Tables::Messages:  return MessagesTable::lastInsertedId(); break;
+    case Tables::Users:        return UsersTable::lastInsertedId();    break;
+    case Tables::Chats:        return ChatsTable::lastInsertedId();    break;
+    case Tables::ChatUsers:    break;
+    case Tables::Messages:     return MessagesTable::lastInsertedId(); break;
+    case Tables::MessageReads: return MessagesTable::lastInsertedId(); break;
     }
 
     return 0;
+}
+
+int DatabaseServer::getCountOfMessageReadsOfSpecificMessage(int messageId)
+{
+    QSqlQuery messageReadsCountQuery;
+    messageReadsCountQuery.prepare("SELECT COUNT(*) "
+                                   "FROM message_reads "
+                                   "WHERE message_id = :message_id;");
+    messageReadsCountQuery.bindValue(":message_id", messageId);
+    if (!executeQuery(messageReadsCountQuery, ErrorImportance::Warning)) {
+        return -1;
+    }
+
+    messageReadsCountQuery.first();
+    return messageReadsCountQuery.value(0).toInt();
 }
 
 void DatabaseServer::createTables()

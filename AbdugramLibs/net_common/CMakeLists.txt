@@ -22,6 +22,8 @@ set(HEADERS
     ${HEADERS_DIR}/consts.h
     ${HEADERS_DIR}/datastream.h
     ${HEADERS_DIR}/fields.h
+    ${HEADERS_DIR}/tcpsession.h
+
     ${HEADERS_DIR}/messages/abdumessage.h
     ${HEADERS_DIR}/messages/abdumessagefactory.h
     ${HEADERS_DIR}/messages/createchatrequest.h
@@ -45,13 +47,19 @@ set(HEADERS
     ${HEADERS_DIR}/messages/logoutrequest.h
     ${HEADERS_DIR}/messages/logoutreply.h
     ${HEADERS_DIR}/messages/createprivatechatrequest.h
-    ${HEADERS_DIR}/tcpsession.h
+    ${HEADERS_DIR}/messages/messagereadrequest.h
+    ${HEADERS_DIR}/messages/messagereadreply.h
+    ${HEADERS_DIR}/messages/syncmessagereadsrequest.h
+    ${HEADERS_DIR}/messages/syncmessagereadsreply.h
+    ${HEADERS_DIR}/messages/messagesupdated.h
 )
 
 set(SOURCES
     ${SOURCES_DIR}/consts.cpp
     ${SOURCES_DIR}/datastream.cpp
     ${SOURCES_DIR}/fields.cpp
+    ${SOURCES_DIR}/tcpsession.cpp
+
     ${SOURCES_DIR}/messages/abdumessage.cpp
     ${SOURCES_DIR}/messages/abdumessagefactory.cpp
     ${SOURCES_DIR}/messages/createchatrequest.cpp
@@ -73,7 +81,11 @@ set(SOURCES
     ${SOURCES_DIR}/messages/logoutrequest.cpp
     ${SOURCES_DIR}/messages/logoutreply.cpp
     ${SOURCES_DIR}/messages/createprivatechatrequest.cpp
-    ${SOURCES_DIR}/tcpsession.cpp
+    ${SOURCES_DIR}/messages/messagereadrequest.cpp
+    ${SOURCES_DIR}/messages/messagereadreply.cpp
+    ${SOURCES_DIR}/messages/syncmessagereadsrequest.cpp
+    ${SOURCES_DIR}/messages/syncmessagereadsreply.cpp
+    ${SOURCES_DIR}/messages/messagesupdated.cpp
 )
 
 add_library(${LIBRARY_NAME} SHARED ${HEADERS} ${SOURCES})

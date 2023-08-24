@@ -7,6 +7,7 @@
 #include "chatsview.h"
 #include "chatuserstable.h"
 #include "messagestable.h"
+#include "messagereadstable.h"
 
 #include "data_structures/chatitem.h"
 
@@ -14,6 +15,7 @@
 #include <sql_common/data_structures/chat.h>
 #include <sql_common/data_structures/chatuser.h>
 #include <sql_common/data_structures/message.h>
+#include <sql_common/data_structures/messagereads.h>
 #include <sql_common/functions.h>
 
 #include <QSqlError>
@@ -56,6 +58,7 @@ QDateTime DatabaseClient::getLastUpdatedAt(Tables table)
         {Tables::Chats, "chats"},
         {Tables::ChatUsers, "chat_users"},
         {Tables::Messages, "messages"},
+        {Tables::MessageReads, "message_reads"}
     };
 
     static const QMap<Tables, QMutex *> tableToMutex {
@@ -63,6 +66,7 @@ QDateTime DatabaseClient::getLastUpdatedAt(Tables table)
         {Tables::Chats, &chats_},
         {Tables::ChatUsers, &chatUsers_},
         {Tables::Messages, &messages_},
+        {Tables::MessageReads, &messageReads_}
     };
 
     QMutexLocker lock{tableToMutex[table]};
@@ -167,14 +171,53 @@ QList<Message> DatabaseClient::getMessages(int chatId)
     return MessagesTable::getMessagesFromChat(chatId);
 }
 
+Message DatabaseClient::getMessageById(int id)
+{
+    QMutexLocker lock{&messages_};
+    return MessagesTable::getMessageById(id);
+}
+
+bool DatabaseClient::updateMessages(const QList<Message> &messages)
+{
+    QMutexLocker lock{&messages_};
+    const bool success = executeTransaction(*threadDb(), [&messages]()->bool {
+        for (const auto &message : messages) {
+            if (!MessagesTable::updateMessage(message))
+                return false;
+        }
+        return true;
+    });
+
+    if (success)
+        emit messagesUpdated(messages);
+
+    return success;
+}
+
 bool DatabaseClient::addOrUpdateChatUser(const ChatUser &chatUser)
 {
     QMutexLocker lock{&chatUsers_};
     return ChatUsersTable::addOrUpdateChatUser(chatUser);
 }
 
+bool DatabaseClient::addOrUpdateMessageReads(const QList<MessageRead> &messageReads)
+{
+    QMutexLocker lock{&messageReads_};
+    const bool success = executeTransaction(*threadDb(), [&messageReads]()->bool {
+        for (const auto &messageRead : messageReads) {
+            if (!MessageReadsTable::addOrUpdateMessageRead(messageRead)) {
+                return false;
+            }
+        }
+        return true;
+    });
+
+    return success;
+}
+
 void DatabaseClient::likeSearch(const QString &likeSearch)
 {
+    QMutexLocker lock{&messageReads_};
     emit foundChats(getChatsViewByLikeSearch(likeSearch));
 }
 

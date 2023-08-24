@@ -114,8 +114,8 @@ void MessageListDelegate::paint(QPainter *painter,
 
     painter->setRenderHint(QPainter::Antialiasing);
 
-    const int type = index.data(static_cast<int>(MessageModelItem::Roles::Type)).toInt();
-    switch (static_cast<MessageModelItem::Type>(type)) {
+    const int type = index.data(MessageModelItem::Roles::Type).toInt();
+    switch (type) {
     case MessageModelItem::Type::MessageItem:
         drawMessageItem(painter, option, index);
         break;
@@ -132,8 +132,8 @@ QSize MessageListDelegate::sizeHint(const QStyleOptionViewItem &option, const QM
     Q_UNUSED(option);
     Q_UNUSED(index);
 
-    const int type = index.data(static_cast<int>(MessageModelItem::Roles::Type)).toInt();
-    switch (static_cast<MessageModelItem::Type>(type)) {
+    const int type = index.data(MessageModelItem::Roles::Type).toInt();
+    switch (type) {
     case MessageModelItem::Type::MessageItem:
         return messageSizeHint(option, index);
         break;
@@ -223,7 +223,7 @@ void MessageListDelegate::drawMessageTime(QPainter *painter, const QStyleOptionV
     timeRect.moveBottom(lastLineBoundingRect.bottom() + TimeSpacing);
 
     QFont f = option.font;
-    f.setPointSizeF(10.5);
+    f.setPointSizeF(f.pointSizeF() - 0.5);
     painter->setFont(f);
     painter->setPen(messageTimeColor());
     painter->drawText(timeRect, time);

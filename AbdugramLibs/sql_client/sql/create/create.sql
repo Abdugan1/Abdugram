@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS messages (
   reply_to_id INTEGER,
   text TEXT,
   is_edited INTEGER,
+  is_read INTEGER,
   created_at DATETIME,
   updated_at DATETIME,
   FOREIGN KEY (chat_id) REFERENCES chats(id) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -61,10 +62,12 @@ CREATE TABLE IF NOT EXISTS message_deletions (
 );
 
 CREATE TABLE IF NOT EXISTS message_reads (
-  id INTEGER PRIMARY KEY,
   message_id INTEGER,
   user_id INTEGER,
   read_at DATETIME,
+  created_at DATETIME,
+  updated_at DATETIME,
+  PRIMARY KEY (user_id, message_id), 
   FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
 );

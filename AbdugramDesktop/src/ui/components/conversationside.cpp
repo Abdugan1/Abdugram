@@ -59,14 +59,14 @@ void ConversationSide::setCurrentChatItem(const ChatModelItemPtr &chat)
         messageEdit_->setFocusToTextEdit();
     }
 
-    const int type = chat->data(ChatModelItem::Roles::Type).toInt();
+    const int newType = chat->data(ChatModelItem::Roles::Type).toInt();
 
     const auto FoundUserItem = ChatModelItem::Type::FoundUserItem;
     const auto ChatItem      = ChatModelItem::Type::ChatItem;
 
     if (prevChat) {
         const int prevType = prevChat->data(ChatModelItem::Roles::Type).toInt();
-        if (prevType == FoundUserItem && type == ChatItem) {
+        if (prevType == FoundUserItem && newType == ChatItem) {
             if (prevChat->data(FoundUserItem::Username) == currentChatItem_->data(ChatItem::ChatName)) {
                 messageView_->setChatIdWithoutSelect(currentChatItem_->data(ChatItem::ChatId).toInt());
                 return;
@@ -75,10 +75,10 @@ void ConversationSide::setCurrentChatItem(const ChatModelItemPtr &chat)
         update();
     }
 
-    if (type == ChatItem) {
+    if (newType == ChatItem) {
         chatHeader_->setChatName(chat->data(ChatItem::Roles::ChatName).toString());
         messageView_->setChatId(chat->data(ChatItem::Roles::ChatId).toInt());
-    } else if (type == FoundUserItem) {
+    } else if (newType == FoundUserItem) {
         chatHeader_->setChatName(chat->data(FoundUserItem::Roles::Username).toString());
         messageView_->setChatId(-1);
     }

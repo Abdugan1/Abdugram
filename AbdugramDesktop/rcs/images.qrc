@@ -25,5 +25,6 @@
         <file>images/bear_128.png</file>
         <file>images/bear_256.png</file>
         <file>images/bear_512.png</file>
+        <file>images/down_arrow.png</file>
     </qresource>
 </RCC>

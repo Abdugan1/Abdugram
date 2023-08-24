@@ -102,17 +102,28 @@ Message Message::fromSqlRecord(const QSqlRecord &record)
 
     message.setText(record.value("text").toString());
     message.setIsEdited(record.value("is_edited").toBool());
+    message.setIsRead(record.value("is_read").toBool());
     message.setCreatedAt(record.value("created_at").toDateTime());
     message.setUpdatedAt(record.value("updated_at").toDateTime());
 
     return message;
 }
 
+bool Message::isRead() const
+{
+    return isRead_;
+}
+
+void Message::setIsRead(bool newIsRead)
+{
+    isRead_ = newIsRead;
+}
+
 QDataStream &operator<<(QDataStream &out, const Message &message)
 {
     out << message.id_        << message.chatId_    << message.senderId_
         << message.replyToId_ << message.text_      << message.isEdited_
-        << message.createdAt_ << message.updatedAt_;
+        << message.isRead_    << message.createdAt_ << message.updatedAt_;
     return out;
 }
 
@@ -120,6 +131,6 @@ QDataStream &operator>>(QDataStream &in, Message &message)
 {
     in >> message.id_        >> message.chatId_    >> message.senderId_
        >> message.replyToId_ >> message.text_      >> message.isEdited_
-       >> message.createdAt_ >> message.updatedAt_;
+        >> message.isRead_   >> message.createdAt_ >> message.updatedAt_;
     return in;
 }

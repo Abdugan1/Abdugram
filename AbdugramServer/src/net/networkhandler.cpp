@@ -3,13 +3,18 @@
 
 #include <net_common/messages/loginreply.h>
 #include <net_common/messages/registerreply.h>
+
 #include <net_common/messages/syncusersreply.h>
 #include <net_common/messages/syncchatsreply.h>
 #include <net_common/messages/syncmessagesreply.h>
+#include <net_common/messages/syncmessagereadsreply.h>
+
 #include <net_common/messages/searchusersreply.h>
 #include <net_common/messages/createchatreply.h>
 #include <net_common/messages/sendmessagereply.h>
 #include <net_common/messages/logoutreply.h>
+#include <net_common/messages/messagereadreply.h>
+#include <net_common/messages/messagesupdated.h>
 
 #include <QDebug>
 
@@ -20,13 +25,10 @@ NetworkHandler::NetworkHandler(QObject *parent)
 
 void NetworkHandler::addSession(int userId, Session *session)
 {
-    qDebug() << "addSession";
     session->setUserId(userId);
     if (sessions_.contains(userId)) {
-        qDebug() << "append";
         sessions_[userId].append(session);
     } else {
-        qDebug() << "init";
         sessions_[userId] = {session};
     }
 }
@@ -78,6 +80,14 @@ void NetworkHandler::sendSyncMessagesReply(Session *session, const QList<Message
     send(session, static_cast<AbduMessagePtr>(syncMessagesReply));
 }
 
+void NetworkHandler::sendSyncMessageReadsReply(Session *session, const QList<MessageRead> &unsyncMessageReads)
+{
+    AnyMessagePtr<SyncMessageReadsReply> syncMessageReadsReply{new SyncMessageReadsReply};
+    syncMessageReadsReply->setUnsyncMessageReads(unsyncMessageReads);
+
+    send(session, static_cast<AbduMessagePtr>(syncMessageReadsReply));
+}
+
 void NetworkHandler::sendSearchReply(Session* session, const QList<User> &foundUsers)
 {
     AnyMessagePtr<SearchUsersReply> searchReply{new SearchUsersReply};
@@ -111,13 +121,28 @@ void NetworkHandler::sendLogoutReply(Session *session)
     send(session, static_cast<AbduMessagePtr>(logoutReply));
 }
 
+void NetworkHandler::sendMessageReadsReply(int userId, const QList<MessageRead> &messageReads)
+{
+    AnyMessagePtr<MessageReadReply> messageReadReply{new MessageReadReply};
+    messageReadReply->setMessageReads(messageReads);
+
+    send(userId, static_cast<AbduMessagePtr>(messageReadReply));
+}
+
+void NetworkHandler::sendMessagesUpdated(int userId, const QList<Message> &updatedMessages)
+{
+    AnyMessagePtr<MessagesUpdated> messagesUpdated{new MessagesUpdated};
+    messagesUpdated->setMessages(updatedMessages);
+
+    send(userId, static_cast<AbduMessagePtr>(messagesUpdated));
+}
+
 void NetworkHandler::send(int userId, const AbduMessagePtr &message)
 {
     if (!sessions_.contains(userId))
         return;
 
     const auto sessions = sessions_[userId];
-    qDebug() << sessions.size();
     for (auto session : sessions) {
         session->send(message);
     }

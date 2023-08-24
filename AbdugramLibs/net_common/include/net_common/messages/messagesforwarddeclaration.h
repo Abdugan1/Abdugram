@@ -15,6 +15,8 @@ class CreateChatRequest;
 class SendMessageRequest;
 class LogoutRequest;
 class CreatePrivateChatRequest;
+class MessageReadRequest;
+class SyncMessageReadsRequest;
 
 class LoginReply;
 class RegisterReply;
@@ -25,7 +27,9 @@ class SearchUsersReply;
 class CreateChatReply;
 class SendMessageReply;
 class LogoutReply;
-
+class MessageReadReply;
+class SyncMessageReadsReply;
+class MessagesUpdated;
 
 using AbduMessagePtr = QSharedDataPointer<AbduMessage>;
 template<typename T>
