@@ -12,9 +12,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Sql Network Multimedia StateMachine)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Sql Network Multimedia StateMachine)
 
-#find FramelessHelper
-find_package(FramelessHelper REQUIRED COMPONENTS Core Widgets)
-
 set(HEADERS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(SOURCES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
@@ -164,11 +161,6 @@ target_link_libraries(${APP_NAME} PRIVATE
     logger
     sql_client
     net_common
-)
-
-target_link_libraries(${APP_NAME} PRIVATE
-    FramelessHelper::FramelessHelperCore
-    FramelessHelper::FramelessHelperWidgets
 )
 
 file (GLOB SQL_FILES ${SQL_SOURCE_DIR}/*)

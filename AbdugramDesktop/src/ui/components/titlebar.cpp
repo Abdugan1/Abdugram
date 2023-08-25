@@ -8,10 +8,6 @@
 #include <QStyleOptionButton>
 #include <QDebug>
 
-#include <FramelessHelper/Widgets/framelesswidgetshelper.h>
-
-FRAMELESSHELPER_USE_NAMESPACE
-
 SystemButton::SystemButton()
     : QPushButton{}
 {
@@ -127,10 +123,10 @@ void TitleBar::setupUi()
     hLayout->addWidget(maximizeButton_);
     hLayout->addWidget(closeButton_);
 
-    auto framelessHelper = FramelessWidgetsHelper::get(parentWidget());
-    framelessHelper->setSystemButton(minimizeButton_, Global::SystemButtonType::Minimize);
-    framelessHelper->setSystemButton(maximizeButton_, Global::SystemButtonType::Maximize);
-    framelessHelper->setSystemButton(closeButton_,    Global::SystemButtonType::Close   );
+//    auto framelessHelper = FramelessWidgetsHelper::get(parentWidget());
+//    framelessHelper->setSystemButton(minimizeButton_, Global::SystemButtonType::Minimize);
+//    framelessHelper->setSystemButton(maximizeButton_, Global::SystemButtonType::Maximize);
+//    framelessHelper->setSystemButton(closeButton_,    Global::SystemButtonType::Close   );
 
     setLayout(hLayout);
     setBackgroundColor(Colors.value(colornames::backgroundLighterHelper2));
