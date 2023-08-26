@@ -52,7 +52,7 @@ void NotificationManager::removeNotificationsWithChatId(int chatId)
         return notification->message().chatId() == chatId;
     });
 
-    for (auto it = notifications_.begin(); it != notifications_.end(); ++it) {
+    for (auto it = begin; it != notifications_.end(); ++it) {
         (*it)->deleteLater();
     }
 

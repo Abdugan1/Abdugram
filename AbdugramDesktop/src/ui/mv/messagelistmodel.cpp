@@ -76,6 +76,10 @@ void MessageListModel::onMessageAdded(const Message &message)
 
 void MessageListModel::onMessagesUpdated(const QList<Message> &updatedMessages)
 {
+    Q_ASSERT(!updatedMessages.isEmpty());
+    if (updatedMessages.first().chatId() != chatId_)
+        return;
+
     for (const auto &message : updatedMessages) {
         const int row = messageIdToRow_.value(message.id());
         auto messageItem = messageModelItems_[row];
@@ -86,6 +90,14 @@ void MessageListModel::onMessagesUpdated(const QList<Message> &updatedMessages)
         messageItem->setData(MessageItem::IsRead,   message.isRead());
         messageItem->setData(MessageItem::IsEdited, message.isEdited());
     }
+
+    const int beginMessageId = updatedMessages.first().id();
+    const int endMessageId   = updatedMessages.last().id();
+
+    const int beginRow = messageIdToRow_.value(beginMessageId);
+    const int endRow   = messageIdToRow_.value(endMessageId);
+
+    emit dataChanged(index(beginRow, 0), index(endRow, 0));
 }
 
 void MessageListModel::addMessage(const Message &message)
@@ -96,6 +108,8 @@ void MessageListModel::addMessage(const Message &message)
     }
     messageModelItems_.append(MessageItem::fromMessage(message));
     messageIdToRow_[message.id()] = messageModelItems_.size() - 1;
+
+    emit messageAdded(message);
 }
 
 void MessageListModel::clear()

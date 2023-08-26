@@ -16,13 +16,29 @@ using MessageItemPtr = std::shared_ptr<MessageItem>;
 class MessageItem : public MessageModelItem
 {
 public:
+    enum {
+        MaxContentWidth = 400,
+
+        BackgroundLeftPadding   = 17,
+        BackgroundTopPadding    = 10,
+        BackgroundRightPadding  = 17,
+        BackgroundBottomPadding = 10,
+
+        TimeHSpacing = 7,
+        TimeVSpacing = 7,
+
+        IsReadWidth = 15,
+    };
+
     enum Roles {
         MessageId = static_cast<int>(MessageModelItem::Roles::UserRole) + 1,
         SenderId,
         Text,
         DateTime,
         IsRead,
-        IsEdited
+        IsEdited,
+
+        SplittedText,
     };
 
     explicit MessageItem();
@@ -53,12 +69,17 @@ protected:
     QVariant dataImp(int role) const override;
 
 private:
+    void setSplittedText();
+
+private:
     int messageId_ = -1;
     int senderId_ = -1;
     QString text_;
     QDateTime dateTime_;
     bool isRead_ = false;
     bool isEdited_ = false;
+
+    QStringList splittedText_;
 };
 
 #endif // MESSAGEITEM_H

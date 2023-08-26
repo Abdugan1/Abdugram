@@ -221,12 +221,10 @@ void ServerMessageVisitor::visit(const MessageReadRequest &request)
     QList<int> readedMessageIds;
 
     const int countOfChatUsers = chatUsers.size();
-    qDebug() << "count of chat users:" << countOfChatUsers;
     const bool success = executeTransaction(QSqlDatabase::database(), [&]()->bool {
         for (const auto &messageRead : messageReads) {
             const int messageId = messageRead.messageId();
             const int countOfMessageReads = database()->getCountOfMessageReadsOfSpecificMessage(messageId);
-            qDebug() << "count of message reads:" << countOfMessageReads;
             if (countOfMessageReads != countOfChatUsers - 1 /* Sender itself */) {
                 continue;
             }
@@ -237,12 +235,8 @@ void ServerMessageVisitor::visit(const MessageReadRequest &request)
         return true;
     });
 
-    qDebug() << "success:" << success << "count of message ids:" << readedMessageIds.count();
-
     if (!success || readedMessageIds.isEmpty())
         return;
-
-    qDebug() << "dksaldklsakldsa";
 
     QList<Message> messages;
     for (int messageId : readedMessageIds) {

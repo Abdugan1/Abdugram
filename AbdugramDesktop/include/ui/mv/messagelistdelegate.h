@@ -18,6 +18,7 @@ private:
     void drawMessageBackground(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     void drawMessageText(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     void drawMessageTime(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    void drawMessageIsRead(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
     void setPainterOriginOnDateSeparator(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     void drawDateSeparatorItem(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
@@ -33,6 +34,8 @@ private:
     QRect getTextRect(const QString &text, const QFont &font) const;
 
     QString dateToString(const QModelIndex &index) const;
+
+    int lastLineFullWidth(const QRect &lastLineRect, const QRect &timeRect, bool senderIsMe) const;
 };
 
 #endif // MESSAGELISTDELEGATE_H

@@ -25,6 +25,7 @@ public:
         LastMessage,
         MessageDate,
         ChatType,
+        UnreadMessageCount
     };
 
     explicit ChatItem();
@@ -46,6 +47,9 @@ public:
 
     Chat::Type chatType() const;
     void setChatType(Chat::Type newChatType);
+
+    int unreadMessageCount() const;
+    void setUnreadMessageCount(int newUnreadMessageCount);
 
     static ChatItemPtr fromChatViewItem(const ChatViewItem &newChatView);
 

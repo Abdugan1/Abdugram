@@ -3,10 +3,10 @@
 
 #include <QListView>
 
+#include <sql_common/data_structures/message.h>
+
 class MessageListModel;
 class MessageListDelegate;
-
-class Message;
 
 class IconButton;
 
@@ -28,6 +28,7 @@ private slots:
     void showNotificationIfMessageIdIsNotCurrent(const Message &message);
 
     void onScrollChanged(int value);
+    void onScrollRangeChanged(int min, int max);
 
     void smoothScrollToBottom();
 
@@ -44,6 +45,8 @@ private:
     MessageListDelegate *delegate_ = nullptr;
 
     IconButton *scrollToBottomButton_ = nullptr;
+
+    Message lastMessage_;
 
     bool autoScroll_ = true;
 };

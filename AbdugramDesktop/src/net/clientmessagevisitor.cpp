@@ -67,6 +67,7 @@ void ClientMessageVisitor::visit(const RegisterReply &reply)
 void ClientMessageVisitor::visit(const SyncUsersReply &reply)
 {
     const QList<User> unsyncUsers = reply.users();
+    qDebug() << "sync users count:" << unsyncUsers.count();
     for (const auto& user : unsyncUsers) {
         database()->addOrUpdateUser(user);
     }
@@ -77,9 +78,11 @@ void ClientMessageVisitor::visit(const SyncUsersReply &reply)
 void ClientMessageVisitor::visit(const SyncChatsReply &reply)
 {
     const QHash<Chat, QList<ChatUser> > unsyncChats = reply.unsyncChats();
+    qDebug() << "sync chats count:" << unsyncChats.count();
     for (auto it = unsyncChats.begin(); it != unsyncChats.end(); ++it) {
         const Chat &chat = it.key();
         const QList<ChatUser> chatUsers = it.value();
+        qDebug() << "sync chats users count:" << chatUsers.count();
         database()->addChat(chat, chatUsers, networkHandler()->userId());
     }
 
@@ -89,6 +92,7 @@ void ClientMessageVisitor::visit(const SyncChatsReply &reply)
 void ClientMessageVisitor::visit(const SyncMessagesReply &reply)
 {
     const QList<Message> unsyncMessages = reply.unsyncMessages();
+    qDebug() << "sync messages count:" << unsyncMessages.count();
     for (const auto &message : unsyncMessages) {
         database()->addOrUpdateMessage(message);
     }
@@ -99,6 +103,7 @@ void ClientMessageVisitor::visit(const SyncMessagesReply &reply)
 void ClientMessageVisitor::visit(const SyncMessageReadsReply &reply)
 {
     const QList<MessageRead> unsyncMessageReads = reply.unsyncMessageReads();
+    qDebug() << "sync message reads count:" << unsyncMessageReads.count();
     database()->addOrUpdateMessageReads(unsyncMessageReads);
 
     emit networkHandler()->messageReadsSyncFinished();

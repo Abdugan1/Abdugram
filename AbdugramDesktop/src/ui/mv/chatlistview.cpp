@@ -39,6 +39,8 @@ ChatListView::ChatListView(QWidget *parent)
         setCurrentIndex(mainModel_->index(mainModel_->rowByChatId(message.chatId())));
     });
 
+    connect(database(), &DatabaseClient::messagesUpdated, this, &ChatListView::updateMainModel);
+
     setModel(mainModel_);
     setItemDelegate(delegate_);
 

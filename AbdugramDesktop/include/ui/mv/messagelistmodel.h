@@ -29,6 +29,9 @@ public:
     void setChatId(int newChatId);
     void setChatIdWithoutSelect(int newChatId);
 
+signals:
+    void messageAdded(const Message &message);
+
 public slots:
     void onMessageAdded(const Message &message);
     void onMessagesUpdated(const QList<Message> &updatedMessages);

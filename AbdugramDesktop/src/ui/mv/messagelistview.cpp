@@ -31,14 +31,12 @@ MessageListView::MessageListView(QWidget *parent)
 {
     setupUi();
 
-    connect(database(), &DatabaseClient::messageAdded, this, &MessageListView::onMessageAdded);
-
     connect(networkHandler(), &NetworkHandler::syncFinished, this, [this]() {
-        connect(database(), &DatabaseClient::messageAdded, this, &MessageListView::showNotificationIfMessageIdIsNotCurrent);
+        connect(model_, &MessageListModel::messageAdded, this, &MessageListView::onMessageAdded);
     });
 
     connect(networkHandler(), &NetworkHandler::loggedOut, this, [this]() {
-        disconnect(database(), &DatabaseClient::messageAdded, this, &MessageListView::showNotificationIfMessageIdIsNotCurrent);
+        disconnect(model_, &MessageListModel::messageAdded, this, &MessageListView::showNotificationIfMessageIdIsNotCurrent);
     });
 
     setModel(model_);
@@ -53,6 +51,7 @@ MessageListView::MessageListView(QWidget *parent)
     setContentsMargins(0, 0, 0, 0);
 
     connect(verticalScrollBar(), &ScrollBar::valueChanged, this, &MessageListView::onScrollChanged);
+    connect(verticalScrollBar(), &ScrollBar::rangeChanged, this, &MessageListView::onScrollRangeChanged);
 }
 
 void MessageListView::setChatId(int chatId)
@@ -64,6 +63,8 @@ void MessageListView::setChatId(int chatId)
 
     if (verticalScrollBar()->value() == prevVal)
         readMessages();
+
+    notificationManager()->removeNotificationsWithChatId(chatId);
 }
 
 void MessageListView::setChatIdWithoutSelect(int chatId)
@@ -75,19 +76,20 @@ void MessageListView::setChatIdWithoutSelect(int chatId)
 
     if (verticalScrollBar()->value() == prevVal)
         readMessages();
+
+    notificationManager()->removeNotificationsWithChatId(chatId);
 }
 
 void MessageListView::onMessageAdded(const Message &message)
 {
-    if (message.chatId() == model_->chatId()) {
-        scrollToEndIfNeccessary(message);
-    }
+    lastMessage_ = message;
 }
 
 void MessageListView::scrollToEndIfNeccessary(const Message &message)
 {
     if (autoScroll_ || message.senderId() == networkHandler()->userId()) {
         scrollToBottom();
+        readMessages();
     }
 }
 
@@ -104,13 +106,20 @@ void MessageListView::showNotificationIfMessageIdIsNotCurrent(const Message &mes
 void MessageListView::onScrollChanged(int value)
 {
     const int maxVal = verticalScrollBar()->maximum();
-    const bool isScrolledToBottom = ((value == prevMaximuim) || (value == maxVal));
-    autoScroll_ = isScrolledToBottom;
     scrollToBottomButton_->setVisible(maxVal - value > 1000);
 
-    prevMaximuim = maxVal;
-
     readMessages();
+}
+
+void MessageListView::onScrollRangeChanged(int min, int max)
+{
+    int value = verticalScrollBar()->value();
+    autoScroll_ = ((value == prevMaximuim) || (value == max));
+    prevMaximuim = max;
+
+    if (lastMessage_.chatId() == model_->chatId()) {
+        scrollToEndIfNeccessary(lastMessage_);
+    }
 }
 
 void MessageListView::smoothScrollToBottom()
@@ -156,7 +165,7 @@ void MessageListView::readMessages()
         readMessagesFromRow(model_->rowCount(QModelIndex{}) - 1);
     } else {
         const QRect r = rect();
-        QPoint readPoint{r.center().x(), r.bottom() - 20};
+        QPoint readPoint{r.center().x(), r.bottom() - 10};
         readMessagesFromRow(indexAt(readPoint).row());
     }
 }
@@ -168,6 +177,10 @@ void MessageListView::readMessagesFromRow(int row)
         const auto index = model_->index(i);
         const int type = index.data(MessageModelItem::Roles::Type).toInt();
         if (type != MessageModelItem::Type::MessageItem)
+            continue;
+
+        const int senderId = index.data(MessageItem::SenderId).toInt();
+        if (senderId == networkHandler()->userId())
             continue;
 
         const bool isRead = index.data(MessageItem::IsRead).toBool();

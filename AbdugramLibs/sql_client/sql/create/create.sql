@@ -71,10 +71,3 @@ CREATE TABLE IF NOT EXISTS message_reads (
   FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE ON UPDATE CASCADE,
   FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
-
-CREATE VIEW IF NOT EXISTS chats_view AS
-SELECT chats.id AS chat_id, chats.name AS chat_name, chats.picture_url AS picture_url, chats.type AS chat_type, messages.text AS last_message, messages.created_at AS message_date
-FROM chats
-LEFT JOIN messages ON chats.id = messages.chat_id
-GROUP BY chats.id
-ORDER BY MAX(messages.created_at) DESC;

@@ -14,8 +14,6 @@
 #include <QStyle>
 #include <QPainter>
 
-const int MaxWidth = 400;
-
 const int MessageBackgroundRadius = 21;
 
 const int HSpacingMessage = 7;
@@ -23,9 +21,6 @@ const int VSpacingMessage = 1;
 
 const int VSpacingDateSeparator = 7;
 
-const int TimeSpacing = 7;
-
-const QMargins MessagePaddings       = QMargins{17, 10, 17, 10};
 const QMargins DateSeparatorPaddings = QMargins{17, 5, 17, 5};
 
 inline QColor messageBackgroundColorWhenSenderIsMe()
@@ -61,44 +56,6 @@ inline QColor dateColor()
 inline bool senderIsMe(const QModelIndex &index)
 {
     return networkHandler()->userId() == index.data(MessageItem::Roles::SenderId).toInt();
-}
-
-QTextOption textOption()
-{
-    QTextOption to;
-    to.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
-    to.setAlignment(Qt::AlignLeft);
-    return to;
-}
-
-QStringList splitMessageTextByLines(const QModelIndex &index)
-{
-    const QString text = index.data(MessageItem::Text).toString();
-
-    QTextDocument doc;
-    doc.setPlainText(text);
-    doc.setDefaultTextOption(textOption());
-    doc.setTextWidth(MaxWidth);
-
-    doc.documentLayout();
-
-    QStringList lines;
-    QTextBlock textBlock = doc.begin();
-    while(textBlock.isValid()) {
-        QString blockText = textBlock.text();
-
-        if(!textBlock.layout())
-            continue;
-
-        for(int i = 0; i != textBlock.layout()->lineCount(); ++i) {
-            QTextLine line = textBlock.layout()->lineAt(i);
-            lines.append(blockText.mid(line.textStart(), line.textLength()));
-        }
-
-        textBlock = textBlock.next();
-    }
-
-    return lines;
 }
 
 MessageListDelegate::MessageListDelegate(QObject *parent)
@@ -165,6 +122,7 @@ void MessageListDelegate::drawMessageItem(QPainter *painter, const QStyleOptionV
     drawMessageBackground(painter, option, index);
     drawMessageText(painter, option, index);
     drawMessageTime(painter, option, index);
+    drawMessageIsRead(painter, option, index);
 
     painter->restore();
 }
@@ -187,10 +145,10 @@ void MessageListDelegate::drawMessageText(QPainter *painter, const QStyleOptionV
 {
     painter->save();
 
-    const auto text = splitMessageTextByLines(index).join('\n');
+    const auto text = index.data(MessageItem::SplittedText).toStringList().join('\n');
 
     QRect rect = getTextRect(text, option.font);
-    rect.moveTopLeft(QPoint{MessagePaddings.left(), MessagePaddings.top()});
+    rect.moveTopLeft(QPoint{MessageItem::BackgroundLeftPadding, MessageItem::BackgroundTopPadding});
 
     // Use this instead?
 //    option.widget->style()->drawItemText(painter, rect, Qt::AlignLeft, option.widget->palette(), true, text);
@@ -207,7 +165,7 @@ void MessageListDelegate::drawMessageTime(QPainter *painter, const QStyleOptionV
 
     const auto backgroundRect = getMessageBackgroundRect(option, index);
 
-    const auto lines = splitMessageTextByLines(index);
+    const auto lines = index.data(MessageItem::SplittedText).toStringList();
     const QString text = lines.join('\n');
     const QRect textRect = getTextRect(text, option.font);
 
@@ -215,18 +173,40 @@ void MessageListDelegate::drawMessageTime(QPainter *painter, const QStyleOptionV
     QRect timeRect = getTextRect(time, option.font);
 
     auto lastLineBoundingRect = getTextRect(lines.last(), option.font);
-    lastLineBoundingRect.moveTop(MessagePaddings.top()
-                                 + textRect.height() - lastLineBoundingRect.height());
+    lastLineBoundingRect.moveTop(MessageItem::BackgroundTopPadding + textRect.height() - lastLineBoundingRect.height());
 
-    timeRect.moveRight(backgroundRect.right() - MessagePaddings.right());
+    timeRect.moveRight(backgroundRect.right() - MessageItem::BackgroundRightPadding - (senderIsMe(index) ? MessageItem::IsReadWidth : 0));
 
-    timeRect.moveBottom(lastLineBoundingRect.bottom() + TimeSpacing);
+    if (lastLineFullWidth(lastLineBoundingRect, timeRect, senderIsMe(index)) <= MessageItem::MaxContentWidth)
+        timeRect.moveBottom(lastLineBoundingRect.bottom() + MessageItem::TimeVSpacing);
+    else
+        timeRect.moveBottom(lastLineBoundingRect.bottom() + timeRect.height());
 
     QFont f = option.font;
     f.setPointSizeF(f.pointSizeF() - 0.5);
     painter->setFont(f);
     painter->setPen(messageTimeColor());
     painter->drawText(timeRect, time);
+
+    painter->restore();
+}
+
+void MessageListDelegate::drawMessageIsRead(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    if (!senderIsMe(index))
+        return;
+
+    painter->save();
+
+    const auto backgroundRect = getMessageBackgroundRect(option, index);
+
+    const QColor checkColor = (index.data(MessageItem::IsRead).toBool() ? Qt::cyan
+                                                                        : Qt::red);
+    QPen pen{checkColor, 10, Qt::SolidLine, Qt::RoundCap};
+    painter->setPen(pen);
+
+    painter->drawPoint(backgroundRect.right() - MessageItem::BackgroundRightPadding,
+                       backgroundRect.bottom() - MessageItem::BackgroundBottomPadding);
 
     painter->restore();
 }
@@ -294,25 +274,27 @@ QRect MessageListDelegate::getMessageBackgroundRect(const QStyleOptionViewItem &
 {
     QRect rect;
 
-    const auto lines = splitMessageTextByLines(index);
+    const auto  lines    = index.data(MessageItem::SplittedText).toStringList();
     const QRect textRect = getTextRect(lines.join('\n'), option.font);
 
-    const QString time = index.data(MessageItem::DateTime).toDateTime().toString("hh:mm");
-    const QRect timeRect = getTextRect(time, option.font);
+    const QString time     = index.data(MessageItem::DateTime).toDateTime().toString("hh:mm");
+    const QRect   timeRect = getTextRect(time, option.font);
 
     const QRect lastLineRect = getTextRect(lines.last(), option.font);
 
     rect = textRect;
 
-    if (lastLineRect.width() + TimeSpacing + timeRect.width() < MaxWidth) {
-        rect.setWidth(rect.width() + TimeSpacing + timeRect.width());
+    if (lastLineFullWidth(lastLineRect, timeRect, senderIsMe(index)) <= MessageItem::MaxContentWidth) {
+        rect.setWidth(rect.width() + MessageItem::TimeHSpacing + timeRect.width());
     } else {
         rect.setBottom(rect.bottom() + timeRect.height());
     }
+    if (senderIsMe(index))
+        rect.setWidth(rect.width() + MessageItem::IsReadWidth);
 
     rect = QRect{0, 0,
-                 rect.width() + MessagePaddings.left() + MessagePaddings.right(),
-                 rect.height() + MessagePaddings.top() + MessagePaddings.bottom()};
+                 rect.width()  + MessageItem::BackgroundLeftPadding + MessageItem::BackgroundRightPadding,
+                 rect.height() + MessageItem::BackgroundTopPadding  + MessageItem::BackgroundBottomPadding};
 
     return rect;
 }
@@ -322,13 +304,13 @@ QRect MessageListDelegate::getDateSeparatorBackgroundRect(const QStyleOptionView
     const auto stringDate = dateToString(index);
     const auto textRect = getTextRect(stringDate, option.font);
     return QRect{0, 0,
-                 textRect.width() + DateSeparatorPaddings.left() + DateSeparatorPaddings.right(),
+                 textRect.width()  + DateSeparatorPaddings.left() + DateSeparatorPaddings.right(),
                  textRect.height() + DateSeparatorPaddings.top() + DateSeparatorPaddings.bottom()};
 }
 
 QRect MessageListDelegate::getTextRect(const QString &text, const QFont &font) const
 {
-    return QFontMetrics{font}.boundingRect(0, 0, MaxWidth, INT_MAX,
+    return QFontMetrics{font}.boundingRect(0, 0, MessageItem::MaxContentWidth, INT_MAX,
                                            Qt::AlignLeft | Qt::TextWrapAnywhere, text);
 }
 
@@ -339,4 +321,9 @@ QString MessageListDelegate::dateToString(const QModelIndex &index) const
         return date.toString("MMMM d");
     }
     return date.toString("MMMM d, yyyy");
+}
+
+int MessageListDelegate::lastLineFullWidth(const QRect &lastLineRect, const QRect &timeRect, bool senderIsMe) const
+{
+    return lastLineRect.width() + MessageItem::TimeHSpacing + timeRect.width() + (senderIsMe ? MessageItem::IsReadWidth : 0);
 }

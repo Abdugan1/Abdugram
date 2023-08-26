@@ -8,12 +8,14 @@
 #include <QPainter>
 #include <QDebug>
 
-const QMargins AvatarMargins      = QMargins{7, 10, 0, 10};
-const QSize    AvatarSize         = QSize{45, 45};
-const QMargins ChatNameMargins    = QMargins{10, 8, 0, 0};
-const QMargins LastMessageMargins = QMargins{0, 0, 0, 5};
-const QMargins MessageDateMargins = QMargins{5, 8, 5, 0};
-const QMargins SectionNameMargins = QMargins{10, 0, 0, 0};
+const QMargins AvatarMargins           = QMargins{7, 10, 0, 10};
+const QSize    AvatarSize              = QSize{45, 45};
+const QSize    UnreadBackgroundSize    = QSize{26, 26};
+const QMargins ChatNameMargins         = QMargins{10, 8, 0, 0};
+const QMargins LastMessageMargins      = QMargins{0, 0, 0, 5};
+const QMargins MessageDateMargins      = QMargins{5, 8, 5, 0};
+const QMargins SectionNameMargins      = QMargins{10, 0, 0, 0};
+const QMargins UnreadBackgroundMargins = QMargins{0, 0, 5, 4};
 
 inline QColor chatNameColor()
 {
@@ -115,6 +117,7 @@ void ChatListDelegate::drawChatItem(QPainter *painter, const QStyleOptionViewIte
     drawChatName(painter, option, index);
     drawLastMessage(painter, option, index);
     drawMessageDate(painter, option, index);
+    drawUnreadMessageCount(painter, option, index);
 
     painter->restore();
 }
@@ -214,6 +217,39 @@ void ChatListDelegate::drawMessageDate(QPainter *painter, const QStyleOptionView
     x -= option.fontMetrics.horizontalAdvance(stringDate);
 
     painter->drawText(x, y, stringDate);
+
+    painter->restore();
+}
+
+void ChatListDelegate::drawUnreadMessageCount(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    if (option.state & QStyle::State_Selected)
+        return;
+
+    const int unreadMessageCount = index.data(ChatItem::UnreadMessageCount).toInt();
+    if (unreadMessageCount == 0)
+        return;
+
+    painter->save();
+
+    QFont f = option.font;
+    f.setPointSizeF(f.pointSizeF() - 1);
+    const QFontMetricsF fm{f};
+
+    const QString unreadCount = (unreadMessageCount < 1000 ? QString::number(unreadMessageCount) : ":D");
+
+    int backgroundX = option.rect.width()  - UnreadBackgroundMargins.right()  - UnreadBackgroundSize.width()  / 2;
+    int backgroundY = option.rect.height() - UnreadBackgroundMargins.bottom() - UnreadBackgroundSize.height() / 2;
+
+    painter->setPen(QPen{Colors.value(colornames::decorationColor),
+                         static_cast<qreal>(UnreadBackgroundSize.width()), Qt::SolidLine, Qt::RoundCap});
+    painter->drawPoint(backgroundX, backgroundY);
+
+    const int numX = backgroundX - fm.horizontalAdvance(unreadCount) / 2;
+    const int numY = backgroundY + fm.ascent() / 2;
+
+    painter->setPen(Colors.value(colornames::mainLabelColor));
+    painter->drawText(numX, numY, unreadCount);
 
     painter->restore();
 }

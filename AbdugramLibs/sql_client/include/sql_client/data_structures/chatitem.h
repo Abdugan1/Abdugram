@@ -34,10 +34,14 @@ public:
     Chat::Type chatType() const;
     void setChatType(Chat::Type newChatType);
 
+    int unreadMessageCount() const;
+    void setUnreadMessageCount(int newUnreadMessageCount);
+
     static ChatViewItem fromSqlRecord(const QSqlRecord &record);
 
     SQLCOMMON_EXPORT friend QDataStream &operator<<(QDataStream &out, const ChatViewItem &chatItem);
     SQLCOMMON_EXPORT friend QDataStream &operator>>(QDataStream &in, ChatViewItem &chatItem);
+
 
 private:
     int chatId_ = -1;
@@ -45,6 +49,7 @@ private:
     QString chatName_;
     QString lastMessage_;
     QDateTime messageDate_;
+    int unreadMessageCount_ = 0;
 
     Chat::Type chatType_ = Chat::Type::Private;
 };

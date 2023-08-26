@@ -21,6 +21,7 @@ private:
     void drawChatName(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     void drawLastMessage(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     void drawMessageDate(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    void drawUnreadMessageCount(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
     void drawFoundUserItem(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     void drawUsername(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;

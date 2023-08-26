@@ -66,6 +66,16 @@ void ChatItem::setChatType(Chat::Type newChatType)
     chatView_.setChatType(newChatType);
 }
 
+int ChatItem::unreadMessageCount() const
+{
+    return chatView_.unreadMessageCount();
+}
+
+void ChatItem::setUnreadMessageCount(int newUnreadMessageCount)
+{
+    chatView_.setUnreadMessageCount(newUnreadMessageCount);
+}
+
 ChatItemPtr ChatItem::fromChatViewItem(const ChatViewItem &newChatView)
 {
     ChatItemPtr chatItem{new ChatItem};
@@ -76,12 +86,13 @@ ChatItemPtr ChatItem::fromChatViewItem(const ChatViewItem &newChatView)
 QVariant ChatItem::dataImp(int role) const
 {
     switch (role) {
-    case Roles::ChatId:      return chatId();      break;
-    case Roles::ChatName:    return chatName();    break;
-    case Roles::PictureUrl:  return pictureUrl();  break;
-    case Roles::LastMessage: return lastMessage(); break;
-    case Roles::MessageDate: return messageDate(); break;
-    case Roles::ChatType:    return chatType();    break;
+    case Roles::ChatId:             return chatId();             break;
+    case Roles::ChatName:           return chatName();           break;
+    case Roles::PictureUrl:         return pictureUrl();         break;
+    case Roles::LastMessage:        return lastMessage();        break;
+    case Roles::MessageDate:        return messageDate();        break;
+    case Roles::ChatType:           return chatType();           break;
+    case Roles::UnreadMessageCount: return unreadMessageCount(); break;
     }
     return QVariant{};
 }

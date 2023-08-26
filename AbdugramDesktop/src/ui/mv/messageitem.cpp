@@ -2,8 +2,19 @@
 
 #include <sql_common/data_structures/message.h>
 
+#include <QTextOption>
+#include <QTextDocument>
+#include <QTextBlock>
 #include <QVariant>
 #include <QDebug>
+
+QTextOption textOption()
+{
+    QTextOption to;
+    to.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
+    to.setAlignment(Qt::AlignLeft);
+    return to;
+}
 
 MessageItem::MessageItem()
     : MessageModelItem{Type::MessageItem}
@@ -39,6 +50,7 @@ QString MessageItem::text() const
 void MessageItem::setText(const QString &newText)
 {
     text_ = newText;
+    setSplittedText();
 }
 
 QDateTime MessageItem::dateTime() const
@@ -68,14 +80,42 @@ MessageItemPtr MessageItem::fromMessage(const Message &message)
 QVariant MessageItem::dataImp(int role) const
 {
     switch (static_cast<Roles>(role)) {
-    case Roles::MessageId: return messageId_; break;
-    case Roles::SenderId:  return senderId_;  break;
-    case Roles::Text:      return text_;      break;
-    case Roles::DateTime:  return dateTime_;  break;
-    case Roles::IsRead:    return isRead_;    break;
-    case Roles::IsEdited:  return isEdited_;  break;
+    case Roles::MessageId:    return messageId_;    break;
+    case Roles::SenderId:     return senderId_;     break;
+    case Roles::Text:         return text_;         break;
+    case Roles::DateTime:     return dateTime_;     break;
+    case Roles::IsRead:       return isRead_;       break;
+    case Roles::IsEdited:     return isEdited_;     break;
+    case Roles::SplittedText: return splittedText_; break;
     }
     return QVariant{};
+}
+
+void MessageItem::setSplittedText()
+{
+    splittedText_.clear();
+
+    QTextDocument doc;
+    doc.setPlainText(text_);
+    doc.setDefaultTextOption(textOption());
+    doc.setTextWidth(MaxContentWidth);
+
+    doc.documentLayout();
+
+    QTextBlock textBlock = doc.begin();
+    while(textBlock.isValid()) {
+        QString blockText = textBlock.text();
+
+        if(!textBlock.layout())
+            continue;
+
+        for(int i = 0; i != textBlock.layout()->lineCount(); ++i) {
+            QTextLine line = textBlock.layout()->lineAt(i);
+            splittedText_.append(blockText.mid(line.textStart(), line.textLength()));
+        }
+
+        textBlock = textBlock.next();
+    }
 }
 
 bool MessageItem::isEdited() const

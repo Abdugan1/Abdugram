@@ -79,20 +79,33 @@ ChatViewItem ChatViewItem::fromSqlRecord(const QSqlRecord &record)
     chatItem.setChatType(Chat::stringToType(record.value("chat_type").toString()));
     chatItem.setLastMessage(record.value("last_message").toString());
     chatItem.setMessageDate(record.value("message_date").toDateTime());
+    chatItem.setUnreadMessageCount(record.value("unread_message_count").toInt());
 
     return chatItem;
+}
+
+int ChatViewItem::unreadMessageCount() const
+{
+    return unreadMessageCount_;
+}
+
+void ChatViewItem::setUnreadMessageCount(int newUnreadMessageCount)
+{
+    unreadMessageCount_ = newUnreadMessageCount;
 }
 
 QDataStream &operator<<(QDataStream &out, const ChatViewItem &chatItem)
 {
     out << chatItem.chatId_ << chatItem.chatName_ << chatItem.pictureUrl_
-        << chatItem.chatType_ << chatItem.lastMessage_ << chatItem.messageDate_;
+        << chatItem.chatType_ << chatItem.lastMessage_ << chatItem.messageDate_
+        << chatItem.unreadMessageCount_;
     return out;
 }
 
 QDataStream &operator>>(QDataStream &in, ChatViewItem &chatItem)
 {
     in >> chatItem.chatId_ >> chatItem.chatName_ >> chatItem.pictureUrl_
-       >> chatItem.chatType_ >> chatItem.lastMessage_ >> chatItem.messageDate_;
+       >> chatItem.chatType_ >> chatItem.lastMessage_ >> chatItem.messageDate_
+       >> chatItem.unreadMessageCount_;
     return in;
 }
