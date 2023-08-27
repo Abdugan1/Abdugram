@@ -46,18 +46,20 @@ public:
     QDateTime getLastUpdatedAt(Tables table);
 
     // Users
+    bool addOrUpdateBunchOfUsers(const QList<User> &users);
     bool addOrUpdateUser(const User &user);
     User getUserById(int userId);
 
     // Chats
-    bool        addOrUpdateChat(const Chat &chat);
-    bool        addChat(Chat chat, const QList<ChatUser> &chatUsers, int ownUserId);
+    bool        addOrUpdateBunchOfChats(const QHash<Chat, QList<ChatUser> >& chats);
+    bool        addOrUpdateChat(Chat chat, const QList<ChatUser> &chatUsers, int ownUserId);
     QList<Chat> getAllChats();
 
     // ChatsView
     QList<ChatViewItem> getChatsView();
 
     // Messages
+    bool           addOrUpdateBunchOfMessages(const QList<Message> &messages);
     bool           addOrUpdateMessage(const Message &message);
     QList<Message> getMessages(int chatId);
     Message        getMessageById(int id);
@@ -67,7 +69,7 @@ public:
     bool addOrUpdateChatUser(const ChatUser &chatUser);
 
     // MessageReads
-    bool addOrUpdateMessageReads(const QList<MessageRead> &messageReads);
+    bool addOrUpdateBunchOfMessageReads(const QList<MessageRead> &messageReads);
 
     //
     void likeSearch(const QString &likeSearch);

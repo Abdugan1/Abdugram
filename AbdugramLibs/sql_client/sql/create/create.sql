@@ -51,6 +51,9 @@ CREATE TABLE IF NOT EXISTS messages (
   FOREIGN KEY (reply_to_id) REFERENCES messages(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+CREATE INDEX IF NOT EXISTS idx_messages_chat_id ON messages (chat_id);
+CREATE INDEX IF NOT EXISTS idx_messages_sender_id ON messages (sender_id);
+CREATE INDEX IF NOT EXISTS idx_messages_reply_to_id ON messages (reply_to_id);
 
 CREATE TABLE IF NOT EXISTS message_deletions (
   id INTEGER PRIMARY KEY,

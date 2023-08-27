@@ -84,10 +84,25 @@ QDateTime DatabaseClient::getLastUpdatedAt(Tables table)
     return getLastUpdatedAtQuery.value(0).toDateTime();
 }
 
+bool DatabaseClient::addOrUpdateBunchOfUsers(const QList<User> &users)
+{
+    QMutexLocker lock{&users_};
+    const bool success = executeTransaction(*threadDb(), [&users]()->bool {
+        for (const auto &user : users) {
+            if (!UsersTable::addOrUpdateUser(user)) {
+                return false;
+            }
+        }
+        return true;
+    });
+
+    return success;
+}
+
 bool DatabaseClient::addOrUpdateUser(const User &user)
 {
     QMutexLocker lock{&users_};
-    bool success = UsersTable::addOrUpdateUser(user);
+    const bool success = UsersTable::addOrUpdateUser(user);
 
     if (success)
         emit userAdded(user);
@@ -101,18 +116,38 @@ User DatabaseClient::getUserById(int userId)
     return UsersTable::getUserById(userId);
 }
 
-bool DatabaseClient::addOrUpdateChat(const Chat &chat)
+bool DatabaseClient::addOrUpdateBunchOfChats(const QHash<Chat, QList<ChatUser> > &chats)
 {
-    QMutexLocker lock{&chats_};
-    const bool success = ChatsTable::addOrUpdateChat(chat);
+    QMutexLocker lockChats{&chats_};
+    QMutexLocker lockChatUsers{&chatUsers_};
 
-    if (success)
-        emit chatAdded(chat);
+    bool success = executeTransaction(*threadDb(), [&]() {
+        const int ownUserId = database()->ownId();
+        for (auto it = chats.begin(); it != chats.end(); ++it) {
+            Chat chat = it.key();
+            const QList<ChatUser> chatUsers = it.value();
+            if (chat.type() == Chat::Type::Private) {
+                auto it = std::find_if(chatUsers.begin(), chatUsers.end(), [&](const ChatUser &chatUser) {
+                    return chatUser.userId() != ownUserId;
+                });
+                chat.setName(UsersTable::getUserById(it->userId()).username());
+            }
+
+            if (!ChatsTable::addOrUpdateChat(chat))
+                return false;
+
+            for (const auto &chatUser : chatUsers) {
+                if (!ChatUsersTable::addOrUpdateChatUser(chatUser))
+                    return false;
+            }
+        }
+        return true;
+    });
 
     return success;
 }
 
-bool DatabaseClient::addChat(Chat chat, const QList<ChatUser> &chatUsers, int ownUserId)
+bool DatabaseClient::addOrUpdateChat(Chat chat, const QList<ChatUser> &chatUsers, int ownUserId)
 {
     QMutexLocker lockChats{&chats_};
     QMutexLocker lockChatUsers{&chatUsers_};
@@ -154,10 +189,25 @@ QList<ChatViewItem> DatabaseClient::getChatsView()
     return ChatsView::getChatViews();
 }
 
+bool DatabaseClient::addOrUpdateBunchOfMessages(const QList<Message> &messages)
+{
+    QMutexLocker lock{&messages_};
+    const bool success = executeTransaction(*threadDb(), [&messages]()->bool {
+        for (const auto &message : messages) {
+            if (!MessagesTable::addOrUpdateMessage(message)) {
+                return false;
+            }
+        }
+        return true;
+    });
+
+    return success;
+}
+
 bool DatabaseClient::addOrUpdateMessage(const Message &message)
 {
     QMutexLocker lock{&messages_};
-    bool success = MessagesTable::addOrUpdateMessage(message);
+    const bool success = MessagesTable::addOrUpdateMessage(message);
 
     if (success)
         emit messageAdded(message);
@@ -200,7 +250,7 @@ bool DatabaseClient::addOrUpdateChatUser(const ChatUser &chatUser)
     return ChatUsersTable::addOrUpdateChatUser(chatUser);
 }
 
-bool DatabaseClient::addOrUpdateMessageReads(const QList<MessageRead> &messageReads)
+bool DatabaseClient::addOrUpdateBunchOfMessageReads(const QList<MessageRead> &messageReads)
 {
     QMutexLocker lock{&messageReads_};
     const bool success = executeTransaction(*threadDb(), [&messageReads]()->bool {

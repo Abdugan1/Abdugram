@@ -15,13 +15,9 @@ bool MessagesTable::addOrUpdateMessage(const Message &message)
     const QString query = "INSERT INTO messages(id, chat_id, sender_id, reply_to_id, text, is_edited, is_read, created_at, updated_at)  "
                           "VALUES (:id, :chat_id, :sender_id, :reply_to_id, :text, :is_edited, :is_read, :created_at, :updated_at) "
                           "ON CONFLICT(id) DO UPDATE SET "
-                          "     chat_id = excluded.chat_id, "
-                          "     sender_id = excluded.sender_id, "
-                          "     reply_to_id = excluded.reply_to_id, "
                           "     text = excluded.text, "
                           "     is_edited = excluded.is_edited, "
                           "     is_read = excluded.is_read, "
-                          "     created_at = excluded.created_at, "
                           "     updated_at = excluded.updated_at;";
 
     SqlQuery addMessageQuery;

@@ -23,6 +23,9 @@ signals:
     void notificationRequested(const Message &message);
 
 private slots:
+    void onSyncFinished();
+    void onLoggedOut();
+
     void onMessageAdded(const Message &message);
     void scrollToEndIfNeccessary(const Message &message);
     void showNotificationIfMessageIdIsNotCurrent(const Message &message);

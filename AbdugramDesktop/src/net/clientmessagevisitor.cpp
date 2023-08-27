@@ -68,9 +68,7 @@ void ClientMessageVisitor::visit(const SyncUsersReply &reply)
 {
     const QList<User> unsyncUsers = reply.users();
     qDebug() << "sync users count:" << unsyncUsers.count();
-    for (const auto& user : unsyncUsers) {
-        database()->addOrUpdateUser(user);
-    }
+    database()->addOrUpdateBunchOfUsers(unsyncUsers);
 
     emit networkHandler()->usersSyncFinished();
 }
@@ -79,12 +77,7 @@ void ClientMessageVisitor::visit(const SyncChatsReply &reply)
 {
     const QHash<Chat, QList<ChatUser> > unsyncChats = reply.unsyncChats();
     qDebug() << "sync chats count:" << unsyncChats.count();
-    for (auto it = unsyncChats.begin(); it != unsyncChats.end(); ++it) {
-        const Chat &chat = it.key();
-        const QList<ChatUser> chatUsers = it.value();
-        qDebug() << "sync chats users count:" << chatUsers.count();
-        database()->addChat(chat, chatUsers, networkHandler()->userId());
-    }
+    database()->addOrUpdateBunchOfChats(unsyncChats);
 
     emit networkHandler()->chatsAndChatUsersSyncFinished();
 }
@@ -93,9 +86,7 @@ void ClientMessageVisitor::visit(const SyncMessagesReply &reply)
 {
     const QList<Message> unsyncMessages = reply.unsyncMessages();
     qDebug() << "sync messages count:" << unsyncMessages.count();
-    for (const auto &message : unsyncMessages) {
-        database()->addOrUpdateMessage(message);
-    }
+    database()->addOrUpdateBunchOfMessages(unsyncMessages);
 
     emit networkHandler()->messagesSyncFinished();
 }
@@ -104,7 +95,7 @@ void ClientMessageVisitor::visit(const SyncMessageReadsReply &reply)
 {
     const QList<MessageRead> unsyncMessageReads = reply.unsyncMessageReads();
     qDebug() << "sync message reads count:" << unsyncMessageReads.count();
-    database()->addOrUpdateMessageReads(unsyncMessageReads);
+    database()->addOrUpdateBunchOfMessageReads(unsyncMessageReads);
 
     emit networkHandler()->messageReadsSyncFinished();
 }
@@ -136,7 +127,7 @@ void ClientMessageVisitor::visit(const CreateChatReply &reply)
     for (const auto& user : users) {
         database()->addOrUpdateUser(user);
     }
-    database()->addChat(chat, chatUsers, networkHandler()->userId());
+    database()->addOrUpdateChat(chat, chatUsers, networkHandler()->userId());
 }
 
 void ClientMessageVisitor::visit(const SendMessageReply &reply)
@@ -158,7 +149,7 @@ void ClientMessageVisitor::visit(const MessageReadReply &reply)
 {
     const QList<MessageRead> messageReads = reply.messageReads();
 
-    database()->addOrUpdateMessageReads(messageReads);
+    database()->addOrUpdateBunchOfMessageReads(messageReads);
 }
 
 void ClientMessageVisitor::visit(const MessagesUpdated &reply)

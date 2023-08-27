@@ -31,13 +31,9 @@ MessageListView::MessageListView(QWidget *parent)
 {
     setupUi();
 
-    connect(networkHandler(), &NetworkHandler::syncFinished, this, [this]() {
-        connect(model_, &MessageListModel::messageAdded, this, &MessageListView::onMessageAdded);
-    });
+    connect(networkHandler(), &NetworkHandler::syncFinished, this, &MessageListView::onSyncFinished);
 
-    connect(networkHandler(), &NetworkHandler::loggedOut, this, [this]() {
-        disconnect(model_, &MessageListModel::messageAdded, this, &MessageListView::showNotificationIfMessageIdIsNotCurrent);
-    });
+    connect(networkHandler(), &NetworkHandler::loggedOut, this, &MessageListView::onLoggedOut);
 
     setModel(model_);
     setItemDelegate(delegate_);
@@ -78,6 +74,18 @@ void MessageListView::setChatIdWithoutSelect(int chatId)
         readMessages();
 
     notificationManager()->removeNotificationsWithChatId(chatId);
+}
+
+void MessageListView::onSyncFinished()
+{
+    connect(model_, &MessageListModel::messageAdded, this, &MessageListView::onMessageAdded);
+    connect(database(), &DatabaseClient::messageAdded, this, &MessageListView::showNotificationIfMessageIdIsNotCurrent);
+}
+
+void MessageListView::onLoggedOut()
+{
+    disconnect(model_, &MessageListModel::messageAdded, this, &MessageListView::onMessageAdded);
+    disconnect(database(), &DatabaseClient::messageAdded, this, &MessageListView::showNotificationIfMessageIdIsNotCurrent);
 }
 
 void MessageListView::onMessageAdded(const Message &message)
