@@ -14,6 +14,7 @@
 #include <net_common/messages/createprivatechatrequest.h>
 #include <net_common/messages/messagereadrequest.h>
 #include <net_common/messages/syncmessagereadsrequest.h>
+#include <net_common/messages/isusernamefreerequest.h>
 
 #include <sql_common/data_structures/user.h>
 #include <sql_common/data_structures/chatuser.h>
@@ -246,4 +247,13 @@ void ServerMessageVisitor::visit(const MessageReadRequest &request)
     for (const auto chatUser : chatUsers) {
         networkHandler_->sendMessagesUpdated(chatUser.userId(), messages);
     }
+}
+
+void ServerMessageVisitor::visit(const IsUsernameFreeRequest &request)
+{
+    const QString username = request.username();
+
+    const bool isFree = !database()->isUsernameExists(username);
+
+    networkHandler_->sendIsUsernameFreeReply(client_, isFree);
 }

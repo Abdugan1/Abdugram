@@ -36,6 +36,7 @@ public:
     void sendLogoutReply(Session *session);
     void sendMessageReadsReply(int userId, const QList<MessageRead> &messageReads);
     void sendMessagesUpdated(int userId, const QList<Message> &updatedMessages);
+    void sendIsUsernameFreeReply(Session *session, bool isFree);
 
 private:
     void send(int userId, const AbduMessagePtr &message);

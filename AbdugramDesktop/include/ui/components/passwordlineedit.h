@@ -3,32 +3,75 @@
 
 #include "fieldlineedit.h"
 
+#include <memory>
+
+class QLabel;
+class QState;
+
 class SecondaryLabel;
+
+class ToolTipLineEdit;
 
 class ToolTip : public QWidget
 {
     Q_OBJECT
 public:
-    explicit ToolTip();
+    enum Types {
+        Information,
+        Critical,
+    };
+
+    explicit ToolTip(ToolTipLineEdit *lineEdit);
+    ~ToolTip();
+
+    void setText(const QString &text);
+
+    Types type() const;
+    void setType(Types newType);
+
+    void appear();
+    void disappear();
+
+signals:
+    void shouldAppear();
+    void shouldDisappear();
 
 protected:
+    void paintEvent(QPaintEvent *event) override;
 
 private:
-    SecondaryLabel *passwordRules_ = nullptr;
+    void updateStates();
+
+    void setParameters();
+    void setIcon(const QPixmap &pixmap);
+    void setTextColor(const QColor &color);
+    void setBackgroundColor(const QColor &color);
+    void setStrokeColor(const QColor &color);
+
+private:
+    enum {
+        Radius = 4
+    };
+
+    Types type_ = Types::Information;
+
+    QState *hideState_ = nullptr;
+    QState *showState_ = nullptr;
+
+    QLabel *icon_ = nullptr;
+    SecondaryLabel *text_ = nullptr;
+
+    ToolTipLineEdit* lineEdit_ = nullptr;
+
+    QColor backgroundColor_;
+    QColor strokeColor_;
 };
 
-class PasswordLineEdit : public FieldLineEdit
+class ToolTipLineEdit : public FieldLineEdit
 {
     Q_OBJECT
 public:
-    explicit PasswordLineEdit(const QString &placeholder, QWidget *parent = nullptr);
-
-protected:
-    void focusInEvent(QFocusEvent *event) override;
-    void focusOutEvent(QFocusEvent *event) override;
-
-private:
-    ToolTip toolTip_;
+    explicit ToolTipLineEdit(const QString &placeholder, QWidget *parent = nullptr);
 };
 
 #endif // PASSWORDLINEEDIT_H

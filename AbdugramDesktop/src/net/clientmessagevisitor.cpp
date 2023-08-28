@@ -14,6 +14,7 @@
 #include <net_common/messages/sendmessagereply.h>
 #include <net_common/messages/messagereadreply.h>
 #include <net_common/messages/messagesupdated.h>
+#include <net_common/messages/isusernamefreereply.h>
 
 #include <sql_common/data_structures/user.h>
 #include <sql_common/data_structures/chatuser.h>
@@ -157,4 +158,9 @@ void ClientMessageVisitor::visit(const MessagesUpdated &reply)
     const QList<Message> messages = reply.messages();
 
     database()->updateMessages(messages);
+}
+
+void ClientMessageVisitor::visit(const IsUsernameFreeReply &reply)
+{
+    emit networkHandler()->isUsernameFreeReply(reply.isFree());
 }

@@ -58,6 +58,23 @@ void LoginPage::setupUi()
     usernameEdit_->setFocus();
 
     passwordEdit_ = new FieldLineEdit{tr("Password")};
+    passwordEdit_->setEchoMode(QLineEdit::Password);
+
+    auto showHidePasswordButton = new IconButton{QPixmap{":/images/show_password.png"}};
+    showHidePasswordButton->setFixedSize(QSize{25, 25});
+    connect(showHidePasswordButton, &IconButton::clicked, this, [this, showHidePasswordButton]() {
+        passwordEdit_->setEchoMode(passwordEdit_->echoMode() == QLineEdit::Password ? QLineEdit::Normal
+                                                                                    : QLineEdit::Password);
+        showHidePasswordButton->setIcon(passwordEdit_->echoMode() == QLineEdit::Password ? QPixmap{":/images/show_password.png"}
+                                                                                         : QPixmap{":/images/hide_password.png"});
+    });
+
+    auto passwordLayout = new QHBoxLayout;
+    passwordLayout->setContentsMargins(0, 0, 0, 0);
+    passwordLayout->setSpacing(0);
+    passwordLayout->addSpacerItem(new QSpacerItem{1, 1, QSizePolicy::Expanding, QSizePolicy::Maximum});
+    passwordLayout->addWidget(showHidePasswordButton);
+    passwordEdit_->setLayout(passwordLayout);
 
     //
     nextButton_ = new WelcomeButton{tr("Next")};
@@ -86,7 +103,7 @@ void LoginPage::setupUi()
 
     QWidget *group = new QWidget;
     group->setLayout(groupLayout);
-    group->setFixedWidth(600);
+    group->setFixedWidth(500);
     
     backButton_ = new IconButton{QPixmap{":/images/back_button.png"}};
 

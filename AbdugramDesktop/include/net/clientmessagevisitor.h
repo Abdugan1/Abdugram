@@ -24,7 +24,8 @@ public:
     void visit(const SendMessageReply      &reply) override;
     void visit(const LogoutReply           &reply) override;
     void visit(const MessageReadReply      &reply) override;
-    void visit(const MessagesUpdated &reply) override;
+    void visit(const MessagesUpdated       &reply) override;
+    void visit(const IsUsernameFreeReply   &reply) override;
 };
 
 #endif // CLIENTMESSAGEVISITOR_H

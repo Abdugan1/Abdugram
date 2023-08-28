@@ -16,6 +16,7 @@
 #include <net_common/messages/logoutrequest.h>
 #include <net_common/messages/createprivatechatrequest.h>
 #include <net_common/messages/messagereadrequest.h>
+#include <net_common/messages/isusernamefreerequest.h>
 
 #include <net_common/consts.h>
 
@@ -217,6 +218,14 @@ void NetworkHandler::sendLogoutRequest()
     AnyMessagePtr<LogoutRequest> logoutRequest{new LogoutRequest};
 
     sendToServer(static_cast<AbduMessagePtr>(logoutRequest));
+}
+
+void NetworkHandler::sendIsUsernameFree(const QString &username)
+{
+    AnyMessagePtr<IsUsernameFreeRequest> isUsernameFreeRequest{new IsUsernameFreeRequest};
+    isUsernameFreeRequest->setUsername(username);
+
+    sendToServer(static_cast<AbduMessagePtr>(isUsernameFreeRequest));
 }
 
 void NetworkHandler::sendRegisterRequest(const QString &firstName,

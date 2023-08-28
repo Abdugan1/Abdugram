@@ -18,6 +18,7 @@ extern const QString secondaryLabelColor     ;
 extern const QString headerLabelColor        ;
 extern const QString helperColor             ;
 extern const QString beautyRedColor          ;
+extern const QString pinkyRedColor           ;
 } // colornames
 
 extern const QHash<QString, QColor> Colors;

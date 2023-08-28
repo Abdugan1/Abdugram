@@ -23,6 +23,7 @@ public:
     virtual void visit(const CreatePrivateChatRequest &request) { Q_UNUSED(request); }
     virtual void visit(const MessageReadRequest       &request) { Q_UNUSED(request); }
     virtual void visit(const SyncMessageReadsRequest  &request) { Q_UNUSED(request); }
+    virtual void visit(const IsUsernameFreeRequest    &request) { Q_UNUSED(request); }
     
     virtual void visit(const LoginReply             &reply) { Q_UNUSED(reply); }
     virtual void visit(const RegisterReply          &reply) { Q_UNUSED(reply); }
@@ -36,6 +37,7 @@ public:
     virtual void visit(const MessageReadReply       &reply) { Q_UNUSED(reply); }
     virtual void visit(const SyncMessageReadsReply  &reply) { Q_UNUSED(reply); }
     virtual void visit(const MessagesUpdated        &reply) { Q_UNUSED(reply); }
+    virtual void visit(const IsUsernameFreeReply    &reply) { Q_UNUSED(reply); }
 
 };
 

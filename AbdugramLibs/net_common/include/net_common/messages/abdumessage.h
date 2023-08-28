@@ -31,6 +31,7 @@ public:
         CreatePrivateChatRequest,
         MessageReadRequest,
         SyncMessageReadsRequest,
+        IsUsernameFreeRequest,
 
         ServerSide = 1000000000,
         LoginReply = ServerSide + 1,
@@ -46,6 +47,7 @@ public:
         MessageReadReply,
         SyncMessageReadsReply,
         MessagesUpdated,
+        IsUsernameFreeReply,
     };
 
 public:

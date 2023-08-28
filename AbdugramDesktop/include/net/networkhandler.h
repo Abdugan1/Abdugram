@@ -55,6 +55,8 @@ public:
 
     void sendLogoutRequest();
 
+    void sendIsUsernameFree(const QString &username);
+
 
     void startSync();
 
@@ -74,6 +76,8 @@ signals:
     void loggedOut();
 
     void searchResult(const QList<User> &usersSearchResult);
+
+    void isUsernameFreeReply(bool isFree);
 
 public slots:
     void connectToServer();

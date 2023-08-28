@@ -15,6 +15,11 @@ public:
 
     void changeColor(const QColor &color);
 
+    void showValidInputState();
+    void showInvalidInputState();
+
+    bool isValid() const;
+
 signals:
     void lineColorChanged();
 
@@ -27,9 +32,6 @@ protected:
 private:
     void init(const QString &placeholder);
 
-    void showValidInputState();
-    void showInvalidInputState();
-
     void startColorAnimation(const QColor &start, const QColor &end);
 
 private:
@@ -37,6 +39,7 @@ private:
         LineWidth = 2
     };
 
+    bool validInputState_ = true;
     QColor lineColor_;
     QColor textColor_;
     QColor placeholderColor_;

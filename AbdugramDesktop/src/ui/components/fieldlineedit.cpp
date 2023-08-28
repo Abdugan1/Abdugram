@@ -15,7 +15,7 @@ inline QColor normalColor()
 
 inline QColor invalidColor()
 {
-    return Qt::red;
+    return Colors.value(colornames::beautyRedColor);
 }
 
 FieldLineEdit::FieldLineEdit(const QString &placeholder, QWidget *parent)
@@ -72,11 +72,18 @@ void FieldLineEdit::init(const QString &placeholder)
 void FieldLineEdit::showValidInputState()
 {
     changeColor(normalColor());
+    validInputState_ = true;
 }
 
 void FieldLineEdit::showInvalidInputState()
 {
     changeColor(invalidColor());
+    validInputState_ = false;
+}
+
+bool FieldLineEdit::isValid() const
+{
+    return hasAcceptableInput() && validInputState_;
 }
 
 void FieldLineEdit::startColorAnimation(const QColor &start, const QColor &end)

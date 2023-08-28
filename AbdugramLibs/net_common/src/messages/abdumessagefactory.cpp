@@ -12,6 +12,7 @@
 #include "messages/createprivatechatrequest.h"
 #include "messages/messagereadrequest.h"
 #include "messages/syncmessagereadsrequest.h"
+#include "messages/isusernamefreerequest.h"
 
 #include "messages/loginreply.h"
 #include "messages/registerreply.h"
@@ -25,6 +26,7 @@
 #include "messages/messagereadreply.h"
 #include "messages/syncmessagereadsreply.h"
 #include "messages/messagesupdated.h"
+#include "messages/isusernamefreereply.h"
 
 #include <QDebug>
 
@@ -73,7 +75,10 @@ AbduMessagePtr AbduMessageFactory::fromData(const QByteArray &data)
     case AbduMessage::Type::SyncMessageReadsRequest:
         abduMessage = new SyncMessageReadsRequest;
         break;
-        
+    case AbduMessage::Type::IsUsernameFreeRequest:
+        abduMessage = new IsUsernameFreeRequest;
+        break;
+
     case AbduMessage::Type::LoginReply:
         abduMessage = new LoginReply;
         break;
@@ -109,6 +114,9 @@ AbduMessagePtr AbduMessageFactory::fromData(const QByteArray &data)
         break;
     case AbduMessage::Type::MessagesUpdated:
         abduMessage = new MessagesUpdated;
+        break;
+    case AbduMessage::Type::IsUsernameFreeReply:
+        abduMessage = new IsUsernameFreeReply;
         break;
     }
 

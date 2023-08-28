@@ -52,6 +52,8 @@ set(HEADERS
     ${HEADERS_DIR}/messages/syncmessagereadsrequest.h
     ${HEADERS_DIR}/messages/syncmessagereadsreply.h
     ${HEADERS_DIR}/messages/messagesupdated.h
+    ${HEADERS_DIR}/messages/isusernamefreerequest.h
+    ${HEADERS_DIR}/messages/isusernamefreereply.h
 )
 
 set(SOURCES
@@ -86,6 +88,8 @@ set(SOURCES
     ${SOURCES_DIR}/messages/syncmessagereadsrequest.cpp
     ${SOURCES_DIR}/messages/syncmessagereadsreply.cpp
     ${SOURCES_DIR}/messages/messagesupdated.cpp
+    ${SOURCES_DIR}/messages/isusernamefreerequest.cpp
+    ${SOURCES_DIR}/messages/isusernamefreereply.cpp
 )
 
 add_library(${LIBRARY_NAME} SHARED ${HEADERS} ${SOURCES})

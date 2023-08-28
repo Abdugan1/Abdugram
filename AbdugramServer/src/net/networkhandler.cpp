@@ -15,6 +15,7 @@
 #include <net_common/messages/logoutreply.h>
 #include <net_common/messages/messagereadreply.h>
 #include <net_common/messages/messagesupdated.h>
+#include <net_common/messages/isusernamefreereply.h>
 
 #include <QDebug>
 
@@ -135,6 +136,14 @@ void NetworkHandler::sendMessagesUpdated(int userId, const QList<Message> &updat
     messagesUpdated->setMessages(updatedMessages);
 
     send(userId, static_cast<AbduMessagePtr>(messagesUpdated));
+}
+
+void NetworkHandler::sendIsUsernameFreeReply(Session *session, bool isFree)
+{
+    AnyMessagePtr<IsUsernameFreeReply> isUsernameFreeReply{new IsUsernameFreeReply};
+    isUsernameFreeReply->setIsFree(isFree);
+
+    send(session, static_cast<AbduMessagePtr>(isUsernameFreeReply));
 }
 
 void NetworkHandler::send(int userId, const AbduMessagePtr &message)

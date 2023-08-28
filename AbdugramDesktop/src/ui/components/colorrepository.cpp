@@ -15,6 +15,7 @@ const QString secondaryLabelColor      = "secondaryLabelColor";
 const QString headerLabelColor         = "headerLabelColor";
 const QString helperColor              = "helperColor";
 const QString beautyRedColor           = "beautyRedColor";
+const QString pinkyRedColor            = "pinkyReadColor";
 
 } // colornames
 
@@ -32,4 +33,5 @@ const QHash<QString, QColor> Colors {
     {colornames::headerLabelColor        , QColor{"#FFFFFF"}},
     {colornames::helperColor             , QColor{"#554450"}},
     {colornames::beautyRedColor          , QColor{"#F64650"}},
+    {colornames::pinkyRedColor           , QColor{"#ffcfcb"}},
 };

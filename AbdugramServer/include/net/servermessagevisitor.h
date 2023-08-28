@@ -25,6 +25,7 @@ public:
     void visit(const LogoutRequest            &request) override;
     void visit(const CreatePrivateChatRequest &request) override;
     void visit(const MessageReadRequest       &request) override;
+    void visit(const IsUsernameFreeRequest    &request) override;
 
 private:
     NetworkHandler *networkHandler_ = nullptr;

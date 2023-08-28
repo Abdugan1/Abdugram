@@ -9,7 +9,7 @@ class FieldLineEdit;
 class WelcomeButton;
 class IconButton;
 class PhoneLineEdit;
-class PasswordLineEdit;
+class ToolTipLineEdit;
 
 class RegistrationPage : public Widget
 {
@@ -37,17 +37,16 @@ private:
     SecondaryLabel *pageInfo_         = nullptr;
     
     FieldLineEdit    *firstNameEdit_       = nullptr;
-    FieldLineEdit    *usernameEdit_        = nullptr;
+    ToolTipLineEdit  *usernameEdit_        = nullptr;
     FieldLineEdit    *emailEdit_           = nullptr;
     PhoneLineEdit    *phoneNumberEdit_     = nullptr;
-    PasswordLineEdit *passwordEdit_        = nullptr;
+    ToolTipLineEdit *passwordEdit_         = nullptr;
     FieldLineEdit    *confirmPasswordEdit_ = nullptr;
     
-    WelcomeButton      *nextButton_ = nullptr;
-    IconButton *backButton_ = nullptr;
+    WelcomeButton *nextButton_ = nullptr;
+    IconButton    *backButton_ = nullptr;
 
     SecondaryLabel *toLoginPageLabel_ = nullptr;
-
 };
 
 #endif // REGISTRATIONPAGE_H

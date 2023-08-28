@@ -26,5 +26,9 @@
         <file>images/bear_256.png</file>
         <file>images/bear_512.png</file>
         <file>images/down_arrow.png</file>
+        <file>images/hide_password.png</file>
+        <file>images/show_password.png</file>
+        <file>images/information.png</file>
+        <file>images/critical.png</file>
     </qresource>
 </RCC>
