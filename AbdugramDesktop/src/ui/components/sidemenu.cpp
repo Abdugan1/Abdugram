@@ -14,42 +14,29 @@
 #include <QMouseEvent>
 #include <QCloseEvent>
 #include <QGraphicsDropShadowEffect>
+#include <QParallelAnimationGroup>
 #include <QPropertyAnimation>
+#include <QStateMachine>
+#include <QSignalTransition>
+#include <QPainter>
 #include <QDebug>
 
 SideMenu::SideMenu(QWidget *parent)
     : QWidget{parent}
 {
     setupUi();
-    
+    setupStates();
+
     connect(logoutButton_, &Button::clicked, this, []() {networkHandler()->sendLogoutRequest();});
     connect(logoutButton_, &Button::clicked, this, &SideMenu::close);
     connect(networkHandler(), &NetworkHandler::syncFinished, this, &SideMenu::onSyncFinished);
-
-    parent->installEventFilter(this);
-}
-
-bool SideMenu::eventFilter(QObject *watched, QEvent *event)
-{
-    switch (event->type()) {
-    case QEvent::Resize:
-    {
-        auto r = parentWidget()->geometry();
-        r.setWidth(r.width() + DrawerWidth);
-        setGeometry(parentWidget()->geometry());
-        break;
-    }
-    default:
-        break;
-    }
-    return QWidget::eventFilter(watched, event);
 }
 
 void SideMenu::showEvent(QShowEvent *event)
 {
     emit aboutToShow();
     raise();
-    startShowAnimation();
+//    startShowAnimation();
     setFocus(Qt::MouseFocusReason);
 
     setAttribute(Qt::WA_TransparentForMouseEvents, false);
@@ -59,7 +46,7 @@ void SideMenu::closeEvent(QCloseEvent *event)
 {
     emit aboutToClose();
     event->ignore();
-    closeAnimation();
+//    closeAnimation();
 
     setAttribute(Qt::WA_TransparentForMouseEvents, true);
 }
@@ -70,6 +57,13 @@ void SideMenu::mousePressEvent(QMouseEvent *event)
         close();
     }
     return QWidget::mousePressEvent(event);
+}
+
+void SideMenu::paintEvent(QPaintEvent *event)
+{
+    QPainter painter{this};
+    painter.setOpacity(overlayOpacity_);
+    painter.fillRect(rect(), Qt::SolidPattern);
 }
 
 void SideMenu::startShowAnimation()
@@ -141,6 +135,8 @@ void SideMenu::setupUi()
     QVBoxLayout *backgroundLayout = new QVBoxLayout;
     backgroundLayout->setContentsMargins(0, 0, 0, 0);
     backgroundLayout->setSpacing(0);
+    backgroundLayout->setSizeConstraint(QLayout::SetNoConstraint);
+
     backgroundLayout->addLayout(userInfoLayout);
     backgroundLayout->addSpacerItem(new QSpacerItem{1, 10, QSizePolicy::Maximum, QSizePolicy::Fixed});
     backgroundLayout->addWidget(logoutButton_);
@@ -150,13 +146,6 @@ void SideMenu::setupUi()
     background_ = new Widget;
     background_->setFixedWidth(DrawerWidth);
     background_->setLayout(backgroundLayout);
-
-    QGraphicsDropShadowEffect *shadow = new QGraphicsDropShadowEffect;
-    shadow->setColor(Qt::black);
-    shadow->setBlurRadius(100);
-    shadow->setXOffset(5);
-    shadow->setYOffset(0);
-    background_->setGraphicsEffect(shadow);
 
     QHBoxLayout *mainLayout = new QHBoxLayout;
     mainLayout->setContentsMargins(0, 0, 0, 0);
@@ -169,6 +158,83 @@ void SideMenu::setupUi()
     hide();
 }
 
+void SideMenu::setupStates()
+{
+    QGraphicsDropShadowEffect *shadow = new QGraphicsDropShadowEffect;
+    shadow->setColor(QColor{0, 0, 0, 180});
+    shadow->setXOffset(5);
+    shadow->setYOffset(0);
+    background_->setGraphicsEffect(shadow);
+
+    auto stateMachine = new QStateMachine{this};
+
+    closedState_ = new QState{stateMachine};
+    closedState_->assignProperty(this, "offset", -DrawerWidth);
+    closedState_->assignProperty(this, "overlayOpacity", 0.0);
+    closedState_->assignProperty(shadow, "blurRadius", 0.0);
+
+    showedState_ = new QState{stateMachine};
+    showedState_->assignProperty(this, "offset", 0);
+    showedState_->assignProperty(this, "overlayOpacity", 0.2);
+    showedState_->assignProperty(shadow, "blurRadius", 20.0);
+
+    //------------------------------------------------------------------------//
+    auto closeOffsetAnim = new QPropertyAnimation{this, "offset"};
+    connect(closeOffsetAnim, &QPropertyAnimation::finished, this, &QWidget::hide);
+    closeOffsetAnim->setEasingCurve(QEasingCurve::OutCubic);
+    closeOffsetAnim->setDuration(200);
+
+    auto closeOverlayOpacityAnim = new QPropertyAnimation{this, "overlayOpacity"};
+    connect(closeOverlayOpacityAnim, &QPropertyAnimation::finished, this, QOverload<>::of(&QWidget::update));
+//    closeOverlayOpacityAnim->setEasingCurve(QEasingCurve::InCubic);
+    closeOverlayOpacityAnim->setDuration(50);
+
+    auto closeShadowAnim = new QPropertyAnimation{shadow, "blurRadius"};
+    closeShadowAnim->setDuration(250);
+
+    //------------------------------------------------------------------------//
+
+    auto showOffsetAnim = new QPropertyAnimation{this, "offset"};
+    showOffsetAnim->setEasingCurve(QEasingCurve::OutCubic);
+    showOffsetAnim->setDuration(250);
+
+    auto showOverlayOpacityAnim = new QPropertyAnimation{this, "overlayOpacity"};
+//    closeOverlayOpacityAnim->setEasingCurve(QEasingCurve::InCubic);
+    showOverlayOpacityAnim->setDuration(50);
+
+    auto showShadowAnim = new QPropertyAnimation{shadow, "blurAnimation"};
+    showOffsetAnim->setDuration(250);
+
+    //------------------------------------------------------------------------//
+
+    auto closedToShowed = closedState_->addTransition(this, &SideMenu::aboutToShow,  showedState_);
+    closedToShowed->addAnimation(showOffsetAnim);
+    closedToShowed->addAnimation(showOverlayOpacityAnim);
+    closedToShowed->addAnimation(showShadowAnim);
+
+    auto showedToClosed = showedState_->addTransition(this, &SideMenu::aboutToClose, closedState_);
+    showedToClosed->addAnimation(closeOffsetAnim);
+    showedToClosed->addAnimation(closeOverlayOpacityAnim);
+    showedToClosed->addAnimation(closeShadowAnim);
+
+    stateMachine->setInitialState(closedState_);
+    stateMachine->start();
+}
+
+qreal SideMenu::overlayOpacity() const
+{
+    return overlayOpacity_;
+}
+
+void SideMenu::setOverlayOpacity(qreal newOverlayOpacity)
+{
+    if (qFuzzyCompare(overlayOpacity_, newOverlayOpacity))
+        return;
+    overlayOpacity_ = newOverlayOpacity;
+    update();
+    emit overlayOpacityChanged();
+}
+
 int SideMenu::offset() const
 {
     return offset_;
@@ -179,6 +245,6 @@ void SideMenu::setOffset(int newOffset)
     if (offset_ == newOffset)
         return;
     offset_ = newOffset;
-    setGeometry(rect().translated(offset_, 0));
+    background_->setGeometry(background_->rect().translated(offset_, 0));
     emit offsetChanged();
 }

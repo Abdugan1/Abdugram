@@ -22,7 +22,6 @@ public:
     };
 
     explicit ToolTip(ToolTipLineEdit *lineEdit);
-    ~ToolTip();
 
     void setText(const QString &text);
 

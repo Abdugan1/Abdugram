@@ -8,6 +8,7 @@
 #include <QGraphicsBlurEffect>
 #include <QSplitter>
 #include <QHBoxLayout>
+#include <QStackedLayout>
 #include <QMoveEvent>
 #include <QResizeEvent>
 #include <QDebug>
@@ -30,7 +31,7 @@ MainPage::MainPage(QWidget *parent)
 void MainPage::resizeEvent(QResizeEvent *event)
 {
     Widget::resizeEvent(event);
-    sideMenu_->resize(sideMenu_->width(), this->geometry().height());
+//    sideMenu_->resize(sideMenu_->width(), this->geometry().height());
 }
 
 void MainPage::keyPressEvent(QKeyEvent *event)
@@ -43,7 +44,7 @@ void MainPage::keyPressEvent(QKeyEvent *event)
 
 void MainPage::setupUi()
 {
-    sideMenu_ = new SideMenu{this};
+    sideMenu_ = new SideMenu;
 
     connect(sideMenu_, &SideMenu::aboutToShow, this, &MainPage::makeMainWidgetVisuallyInactive);
     connect(sideMenu_, &SideMenu::aboutToClose, this, &MainPage::makeMainWidgetNormal);
@@ -72,7 +73,16 @@ void MainPage::setupUi()
     hLayout->setSpacing(0);
     hLayout->addWidget(splitter_);
 
-    setLayout(hLayout);
+    QWidget *mainWidget = new QWidget;
+    mainWidget->setLayout(hLayout);
+
+    QStackedLayout *mainLayout = new QStackedLayout;
+    mainLayout->setStackingMode(QStackedLayout::StackAll);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
+    mainLayout->addWidget(mainWidget);
+    mainLayout->addWidget(sideMenu_);
+
+    setLayout(mainLayout);
 }
 
 void MainPage::unselectChat()
@@ -83,22 +93,22 @@ void MainPage::unselectChat()
 
 void MainPage::makeMainWidgetVisuallyInactive()
 {
-    QPropertyAnimation *blurAnimation = new QPropertyAnimation{blur_, "blurRadius"};
-    blurAnimation->setStartValue(BlurStart);
-    blurAnimation->setEndValue(BlurEnd);
-    blurAnimation->setEasingCurve(QEasingCurve::OutQuint);
-    blurAnimation->setDuration(100);
+//    QPropertyAnimation *blurAnimation = new QPropertyAnimation{blur_, "blurRadius"};
+//    blurAnimation->setStartValue(BlurStart);
+//    blurAnimation->setEndValue(BlurEnd);
+//    blurAnimation->setEasingCurve(QEasingCurve::OutQuint);
+//    blurAnimation->setDuration(100);
 
-    blurAnimation->start(QAbstractAnimation::DeleteWhenStopped);
+//    blurAnimation->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
 void MainPage::makeMainWidgetNormal()
 {
-    QPropertyAnimation *blurAnimation = new QPropertyAnimation{blur_, "blurRadius"};
-    blurAnimation->setStartValue(BlurEnd);
-    blurAnimation->setEndValue(BlurStart);
-    blurAnimation->setEasingCurve(QEasingCurve::OutQuint);
-    blurAnimation->setDuration(100);
+//    QPropertyAnimation *blurAnimation = new QPropertyAnimation{blur_, "blurRadius"};
+//    blurAnimation->setStartValue(BlurEnd);
+//    blurAnimation->setEndValue(BlurStart);
+//    blurAnimation->setEasingCurve(QEasingCurve::OutQuint);
+//    blurAnimation->setDuration(100);
 
-    blurAnimation->start(QAbstractAnimation::DeleteWhenStopped);
+//    blurAnimation->start(QAbstractAnimation::DeleteWhenStopped);
 }
