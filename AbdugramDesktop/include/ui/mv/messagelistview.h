@@ -2,6 +2,7 @@
 #define MESSAGELISTVIEW_H
 
 #include <QListView>
+#include <QSharedPointer>
 
 #include <sql_common/data_structures/message.h>
 
@@ -9,6 +10,7 @@ class MessageListModel;
 class MessageListDelegate;
 
 class IconButton;
+class Document;
 
 class MessageListView : public QListView
 {
@@ -21,6 +23,11 @@ public:
 
 signals:
     void notificationRequested(const Message &message);
+
+protected:
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseDoubleClickEvent(QMouseEvent *event) override;
 
 private slots:
     void onSyncFinished();
@@ -43,6 +50,10 @@ private:
     void readMessages();
     void readMessagesFromRow(int row);
 
+    int getRelativeCursorPos(const QSharedPointer<Document> &doc,
+                             const QModelIndex &index,
+                             const QPoint &mousePos) const;
+
 private:
     MessageListModel    *model_     = nullptr;
     MessageListDelegate *delegate_ = nullptr;
@@ -52,6 +63,12 @@ private:
     Message lastMessage_;
 
     bool autoScroll_ = true;
+
+    QModelIndex previousPressedIndex_;
+    QModelIndex pressedIndex_;
+    QPoint pressedPos_;
+
+    bool wordSelection_ = false;
 };
 
 #endif // MESSAGELISTVIEW_H

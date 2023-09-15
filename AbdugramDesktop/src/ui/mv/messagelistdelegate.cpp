@@ -1,12 +1,13 @@
 #include "ui/mv/messagelistdelegate.h"
 #include "ui/mv/messageitem.h"
 #include "ui/mv/dateseparatoritem.h"
+#include "ui/mv/document.h"
 
 #include "ui/components/colorrepository.h"
 
 #include "net/networkhandler.h"
 
-#include <QTextEdit>
+#include <QAbstractTextDocumentLayout>
 #include <QLabel>
 #include <QTextBrowser>
 #include <QTextDocument>
@@ -15,9 +16,6 @@
 #include <QPainter>
 
 const int MessageBackgroundRadius = 21;
-
-const int HSpacingMessage = 7;
-const int VSpacingMessage = 1;
 
 const int VSpacingDateSeparator = 7;
 
@@ -105,10 +103,10 @@ QSize MessageListDelegate::sizeHint(const QStyleOptionViewItem &option, const QM
 void MessageListDelegate::setPainterOriginOnMessage(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     const int fullWidth = option.rect.width();
-    const int bgWidth   = getMessageBackgroundRect(option, index).width();
+    const int bgWidth   = index.data(MessageItem::BackgroundRect).toRect().width();
 
-    const int dx = !senderIsMe(index) ? HSpacingMessage : fullWidth - HSpacingMessage - bgWidth;
-    const int dy = option.rect.top() + VSpacingMessage;
+    const int dx = !senderIsMe(index) ? messageHSpacing() : fullWidth - messageHSpacing() - bgWidth;
+    const int dy = option.rect.top()  + messageVSpacing();
 
     painter->translate(dx, dy);
 }
@@ -135,7 +133,7 @@ void MessageListDelegate::drawMessageBackground(QPainter *painter, const QStyleO
     painter->setBrush(senderIsMe(index) ? messageBackgroundColorWhenSenderIsMe()
                                         : messageBackgroundColorWhenSenderIsOther());
 
-    painter->drawRoundedRect(getMessageBackgroundRect(option, index),
+    painter->drawRoundedRect(index.data(MessageItem::BackgroundRect).toRect(),
                              MessageBackgroundRadius, MessageBackgroundRadius);
 
     painter->restore();
@@ -145,16 +143,22 @@ void MessageListDelegate::drawMessageText(QPainter *painter, const QStyleOptionV
 {
     painter->save();
 
-    const auto text = index.data(MessageItem::SplittedText).toStringList().join('\n');
-
-    QRect rect = getTextRect(text, option.font);
-    rect.moveTopLeft(QPoint{MessageItem::BackgroundLeftPadding, MessageItem::BackgroundTopPadding});
+    const auto text = index.data(MessageItem::Text).toString();
 
     // Use this instead?
 //    option.widget->style()->drawItemText(painter, rect, Qt::AlignLeft, option.widget->palette(), true, text);
 
     painter->setPen(messageTextColor());
-    painter->drawText(rect, text);
+    painter->setFont(index.data(MessageItem::TextFont).value<QFont>());
+
+    if (index == interactiveIndex_) {
+        painter->translate(index.data(MessageItem::TextRect).toRect().topLeft());
+        auto context = QAbstractTextDocumentLayout::PaintContext();
+        context.palette.setColor(QPalette::Text, messageTextColor());
+        doc_->documentLayout()->draw(painter, context);
+    } else {
+        painter->drawText(index.data(MessageItem::TextRect).toRect(), text);
+    }
 
     painter->restore();
 }
@@ -163,30 +167,11 @@ void MessageListDelegate::drawMessageTime(QPainter *painter, const QStyleOptionV
 {
     painter->save();
 
-    const auto backgroundRect = getMessageBackgroundRect(option, index);
-
-    const auto lines = index.data(MessageItem::SplittedText).toStringList();
-    const QString text = lines.join('\n');
-    const QRect textRect = getTextRect(text, option.font);
-
     const QString time = index.data((MessageItem::Roles::DateTime)).toDateTime().toString("hh:mm");
-    QRect timeRect = getTextRect(time, option.font);
 
-    auto lastLineBoundingRect = getTextRect(lines.last(), option.font);
-    lastLineBoundingRect.moveTop(MessageItem::BackgroundTopPadding + textRect.height() - lastLineBoundingRect.height());
-
-    timeRect.moveRight(backgroundRect.right() - MessageItem::BackgroundRightPadding - (senderIsMe(index) ? MessageItem::IsReadWidth : 0));
-
-    if (lastLineFullWidth(lastLineBoundingRect, timeRect, senderIsMe(index)) <= MessageItem::MaxContentWidth)
-        timeRect.moveBottom(lastLineBoundingRect.bottom() + MessageItem::TimeVSpacing);
-    else
-        timeRect.moveBottom(lastLineBoundingRect.bottom() + timeRect.height());
-
-    QFont f = option.font;
-    f.setPointSizeF(f.pointSizeF() - 0.5);
-    painter->setFont(f);
     painter->setPen(messageTimeColor());
-    painter->drawText(timeRect, time);
+    painter->setFont(index.data(MessageItem::TimeFont).value<QFont>());
+    painter->drawText(index.data(MessageItem::TimeRect).toRect(), time);
 
     painter->restore();
 }
@@ -198,15 +183,12 @@ void MessageListDelegate::drawMessageIsRead(QPainter *painter, const QStyleOptio
 
     painter->save();
 
-    const auto backgroundRect = getMessageBackgroundRect(option, index);
-
     const QColor checkColor = (index.data(MessageItem::IsRead).toBool() ? Qt::cyan
                                                                         : Qt::red);
     QPen pen{checkColor, 10, Qt::SolidLine, Qt::RoundCap};
     painter->setPen(pen);
 
-    painter->drawPoint(backgroundRect.right() - MessageItem::BackgroundRightPadding,
-                       backgroundRect.bottom() - MessageItem::BackgroundBottomPadding);
+    painter->drawPoint(index.data(MessageItem::IsReadPos).toPoint());
 
     painter->restore();
 }
@@ -260,8 +242,8 @@ void MessageListDelegate::drawDateSeparatorDate(QPainter *painter, const QStyleO
 
 QSize MessageListDelegate::messageSizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    const QRect bgRect = getMessageBackgroundRect(option, index);
-    return QSize{bgRect.width() + HSpacingMessage * 2, bgRect.height() + VSpacingMessage * 2};
+    const QRect bgRect = index.data(MessageItem::BackgroundRect).toRect();
+    return QSize{bgRect.width() + messageHSpacing() * 2, bgRect.height() + messageVSpacing() * 2};
 }
 
 QSize MessageListDelegate::dateSeparatorSizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
@@ -270,34 +252,6 @@ QSize MessageListDelegate::dateSeparatorSizeHint(const QStyleOptionViewItem &opt
     return QSize{bgRect.width(), bgRect.height() + VSpacingDateSeparator * 2};
 }
 
-QRect MessageListDelegate::getMessageBackgroundRect(const QStyleOptionViewItem &option, const QModelIndex &index) const
-{
-    QRect rect;
-
-    const auto  lines    = index.data(MessageItem::SplittedText).toStringList();
-    const QRect textRect = getTextRect(lines.join('\n'), option.font);
-
-    const QString time     = index.data(MessageItem::DateTime).toDateTime().toString("hh:mm");
-    const QRect   timeRect = getTextRect(time, option.font);
-
-    const QRect lastLineRect = getTextRect(lines.last(), option.font);
-
-    rect = textRect;
-
-    if (lastLineFullWidth(lastLineRect, timeRect, senderIsMe(index)) <= MessageItem::MaxContentWidth) {
-        rect.setWidth(rect.width() + MessageItem::TimeHSpacing + timeRect.width());
-    } else {
-        rect.setBottom(rect.bottom() + timeRect.height());
-    }
-    if (senderIsMe(index))
-        rect.setWidth(rect.width() + MessageItem::IsReadWidth);
-
-    rect = QRect{0, 0,
-                 rect.width()  + MessageItem::BackgroundLeftPadding + MessageItem::BackgroundRightPadding,
-                 rect.height() + MessageItem::BackgroundTopPadding  + MessageItem::BackgroundBottomPadding};
-
-    return rect;
-}
 
 QRect MessageListDelegate::getDateSeparatorBackgroundRect(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
@@ -326,4 +280,34 @@ QString MessageListDelegate::dateToString(const QModelIndex &index) const
 int MessageListDelegate::lastLineFullWidth(const QRect &lastLineRect, const QRect &timeRect, bool senderIsMe) const
 {
     return lastLineRect.width() + MessageItem::TimeHSpacing + timeRect.width() + (senderIsMe ? MessageItem::IsReadWidth : 0);
+}
+
+void MessageListDelegate::setInteractiveIndex(const QModelIndex &newInteractiveIndex)
+{
+    interactiveIndex_ = newInteractiveIndex;
+}
+
+QSharedPointer<Document> MessageListDelegate::doc() const
+{
+    return doc_;
+}
+
+void MessageListDelegate::setDoc(QSharedPointer<Document> newDoc)
+{
+    doc_ = newDoc;
+}
+
+int MessageListDelegate::messageHSpacing() const
+{
+    return 7;
+}
+
+int MessageListDelegate::messageVSpacing() const
+{
+    return 1;
+}
+
+QModelIndex MessageListDelegate::interactiveIndex() const
+{
+    return interactiveIndex_;
 }

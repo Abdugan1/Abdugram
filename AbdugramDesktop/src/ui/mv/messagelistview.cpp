@@ -2,6 +2,7 @@
 #include "ui/mv/messagelistmodel.h"
 #include "ui/mv/messagelistdelegate.h"
 #include "ui/mv/messageitem.h"
+#include "ui/mv/document.h"
 
 #include "ui/components/scrollbar.h"
 #include "ui/components/notificationmanager.h"
@@ -16,8 +17,10 @@
 #include <sql_client/databaseclient.h>
 
 #include <QWindow>
+#include <QMouseEvent>
 #include <QPropertyAnimation>
 #include <QBoxLayout>
+#include <QAbstractTextDocumentLayout>
 #include <QApplication>
 #include <QPainter>
 #include <QDebug>
@@ -52,6 +55,9 @@ MessageListView::MessageListView(QWidget *parent)
 
 void MessageListView::setChatId(int chatId)
 {
+    delegate_->setDoc(nullptr);
+    delegate_->setInteractiveIndex(QModelIndex{});
+
     const int prevVal = verticalScrollBar()->value();
 
     model_->setChatId(chatId);
@@ -65,6 +71,9 @@ void MessageListView::setChatId(int chatId)
 
 void MessageListView::setChatIdWithoutSelect(int chatId)
 {
+    delegate_->setDoc(nullptr);
+    delegate_->setInteractiveIndex(QModelIndex{});
+
     const int prevVal = verticalScrollBar()->value();
 
     model_->setChatIdWithoutSelect(chatId);
@@ -74,6 +83,72 @@ void MessageListView::setChatIdWithoutSelect(int chatId)
         readMessages();
 
     notificationManager()->removeNotificationsWithChatId(chatId);
+}
+
+void MessageListView::mousePressEvent(QMouseEvent *event)
+{
+    pressedPos_ = event->pos();
+
+    if (indexAt(pressedPos_).data(MessageModelItem::Type).toInt()
+        == MessageModelItem::MessageItem) {
+        previousPressedIndex_ = pressedIndex_;
+        pressedIndex_         = indexAt(pressedPos_);
+
+        if (pressedIndex_ != previousPressedIndex_) {
+            // Repaint previous pressed as static text. Means no selection draws
+            update(previousPressedIndex_);
+        }
+
+        const QString text = pressedIndex_.data(MessageItem::Text).toString();
+
+        QSharedPointer<Document> doc{new Document};
+        doc->setPlainText(text);
+
+        const int startPos = getRelativeCursorPos(doc, pressedIndex_, pressedPos_);
+        doc->setCursorPosition(startPos);
+
+        delegate_->setInteractiveIndex(pressedIndex_);
+        delegate_->setDoc(doc);
+
+        wordSelection_ = false;
+    }
+
+    QListView::mousePressEvent(event);
+}
+
+void MessageListView::mouseMoveEvent(QMouseEvent *event)
+{
+    const QPoint currentMousePos = event->pos();
+
+    if (event->buttons() & Qt::LeftButton) {
+        const QPoint currentMousePos = event->pos();
+
+        QSharedPointer<Document> doc = delegate_->doc();
+
+        const int endPos = getRelativeCursorPos(doc, pressedIndex_, currentMousePos);
+
+        if (wordSelection_) {
+            doc->extendWordwiseSelection(endPos);
+        } else {
+            doc->setCursorPosition(endPos, QTextCursor::KeepAnchor);
+        }
+
+        update(pressedIndex_);
+    }
+
+    QListView::mouseMoveEvent(event);
+}
+
+void MessageListView::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    QSharedPointer<Document> doc = delegate_->doc();
+    doc->select(QTextCursor::WordUnderCursor);
+
+    update(pressedIndex_);
+
+    wordSelection_ = true;
+
+    QListView::mouseDoubleClickEvent(event);
 }
 
 void MessageListView::onSyncFinished()
@@ -206,4 +281,30 @@ void MessageListView::readMessagesFromRow(int row)
 
     if (!messageReads.isEmpty())
         networkHandler()->sendMessageReadRequest(messageReads);
+}
+
+int MessageListView::getRelativeCursorPos(const QSharedPointer<Document> &doc,
+                                          const QModelIndex &index,
+                                          const QPoint &mousePos) const
+{
+    const bool  senderIsMe = (index.data(MessageItem::SenderId) == networkHandler()->userId());
+    const int   hSpacing   = delegate_->messageHSpacing();
+    const int   vSpacing   = delegate_->messageVSpacing();
+
+    const QMargins padding{hSpacing, vSpacing, hSpacing, vSpacing};
+
+    const QRect itemRect  = visualRect(index).marginsRemoved(padding);
+    QRect bgRect    = index.data(MessageItem::BackgroundRect).toRect().translated(itemRect.topLeft());
+
+    if (senderIsMe) {
+        bgRect.translate(itemRect.width() - bgRect.width(), 0);
+    }
+
+    const QRect textRect  = index.data(MessageItem::TextRect).toRect();
+
+    QPoint relativePos = mousePos - (bgRect.topLeft() + textRect.topLeft());
+    if (senderIsMe) {
+//        relativePos.rx() -=
+    }
+    return doc->documentLayout()->hitTest(relativePos, Qt::FuzzyHit);
 }

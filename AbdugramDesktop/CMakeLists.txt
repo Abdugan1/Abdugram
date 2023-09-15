@@ -64,6 +64,7 @@ set(HEADERS
     ${HEADERS_DIR}/ui/mv/messagelistdelegate.h
     ${HEADERS_DIR}/ui/mv/messagelistmodel.h
     ${HEADERS_DIR}/ui/mv/messagelistview.h
+    ${HEADERS_DIR}/ui/mv/document.h
 
     ${HEADERS_DIR}/ui/pages/hellopage.h
     ${HEADERS_DIR}/ui/pages/loginpage.h
@@ -123,6 +124,7 @@ set(SOURCES
     ${SOURCES_DIR}/ui/mv/messagelistdelegate.cpp
     ${SOURCES_DIR}/ui/mv/messagelistmodel.cpp
     ${SOURCES_DIR}/ui/mv/messagelistview.cpp
+    ${SOURCES_DIR}/ui/mv/document.cpp
 
     ${SOURCES_DIR}/ui/pages/hellopage.cpp
     ${SOURCES_DIR}/ui/pages/loginpage.cpp

@@ -1,10 +1,13 @@
 #include "ui/mv/messageitem.h"
 
+#include "net/networkhandler.h"
+
 #include <sql_common/data_structures/message.h>
 
 #include <QTextOption>
 #include <QTextDocument>
 #include <QTextBlock>
+#include <QFontMetrics>
 #include <QVariant>
 #include <QDebug>
 
@@ -23,56 +26,67 @@ MessageItem::MessageItem()
 
 int MessageItem::messageId() const
 {
-    return messageId_;
+    return message_.id();
 }
-
-void MessageItem::setMessageId(int newMessageId)
-{
-    messageId_ = newMessageId;
-}
-
 
 int MessageItem::senderId() const
 {
-    return senderId_;
-}
-
-void MessageItem::setSenderId(int newSenderId)
-{
-    senderId_ = newSenderId;
+    return message_.senderId();
 }
 
 QString MessageItem::text() const
 {
-    return text_;
+    return message_.text();
 }
-
-void MessageItem::setText(const QString &newText)
-{
-    text_ = newText;
-    setSplittedText();
-}
-
 QDateTime MessageItem::dateTime() const
 {
-    return dateTime_;
+    return message_.createdAt();
 }
 
-void MessageItem::setDateTime(const QDateTime &newDateTime)
+bool MessageItem::isEdited() const
 {
-    dateTime_ = newDateTime;
+    return message_.isEdited();
+}
+
+bool MessageItem::isRead() const
+{
+    return message_.isRead();
+}
+
+QStringList MessageItem::splittedText() const
+{
+    return splittedText_;
+}
+
+QRect MessageItem::backgroundRect() const
+{
+    return drawData_.backgroundRect;
+}
+
+QRect MessageItem::textRect() const
+{
+    return drawData_.textRect;
+}
+
+QRect MessageItem::timeRect() const
+{
+    return drawData_.timeRect;
+}
+
+QPoint MessageItem::isReadPos() const
+{
+    return drawData_.isReadPoint;
 }
 
 MessageItemPtr MessageItem::fromMessage(const Message &message)
 {
     MessageItemPtr messageItem{new MessageItem};
 
-    messageItem->setMessageId(message.id());
-    messageItem->setSenderId(message.senderId());
-    messageItem->setText(message.text());
-    messageItem->setDateTime(message.createdAt());
-    messageItem->setIsRead(message.isRead());
-    messageItem->setIsEdited(message.isEdited());
+    messageItem->message_ = message;
+    messageItem->setSplittedText(message.text());
+    messageItem->message_.setText(messageItem->splittedText_.join('\n'));
+
+    messageItem->calculateDrawData();
 
     return messageItem;
 }
@@ -80,27 +94,47 @@ MessageItemPtr MessageItem::fromMessage(const Message &message)
 QVariant MessageItem::dataImp(int role) const
 {
     switch (static_cast<Roles>(role)) {
-    case Roles::MessageId:    return messageId_;    break;
-    case Roles::SenderId:     return senderId_;     break;
-    case Roles::Text:         return text_;         break;
-    case Roles::DateTime:     return dateTime_;     break;
-    case Roles::IsRead:       return isRead_;       break;
-    case Roles::IsEdited:     return isEdited_;     break;
-    case Roles::SplittedText: return splittedText_; break;
+    case Roles::MessageId:    return messageId();    break;
+    case Roles::SenderId:     return senderId();     break;
+    case Roles::Text:         return text();         break;
+    case Roles::DateTime:     return dateTime();     break;
+    case Roles::IsRead:       return isRead();       break;
+    case Roles::IsEdited:     return isEdited();     break;
+    case Roles::SplittedText: return splittedText(); break;
+
+    case Roles::TextFont:       return drawData_.textFont;       break;
+    case Roles::TimeFont:       return drawData_.timeFont;       break;
+    case Roles::BackgroundRect: return drawData_.backgroundRect; break;
+    case Roles::TextRect:       return drawData_.textRect;       break;
+    case Roles::TimeRect:       return drawData_.timeRect;       break;
+    case Roles::IsReadPos:      return drawData_.isReadPoint;    break;
+    default:
+        break;
     }
     return QVariant{};
 }
 
-void MessageItem::setSplittedText()
+void MessageItem::setData(int role, const QVariant &data)
+{
+    switch (static_cast<Roles>(role)) {
+    case Roles::MessageData:
+        *this = *fromMessage(data.value<Message>());
+        break;
+    default:
+        break;
+    }
+}
+
+void MessageItem::setSplittedText(const QString &text)
 {
     splittedText_.clear();
 
     QTextDocument doc;
-    doc.setPlainText(text_);
+    doc.setPlainText(text);
     doc.setDefaultTextOption(textOption());
     doc.setTextWidth(MaxContentWidth);
 
-    doc.documentLayout();
+    doc.documentLayout(); // Must have thing! It seems it creates layout
 
     QTextBlock textBlock = doc.begin();
     while(textBlock.isValid()) {
@@ -118,34 +152,125 @@ void MessageItem::setSplittedText()
     }
 }
 
-bool MessageItem::isEdited() const
+void MessageItem::setMessageId(int messageId)
 {
-    return isEdited_;
+    message_.setId(messageId);
 }
 
-void MessageItem::setIsEdited(bool newIsEdited)
+void MessageItem::setSenderId(int senderId)
 {
-    isEdited_ = newIsEdited;
+    message_.setSenderId(senderId);
 }
 
-bool MessageItem::isRead() const
+void MessageItem::setText(const QString &text)
 {
-    return isRead_;
+    setSplittedText(text);
+    message_.setText(splittedText_.join('\n'));
 }
 
-void MessageItem::setIsRead(bool newIsRead)
+void MessageItem::setDateTime(const QDateTime &dateTime)
 {
-    isRead_ = newIsRead;
+    message_.setCreatedAt(dateTime);
 }
 
-void MessageItem::setData(int role, const QVariant &data)
+void MessageItem::setIsRead(bool isRead)
 {
-    switch (static_cast<Roles>(role)) {
-    case Roles::MessageId: setMessageId(data.toInt());     break;
-    case Roles::SenderId:  setSenderId(data.toInt());      break;
-    case Roles::Text:      setText(data.toString());       break;
-    case Roles::DateTime:  setDateTime(data.toDateTime()); break;
-    case Roles::IsRead:    setIsRead(data.toBool());       break;
-    case Roles::IsEdited:  setIsEdited(data.toBool());     break;
+    message_.setIsRead(isRead);
+}
+
+void MessageItem::setIsEdited(bool isEdited)
+{
+    message_.setIsEdited(isEdited);
+}
+
+QRect MessageItem::getTextBRect(const QString &t, const QFont &f) const
+{
+    return QFontMetrics{f}.boundingRect(0, 0, MaxContentWidth, INT_MAX, Qt::AlignLeft, t);
+}
+
+bool MessageItem::senderIsMe() const
+{
+    return senderId() == networkHandler()->userId();
+}
+
+int MessageItem::lastLineFullWidth(const QRect &lastLineRect, const QRect &timeRect) const
+{
+    return lastLineRect.width() + TimeHSpacing + timeRect.width() + (senderIsMe() ? IsReadWidth : 0);
+}
+
+void MessageItem::calculateDrawData()
+{
+    QFont textFont;
+    textFont.setPointSize(11);
+
+    QFont timeFont;
+    timeFont.setPointSizeF(textFont.pointSizeF() - 0.5);
+
+    drawData_.textFont = textFont;
+    drawData_.timeFont = timeFont;
+
+    drawData_.backgroundRect = getBackgroundRect();
+    drawData_.textRect       = getTextRect();
+    drawData_.timeRect       = getTimeRect();
+    drawData_.isReadPoint    = getIsReadPos();
+}
+
+QRect MessageItem::getBackgroundRect() const
+{
+    QRect backgroundRect;
+
+    const QRect textRect = getTextBRect(text(), drawData_.textFont);
+
+    const QString time     = dateTime().toString("hh:mm");
+    const QRect   timeRect = getTextBRect(time, drawData_.timeFont);
+
+    const QRect lastLineRect = getTextBRect(splittedText_.constLast(), drawData_.textFont);
+
+    backgroundRect = textRect;
+
+    if (lastLineFullWidth(lastLineRect, timeRect) <= MaxContentWidth) {
+        backgroundRect.setWidth(backgroundRect.width() + TimeHSpacing + timeRect.width());
+    } else {
+        backgroundRect.setBottom(backgroundRect.bottom() + timeRect.height());
     }
+    if (senderIsMe())
+        backgroundRect.setWidth(backgroundRect.width() + IsReadWidth);
+
+    backgroundRect = QRect{0, 0,
+                           backgroundRect.width()  + BackgroundLeftPadding + BackgroundRightPadding,
+                           backgroundRect.height() + BackgroundTopPadding  + BackgroundBottomPadding};
+
+
+    return backgroundRect;
+}
+
+QRect MessageItem::getTextRect() const
+{
+    QRect textRect = getTextBRect(text(), drawData_.textFont);
+    textRect.moveTopLeft(QPoint{BackgroundLeftPadding, BackgroundTopPadding});
+    return textRect;
+}
+
+QRect MessageItem::getTimeRect() const
+{
+    const QString time = dateTime().toString("hh:mm");
+    QRect timeRect = getTextBRect(time, drawData_.timeFont);
+
+    auto lastLineBoundingRect = getTextBRect(splittedText_.constLast(), drawData_.textFont);
+    lastLineBoundingRect.moveTop(BackgroundTopPadding + drawData_.textRect.height() - lastLineBoundingRect.height());
+
+    timeRect.moveRight(drawData_.backgroundRect.right() - BackgroundRightPadding - (senderIsMe() ? IsReadWidth : 0));
+
+    if (lastLineFullWidth(lastLineBoundingRect, timeRect) <= MaxContentWidth)
+        timeRect.moveBottom(lastLineBoundingRect.bottom() + TimeVSpacing);
+    else
+        timeRect.moveBottom(lastLineBoundingRect.bottom() + timeRect.height());
+
+    return timeRect;
+}
+
+QPoint MessageItem::getIsReadPos() const
+{
+    return QPoint{drawData_.backgroundRect.right()  - BackgroundRightPadding,
+                  drawData_.backgroundRect.bottom() - BackgroundBottomPadding};
 }

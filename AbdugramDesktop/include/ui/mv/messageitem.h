@@ -3,13 +3,16 @@
 
 #include "messagemodelitem.h"
 
+#include <sql_common/data_structures/message.h>
+
 #include <QString>
 #include <QDateTime>
+#include <QRect>
+#include <QFont>
 
 #include <memory>
 
 class MessageItem;
-class Message;
 
 using MessageItemPtr = std::shared_ptr<MessageItem>;
 
@@ -37,29 +40,36 @@ public:
         DateTime,
         IsRead,
         IsEdited,
-
         SplittedText,
+
+        MessageData,
+
+        TextFont,
+        TimeFont,
+
+        BackgroundRect,
+        TextRect,
+        TimeRect,
+        IsReadPos,
     };
 
     explicit MessageItem();
 
-    int messageId() const;
-    void setMessageId(int newMessageId);
+    int         messageId()     const;
+    int         senderId()      const;
+    QString     text()          const;
+    QDateTime   dateTime()      const;
+    bool        isRead()        const;
+    bool        isEdited()      const;
+    QStringList splittedText()  const;
 
-    int senderId() const;
-    void setSenderId(int newSenderId);
+    QFont textFont() const;
+    QFont timeFont() const;
 
-    QString text() const;
-    void setText(const QString &newText);
-
-    QDateTime dateTime() const;
-    void setDateTime(const QDateTime &newDateTime);
-
-    bool isRead() const;
-    void setIsRead(bool newIsRead);
-
-    bool isEdited() const;
-    void setIsEdited(bool newIsEdited);
+    QRect  backgroundRect() const;
+    QRect  textRect()       const;
+    QRect  timeRect()       const;
+    QPoint isReadPos()      const;
 
     void setData(int role, const QVariant &data) override;
 
@@ -69,17 +79,44 @@ protected:
     QVariant dataImp(int role) const override;
 
 private:
-    void setSplittedText();
+    void setSplittedText(const QString &text);
+
+    void setMessageId(int messageId);
+    void setSenderId(int senderId);
+    void setText(const QString &text);
+    void setDateTime(const QDateTime &dateTime);
+    void setIsRead(bool isRead);
+    void setIsEdited(bool isEdited);
+
+
+    QRect getTextBRect(const QString &t, const QFont &f) const;
+    bool senderIsMe() const;
+    int lastLineFullWidth(const QRect &lastLineRect, const QRect &timeRect) const;
+
+    void calculateDrawData();
+    QRect getBackgroundRect() const;
+    QRect getTextRect() const;
+    QRect getTimeRect() const;
+    QPoint getIsReadPos() const;
 
 private:
-    int messageId_ = -1;
-    int senderId_ = -1;
-    QString text_;
-    QDateTime dateTime_;
-    bool isRead_ = false;
-    bool isEdited_ = false;
+    Message message_;
 
     QStringList splittedText_;
+
+    struct DrawData
+    {
+        QFont textFont;
+        QFont timeFont;
+
+        QRect backgroundRect;
+        QRect textRect; // text will be drawn in that rect
+        QRect timeRect; // text will be drawn in that rect
+
+        QPoint isReadPoint;
+    };
+
+    DrawData drawData_;
 };
 
 #endif // MESSAGEITEM_H

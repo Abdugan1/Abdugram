@@ -83,12 +83,7 @@ void MessageListModel::onMessagesUpdated(const QList<Message> &updatedMessages)
     for (const auto &message : updatedMessages) {
         const int row = messageIdToRow_.value(message.id());
         auto messageItem = messageModelItems_[row];
-        messageItem->setData(MessageItem::MessageId,message.id());
-        messageItem->setData(MessageItem::SenderId, message.senderId());
-        messageItem->setData(MessageItem::Text,     message.text());
-        messageItem->setData(MessageItem::DateTime, message.createdAt());
-        messageItem->setData(MessageItem::IsRead,   message.isRead());
-        messageItem->setData(MessageItem::IsEdited, message.isEdited());
+        messageItem->setData(MessageItem::MessageData, QVariant::fromValue<Message>(message));
     }
 
     const int beginMessageId = updatedMessages.first().id();
