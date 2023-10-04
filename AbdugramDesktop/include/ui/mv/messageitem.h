@@ -40,6 +40,7 @@ public:
         DateTime,
         IsRead,
         IsEdited,
+        TextLines,
         SplittedText,
 
         MessageData,
@@ -55,13 +56,14 @@ public:
 
     explicit MessageItem();
 
-    int         messageId()     const;
-    int         senderId()      const;
-    QString     text()          const;
-    QDateTime   dateTime()      const;
-    bool        isRead()        const;
-    bool        isEdited()      const;
-    QStringList splittedText()  const;
+    int         messageId()    const;
+    int         senderId()     const;
+    QString     text()         const;
+    QString     splittedText() const;
+    QDateTime   dateTime()     const;
+    bool        isRead()       const;
+    bool        isEdited()     const;
+    QStringList textLines()    const;
 
     QFont textFont() const;
     QFont timeFont() const;
@@ -79,7 +81,7 @@ protected:
     QVariant dataImp(int role) const override;
 
 private:
-    void setSplittedText(const QString &text);
+    void setTextLines(const QString &text);
 
     void setMessageId(int messageId);
     void setSenderId(int senderId);
@@ -102,7 +104,8 @@ private:
 private:
     Message message_;
 
-    QStringList splittedText_;
+    QString splittedText_;
+    QStringList textLines_;
 
     struct DrawData
     {

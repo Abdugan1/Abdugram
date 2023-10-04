@@ -46,6 +46,8 @@ set(HEADERS
     ${HEADERS_DIR}/ui/components/notificationmanager.h
     ${HEADERS_DIR}/ui/components/notification.h
     ${HEADERS_DIR}/ui/components/widget.h
+    include/ui/components/contextmenu.h
+    include/ui/components/contextmenuprivate.h
 
     ${HEADERS_DIR}/ui/styles/style.h
 
@@ -106,6 +108,8 @@ set(SOURCES
     ${SOURCES_DIR}/ui/components/notificationmanager.cpp
     ${SOURCES_DIR}/ui/components/notification.cpp
     ${SOURCES_DIR}/ui/components/widget.cpp
+    src/ui/components/contextmenu.cpp
+    src/ui/components/contextmenuprivate.cpp
 
     ${SOURCES_DIR}/ui/styles/style.cpp
 

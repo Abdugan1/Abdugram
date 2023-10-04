@@ -38,6 +38,12 @@ QString MessageItem::text() const
 {
     return message_.text();
 }
+
+QString MessageItem::splittedText() const
+{
+    return splittedText_;
+}
+
 QDateTime MessageItem::dateTime() const
 {
     return message_.createdAt();
@@ -53,9 +59,9 @@ bool MessageItem::isRead() const
     return message_.isRead();
 }
 
-QStringList MessageItem::splittedText() const
+QStringList MessageItem::textLines() const
 {
-    return splittedText_;
+    return textLines_;
 }
 
 QRect MessageItem::backgroundRect() const
@@ -83,8 +89,8 @@ MessageItemPtr MessageItem::fromMessage(const Message &message)
     MessageItemPtr messageItem{new MessageItem};
 
     messageItem->message_ = message;
-    messageItem->setSplittedText(message.text());
-    messageItem->message_.setText(messageItem->splittedText_.join('\n'));
+    messageItem->setTextLines(message.text());
+    messageItem->splittedText_ = messageItem->textLines_.join('\n');
 
     messageItem->calculateDrawData();
 
@@ -97,10 +103,11 @@ QVariant MessageItem::dataImp(int role) const
     case Roles::MessageId:    return messageId();    break;
     case Roles::SenderId:     return senderId();     break;
     case Roles::Text:         return text();         break;
+    case Roles::SplittedText: return splittedText(); break;
     case Roles::DateTime:     return dateTime();     break;
     case Roles::IsRead:       return isRead();       break;
     case Roles::IsEdited:     return isEdited();     break;
-    case Roles::SplittedText: return splittedText(); break;
+    case Roles::TextLines:    return textLines(); break;
 
     case Roles::TextFont:       return drawData_.textFont;       break;
     case Roles::TimeFont:       return drawData_.timeFont;       break;
@@ -125,9 +132,9 @@ void MessageItem::setData(int role, const QVariant &data)
     }
 }
 
-void MessageItem::setSplittedText(const QString &text)
+void MessageItem::setTextLines(const QString &text)
 {
-    splittedText_.clear();
+    textLines_.clear();
 
     QTextDocument doc;
     doc.setPlainText(text);
@@ -145,7 +152,7 @@ void MessageItem::setSplittedText(const QString &text)
 
         for(int i = 0; i != textBlock.layout()->lineCount(); ++i) {
             QTextLine line = textBlock.layout()->lineAt(i);
-            splittedText_.append(blockText.mid(line.textStart(), line.textLength()));
+            textLines_.append(blockText.mid(line.textStart(), line.textLength()));
         }
 
         textBlock = textBlock.next();
@@ -164,8 +171,8 @@ void MessageItem::setSenderId(int senderId)
 
 void MessageItem::setText(const QString &text)
 {
-    setSplittedText(text);
-    message_.setText(splittedText_.join('\n'));
+    setTextLines(text);
+    message_.setText(textLines_.join('\n'));
 }
 
 void MessageItem::setDateTime(const QDateTime &dateTime)
@@ -219,12 +226,12 @@ QRect MessageItem::getBackgroundRect() const
 {
     QRect backgroundRect;
 
-    const QRect textRect = getTextBRect(text(), drawData_.textFont);
+    const QRect textRect = getTextBRect(splittedText(), drawData_.textFont);
 
     const QString time     = dateTime().toString("hh:mm");
     const QRect   timeRect = getTextBRect(time, drawData_.timeFont);
-
-    const QRect lastLineRect = getTextBRect(splittedText_.constLast(), drawData_.textFont);
+    
+    const QRect lastLineRect = getTextBRect(textLines_.constLast(), drawData_.textFont);
 
     backgroundRect = textRect;
 
@@ -246,7 +253,7 @@ QRect MessageItem::getBackgroundRect() const
 
 QRect MessageItem::getTextRect() const
 {
-    QRect textRect = getTextBRect(text(), drawData_.textFont);
+    QRect textRect = getTextBRect(splittedText(), drawData_.textFont);
     textRect.moveTopLeft(QPoint{BackgroundLeftPadding, BackgroundTopPadding});
     return textRect;
 }
@@ -255,8 +262,8 @@ QRect MessageItem::getTimeRect() const
 {
     const QString time = dateTime().toString("hh:mm");
     QRect timeRect = getTextBRect(time, drawData_.timeFont);
-
-    auto lastLineBoundingRect = getTextBRect(splittedText_.constLast(), drawData_.textFont);
+    
+    auto lastLineBoundingRect = getTextBRect(textLines_.constLast(), drawData_.textFont);
     lastLineBoundingRect.moveTop(BackgroundTopPadding + drawData_.textRect.height() - lastLineBoundingRect.height());
 
     timeRect.moveRight(drawData_.backgroundRect.right() - BackgroundRightPadding - (senderIsMe() ? IsReadWidth : 0));

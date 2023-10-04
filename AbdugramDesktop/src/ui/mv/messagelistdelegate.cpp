@@ -143,7 +143,7 @@ void MessageListDelegate::drawMessageText(QPainter *painter, const QStyleOptionV
 {
     painter->save();
 
-    const auto text = index.data(MessageItem::Text).toString();
+    const auto text = index.data(MessageItem::SplittedText).toString();
 
     // Use this instead?
 //    option.widget->style()->drawItemText(painter, rect, Qt::AlignLeft, option.widget->palette(), true, text);

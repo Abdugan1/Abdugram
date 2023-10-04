@@ -30,5 +30,6 @@
         <file>images/show_password.png</file>
         <file>images/information.png</file>
         <file>images/critical.png</file>
+        <file>images/copy.png</file>
     </qresource>
 </RCC>

@@ -8,6 +8,7 @@
 #include "ui/components/notificationmanager.h"
 #include "ui/components/iconbutton.h"
 #include "ui/components/colorrepository.h"
+#include "ui/components/contextmenu.h"
 
 #include "net/networkhandler.h"
 
@@ -17,7 +18,9 @@
 #include <sql_client/databaseclient.h>
 
 #include <QWindow>
+#include <QClipboard>
 #include <QMouseEvent>
+#include <QContextMenuEvent>
 #include <QPropertyAnimation>
 #include <QBoxLayout>
 #include <QAbstractTextDocumentLayout>
@@ -27,30 +30,168 @@
 
 int prevMaximuim = 0;
 
+MessageTextSelectionHelper::MessageTextSelectionHelper(MessageListView *view)
+    : view_{view}
+{
+    Q_ASSERT(view_);
+}
+
+void MessageTextSelectionHelper::handleMousePress(QMouseEvent *event)
+{
+    if (!leftButtonPressed(event))
+        return;
+
+    const QPoint pressedPos        = event->pos();
+    const QModelIndex pressedIndex = view_->indexAt(pressedPos);
+
+    if (!isMessageItem(pressedIndex))
+        return;
+
+    pressedPos_           = pressedPos;
+    previousPressedIndex_ = pressedIndex_;
+    pressedIndex_         = pressedIndex;
+
+    if (pressedIndex_ != previousPressedIndex_) {
+        // Repaint previous pressed as static text. Means no selection draws
+        view_->update(previousPressedIndex_);
+    }
+
+    const QString text = pressedIndex_.data(MessageItem::Text).toString();
+
+    QSharedPointer<Document> doc{new Document};
+    doc->setPlainText(text);
+
+    const int startPos = relativeTextCursorPos(doc, pressedIndex_, pressedPos_);
+    doc->setCursorPosition(startPos);
+
+    view_->delegate_->setInteractiveIndex(pressedIndex_);
+    view_->delegate_->setDoc(doc);
+
+    wordSelection_ = false;
+}
+
+void MessageTextSelectionHelper::handleMouseMove(QMouseEvent *event)
+{
+    if (!leftButtonPressed(event) && !isMessageItem(pressedIndex_))
+        return;
+
+    const QPoint currentMousePos = event->pos();
+
+    QSharedPointer<Document> doc = view_->delegate_->doc();
+
+    const int endPos = relativeTextCursorPos(doc, pressedIndex_, currentMousePos);
+
+    if (wordSelection_) {
+        doc->extendWordwiseSelection(endPos);
+    } else {
+        doc->setCursorPosition(endPos, QTextCursor::KeepAnchor);
+    }
+
+    view_->update(pressedIndex_);
+}
+
+void MessageTextSelectionHelper::handleMouseDoubleClick(QMouseEvent *event)
+{
+    if (!leftButtonPressed(event) && !isMessageItem(pressedIndex_))
+        return;
+
+    const QPoint currentMousePos = event->pos();
+    QSharedPointer<Document> doc = view_->delegate_->doc();
+
+    doc->select(QTextCursor::WordUnderCursor);
+
+    view_->update(pressedIndex_);
+
+    wordSelection_ = true;
+}
+
+bool MessageTextSelectionHelper::leftButtonPressed(const QMouseEvent *event) const
+{
+    return event->buttons() & Qt::LeftButton;
+}
+
+bool MessageTextSelectionHelper::isMessageItem(const QModelIndex &index) const
+{
+    return index.data(MessageModelItem::Roles::Type).toInt() == MessageModelItem::Type::MessageItem;
+}
+
+int MessageTextSelectionHelper::relativeTextCursorPos(const QSharedPointer<Document> &doc,
+                                                      const QModelIndex &index,
+                                                      const QPoint &mousePos) const
+{
+    const bool  senderIsMe = (index.data(MessageItem::SenderId) == networkHandler()->userId());
+    const int   hSpacing   = view_->delegate_->messageHSpacing();
+    const int   vSpacing   = view_->delegate_->messageVSpacing();
+
+    const QMargins padding{hSpacing, vSpacing, hSpacing, vSpacing};
+
+    const QRect itemRect  = view_->visualRect(index).marginsRemoved(padding);
+    QRect bgRect    = index.data(MessageItem::BackgroundRect).toRect().translated(itemRect.topLeft());
+
+    if (senderIsMe) {
+        bgRect.translate(itemRect.width() - bgRect.width(), 0);
+    }
+
+    const QRect textRect  = index.data(MessageItem::TextRect).toRect();
+
+    QPoint relativePos = mousePos - (bgRect.topLeft() + textRect.topLeft());
+    if (senderIsMe) {
+        //        relativePos.rx() -=
+    }
+    return doc->documentLayout()->hitTest(relativePos, Qt::FuzzyHit);
+}
+
+MessageListViewContextMenuHelper::MessageListViewContextMenuHelper(MessageListView *view)
+    : view_{view}
+{
+    Q_ASSERT(view_);
+
+    initContextMenus();
+}
+
+void MessageListViewContextMenuHelper::popup(const QModelIndex &indexUnderMouse, const QPoint &pos)
+{
+    lastIndex_ = indexUnderMouse;
+
+    const int type = indexUnderMouse.data(MessageModelItem::Roles::Type).toInt();
+    if (type == MessageModelItem::MessageItem) {
+        contextMenu_->openMenu(pos);
+    }
+}
+
+void MessageListViewContextMenuHelper::initContextMenus()
+{
+    contextMenu_ = new ContextMenu{view_};
+
+    copyAction_ = new QAction{QIcon{":/images/copy.png"}, "Copy", contextMenu_};
+    QObject::connect(copyAction_, &QAction::triggered, [this]()->void {
+        const QString text = lastIndex_.data(MessageItem::Text).toString();
+        qApp->clipboard()->setText(text);
+    });
+
+    contextMenu_->addAction(copyAction_);
+}
+
+
 MessageListView::MessageListView(QWidget *parent)
     : QListView{parent}
     , model_{new MessageListModel{this}}
     , delegate_{new MessageListDelegate{this}}
+    , textSelectionHelper_{new MessageTextSelectionHelper{this}}
+    , contextMenuHelper_{new MessageListViewContextMenuHelper{this}}
 {
     setupUi();
 
     connect(networkHandler(), &NetworkHandler::syncFinished, this, &MessageListView::onSyncFinished);
-
     connect(networkHandler(), &NetworkHandler::loggedOut, this, &MessageListView::onLoggedOut);
-
-    setModel(model_);
-    setItemDelegate(delegate_);
-
-    setVerticalScrollMode(QListView::ScrollPerPixel);
-    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setVerticalScrollBar(new ScrollBar{Qt::Vertical, this});
-    prevMaximuim = verticalScrollBar()->maximum();
-    setFocusPolicy(Qt::NoFocus);
-
-    setContentsMargins(0, 0, 0, 0);
 
     connect(verticalScrollBar(), &ScrollBar::valueChanged, this, &MessageListView::onScrollChanged);
     connect(verticalScrollBar(), &ScrollBar::rangeChanged, this, &MessageListView::onScrollRangeChanged);
+
+    setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(this, &QWidget::customContextMenuRequested, this, &MessageListView::onContextMenuRequested);
+
+    prevMaximuim = verticalScrollBar()->maximum();
 }
 
 void MessageListView::setChatId(int chatId)
@@ -87,66 +228,21 @@ void MessageListView::setChatIdWithoutSelect(int chatId)
 
 void MessageListView::mousePressEvent(QMouseEvent *event)
 {
-    pressedPos_ = event->pos();
-
-    if (indexAt(pressedPos_).data(MessageModelItem::Type).toInt()
-        == MessageModelItem::MessageItem) {
-        previousPressedIndex_ = pressedIndex_;
-        pressedIndex_         = indexAt(pressedPos_);
-
-        if (pressedIndex_ != previousPressedIndex_) {
-            // Repaint previous pressed as static text. Means no selection draws
-            update(previousPressedIndex_);
-        }
-
-        const QString text = pressedIndex_.data(MessageItem::Text).toString();
-
-        QSharedPointer<Document> doc{new Document};
-        doc->setPlainText(text);
-
-        const int startPos = getRelativeCursorPos(doc, pressedIndex_, pressedPos_);
-        doc->setCursorPosition(startPos);
-
-        delegate_->setInteractiveIndex(pressedIndex_);
-        delegate_->setDoc(doc);
-
-        wordSelection_ = false;
-    }
+    textSelectionHelper_->handleMousePress(event);
 
     QListView::mousePressEvent(event);
 }
 
 void MessageListView::mouseMoveEvent(QMouseEvent *event)
 {
-    const QPoint currentMousePos = event->pos();
-
-    if (event->buttons() & Qt::LeftButton) {
-        const QPoint currentMousePos = event->pos();
-
-        QSharedPointer<Document> doc = delegate_->doc();
-
-        const int endPos = getRelativeCursorPos(doc, pressedIndex_, currentMousePos);
-
-        if (wordSelection_) {
-            doc->extendWordwiseSelection(endPos);
-        } else {
-            doc->setCursorPosition(endPos, QTextCursor::KeepAnchor);
-        }
-
-        update(pressedIndex_);
-    }
+    textSelectionHelper_->handleMouseMove(event);
 
     QListView::mouseMoveEvent(event);
 }
 
 void MessageListView::mouseDoubleClickEvent(QMouseEvent *event)
 {
-    QSharedPointer<Document> doc = delegate_->doc();
-    doc->select(QTextCursor::WordUnderCursor);
-
-    update(pressedIndex_);
-
-    wordSelection_ = true;
+    textSelectionHelper_->handleMouseDoubleClick(event);
 
     QListView::mouseDoubleClickEvent(event);
 }
@@ -217,8 +313,21 @@ void MessageListView::smoothScrollToBottom()
     scrollAnimation->start(QAbstractAnimation::DeleteWhenStopped);
 }
 
+void MessageListView::onContextMenuRequested(const QPoint &pos)
+{
+    const QModelIndex index = indexAt(pos);
+    const int type = index.data(MessageModelItem::Roles::Type).toInt();
+
+    if (type == MessageModelItem::MessageItem) {
+        contextMenuHelper_->popup(index, viewport()->mapToGlobal(pos));
+    }
+}
+
 void MessageListView::setupUi()
 {
+    setModel(model_);
+    setItemDelegate(delegate_);
+
     scrollToBottomButton_ = new IconButton{QPixmap{":/images/down_arrow.png"}};
     scrollToBottomButton_->setBackgroundColor(Colors.value(colornames::backgroundLighterHelper2));
     scrollToBottomButton_->setFixedSize(QSize{40, 40});
@@ -232,6 +341,13 @@ void MessageListView::setupUi()
     vLayout->addWidget(scrollToBottomButton_, 0, Qt::AlignRight | Qt::AlignBottom);
 
     setLayout(vLayout);
+
+    setVerticalScrollMode(QListView::ScrollPerPixel);
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setVerticalScrollBar(new ScrollBar{Qt::Vertical, this});
+    setFocusPolicy(Qt::NoFocus);
+
+    setContentsMargins(0, 0, 0, 0);
 }
 
 void MessageListView::scrollToEnd()
