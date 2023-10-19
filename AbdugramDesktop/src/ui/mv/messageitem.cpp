@@ -64,6 +64,16 @@ QStringList MessageItem::textLines() const
     return textLines_;
 }
 
+bool MessageItem::hasSelection() const
+{
+    return hasSelection_;
+}
+
+QString MessageItem::selection() const
+{
+    return selection_;
+}
+
 QRect MessageItem::backgroundRect() const
 {
     return drawData_.backgroundRect;
@@ -107,7 +117,9 @@ QVariant MessageItem::dataImp(int role) const
     case Roles::DateTime:     return dateTime();     break;
     case Roles::IsRead:       return isRead();       break;
     case Roles::IsEdited:     return isEdited();     break;
-    case Roles::TextLines:    return textLines(); break;
+    case Roles::TextLines:    return textLines();    break;
+    case Roles::HasSelection: return hasSelection(); break;
+    case Roles::Selection:    return selection();    break;
 
     case Roles::TextFont:       return drawData_.textFont;       break;
     case Roles::TimeFont:       return drawData_.timeFont;       break;
@@ -123,9 +135,16 @@ QVariant MessageItem::dataImp(int role) const
 
 void MessageItem::setData(int role, const QVariant &data)
 {
+//    qDebug() << "Setting data:" << (role == Roles::HasSelection);
     switch (static_cast<Roles>(role)) {
     case Roles::MessageData:
         *this = *fromMessage(data.value<Message>());
+        break;
+    case Roles::HasSelection:
+        hasSelection_ = data.toBool();
+        break;
+    case Roles::Selection:
+        selection_ = data.toString();
         break;
     default:
         break;

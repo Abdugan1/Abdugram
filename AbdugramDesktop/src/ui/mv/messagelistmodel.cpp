@@ -28,6 +28,13 @@ QVariant MessageListModel::data(const QModelIndex &index, int role) const
     return messageModelItems_[index.row()]->data(role);
 }
 
+bool MessageListModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    messageModelItems_[index.row()]->setData(role, value);
+    emit dataChanged(index, index);
+    return true;
+}
+
 bool MessageListModel::isEmpty() const
 {
     return messageModelItems_.isEmpty();
@@ -83,6 +90,8 @@ void MessageListModel::onMessagesUpdated(const QList<Message> &updatedMessages)
     for (const auto &message : updatedMessages) {
         const int row = messageIdToRow_.value(message.id());
         auto messageItem = messageModelItems_[row];
+        // Call explicitly MessageItemModel::setData instead of MessageListModel::setData
+        // Because of efficiency(emits everytime dataChanged)
         messageItem->setData(MessageItem::MessageData, QVariant::fromValue<Message>(message));
     }
 

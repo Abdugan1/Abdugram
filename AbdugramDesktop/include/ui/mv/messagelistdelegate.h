@@ -15,9 +15,6 @@ public:
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
     QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
-    QModelIndex interactiveIndex() const;
-    void setInteractiveIndex(const QModelIndex &newInteractiveIndex);
-
     QSharedPointer<Document> doc() const;
     void setDoc(QSharedPointer<Document> newDoc);
 
@@ -49,7 +46,6 @@ private:
     int lastLineFullWidth(const QRect &lastLineRect, const QRect &timeRect, bool senderIsMe) const;
 
 private:
-    QModelIndex interactiveIndex_;
     QSharedPointer<Document> doc_;
 
 };

@@ -151,7 +151,9 @@ void MessageListDelegate::drawMessageText(QPainter *painter, const QStyleOptionV
     painter->setPen(messageTextColor());
     painter->setFont(index.data(MessageItem::TextFont).value<QFont>());
 
-    if (index == interactiveIndex_) {
+    const bool hasSelection = index.data(MessageItem::HasSelection).toBool();
+
+    if (hasSelection) {
         painter->translate(index.data(MessageItem::TextRect).toRect().topLeft());
         auto context = QAbstractTextDocumentLayout::PaintContext();
         context.palette.setColor(QPalette::Text, messageTextColor());
@@ -282,11 +284,6 @@ int MessageListDelegate::lastLineFullWidth(const QRect &lastLineRect, const QRec
     return lastLineRect.width() + MessageItem::TimeHSpacing + timeRect.width() + (senderIsMe ? MessageItem::IsReadWidth : 0);
 }
 
-void MessageListDelegate::setInteractiveIndex(const QModelIndex &newInteractiveIndex)
-{
-    interactiveIndex_ = newInteractiveIndex;
-}
-
 QSharedPointer<Document> MessageListDelegate::doc() const
 {
     return doc_;
@@ -305,9 +302,4 @@ int MessageListDelegate::messageHSpacing() const
 int MessageListDelegate::messageVSpacing() const
 {
     return 1;
-}
-
-QModelIndex MessageListDelegate::interactiveIndex() const
-{
-    return interactiveIndex_;
 }

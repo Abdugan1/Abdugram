@@ -35,6 +35,9 @@ private:
                               const QModelIndex &index,
                               const QPoint &mousePos) const;
 
+    void removeSelectionFromPreviousIndex();
+    void setSelectionForCurrentIndex(const QString &selection);
+
 private:
     MessageListView *view_ = nullptr;
 
@@ -45,8 +48,10 @@ private:
     bool wordSelection_ = false;
 };
 
-class MessageListViewContextMenuHelper
+class MessageListViewContextMenuHelper : public QObject
 {
+    Q_OBJECT
+
 public:
     explicit MessageListViewContextMenuHelper(MessageListView *view);
 
@@ -54,6 +59,9 @@ public:
 
 private:
     void initContextMenus();
+
+private slots:
+    void onCopyActionTriggered();
 
 private:
     MessageListView *view_ = nullptr;

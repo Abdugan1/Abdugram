@@ -51,10 +51,7 @@ void MessageTextSelectionHelper::handleMousePress(QMouseEvent *event)
     previousPressedIndex_ = pressedIndex_;
     pressedIndex_         = pressedIndex;
 
-    if (pressedIndex_ != previousPressedIndex_) {
-        // Repaint previous pressed as static text. Means no selection draws
-        view_->update(previousPressedIndex_);
-    }
+    removeSelectionFromPreviousIndex();
 
     const QString text = pressedIndex_.data(MessageItem::Text).toString();
 
@@ -64,7 +61,6 @@ void MessageTextSelectionHelper::handleMousePress(QMouseEvent *event)
     const int startPos = relativeTextCursorPos(doc, pressedIndex_, pressedPos_);
     doc->setCursorPosition(startPos);
 
-    view_->delegate_->setInteractiveIndex(pressedIndex_);
     view_->delegate_->setDoc(doc);
 
     wordSelection_ = false;
@@ -87,7 +83,7 @@ void MessageTextSelectionHelper::handleMouseMove(QMouseEvent *event)
         doc->setCursorPosition(endPos, QTextCursor::KeepAnchor);
     }
 
-    view_->update(pressedIndex_);
+    setSelectionForCurrentIndex(doc->selectedText());
 }
 
 void MessageTextSelectionHelper::handleMouseDoubleClick(QMouseEvent *event)
@@ -100,9 +96,10 @@ void MessageTextSelectionHelper::handleMouseDoubleClick(QMouseEvent *event)
 
     doc->select(QTextCursor::WordUnderCursor);
 
-    view_->update(pressedIndex_);
-
     wordSelection_ = true;
+
+    removeSelectionFromPreviousIndex();
+    setSelectionForCurrentIndex(doc->selectedText());
 }
 
 bool MessageTextSelectionHelper::leftButtonPressed(const QMouseEvent *event) const
@@ -141,8 +138,25 @@ int MessageTextSelectionHelper::relativeTextCursorPos(const QSharedPointer<Docum
     return doc->documentLayout()->hitTest(relativePos, Qt::FuzzyHit);
 }
 
+void MessageTextSelectionHelper::removeSelectionFromPreviousIndex()
+{
+    if (previousPressedIndex_.isValid()) {
+        view_->model_->setData(previousPressedIndex_, false, MessageItem::HasSelection);
+        view_->model_->setData(previousPressedIndex_, "",    MessageItem::Selection);
+    }
+}
+
+void MessageTextSelectionHelper::setSelectionForCurrentIndex(const QString &selection)
+{
+    if (pressedIndex_.isValid()) {
+        view_->model_->setData(pressedIndex_, true,      MessageItem::HasSelection);
+        view_->model_->setData(pressedIndex_, selection, MessageItem::Selection);
+    }
+}
+
 MessageListViewContextMenuHelper::MessageListViewContextMenuHelper(MessageListView *view)
-    : view_{view}
+    : QObject{view}
+    , view_{view}
 {
     Q_ASSERT(view_);
 
@@ -164,12 +178,22 @@ void MessageListViewContextMenuHelper::initContextMenus()
     contextMenu_ = new ContextMenu{view_};
 
     copyAction_ = new QAction{QIcon{":/images/copy.png"}, "Copy", contextMenu_};
-    QObject::connect(copyAction_, &QAction::triggered, [this]()->void {
-        const QString text = lastIndex_.data(MessageItem::Text).toString();
-        qApp->clipboard()->setText(text);
-    });
+    QObject::connect(copyAction_, &QAction::triggered, this, &MessageListViewContextMenuHelper::onCopyActionTriggered);
 
     contextMenu_->addAction(copyAction_);
+}
+
+void MessageListViewContextMenuHelper::onCopyActionTriggered()
+{
+    const bool hasSelection = lastIndex_.data(MessageItem::HasSelection).toBool();
+    QString text;
+    if (hasSelection) {
+        text = lastIndex_.data(MessageItem::Selection).toString();
+    } else {
+        text = lastIndex_.data(MessageItem::Text).toString();
+    }
+
+    qApp->clipboard()->setText(text);
 }
 
 
@@ -196,9 +220,6 @@ MessageListView::MessageListView(QWidget *parent)
 
 void MessageListView::setChatId(int chatId)
 {
-    delegate_->setDoc(nullptr);
-    delegate_->setInteractiveIndex(QModelIndex{});
-
     const int prevVal = verticalScrollBar()->value();
 
     model_->setChatId(chatId);
@@ -212,9 +233,6 @@ void MessageListView::setChatId(int chatId)
 
 void MessageListView::setChatIdWithoutSelect(int chatId)
 {
-    delegate_->setDoc(nullptr);
-    delegate_->setInteractiveIndex(QModelIndex{});
-
     const int prevVal = verticalScrollBar()->value();
 
     model_->setChatIdWithoutSelect(chatId);

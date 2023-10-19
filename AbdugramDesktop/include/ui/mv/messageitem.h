@@ -42,6 +42,8 @@ public:
         IsEdited,
         TextLines,
         SplittedText,
+        HasSelection,
+        Selection,
 
         MessageData,
 
@@ -64,6 +66,8 @@ public:
     bool        isRead()       const;
     bool        isEdited()     const;
     QStringList textLines()    const;
+    bool        hasSelection() const;
+    QString     selection()    const;
 
     QFont textFont() const;
     QFont timeFont() const;
@@ -103,6 +107,9 @@ private:
 
 private:
     Message message_;
+
+    bool hasSelection_ = false;
+    QString selection_;
 
     QString splittedText_;
     QStringList textLines_;
