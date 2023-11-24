@@ -12,7 +12,7 @@ class RegistrationPage;
 class ProblemWidget;
 class MainPage;
 
-class SideMenu;
+class Drawer;
 
 class TcpSession;
 class ClientMessageVisitor;

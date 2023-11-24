@@ -14,6 +14,20 @@ MainLabel::MainLabel(const QString &text, QWidget *parent, Qt::WindowFlags f)
     init();
 }
 
+void MainLabel::setPointSize(int pointSize)
+{
+    QFont f = font();
+    f.setPointSize(pointSize);
+    setFont(f);
+}
+
+void MainLabel::setBold(int bold)
+{
+    QFont f = font();
+    f.setBold(bold);
+    setFont(f);
+}
+
 void MainLabel::init()
 {
     QPalette p = palette();

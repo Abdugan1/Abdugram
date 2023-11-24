@@ -31,5 +31,6 @@
         <file>images/information.png</file>
         <file>images/critical.png</file>
         <file>images/copy.png</file>
+        <file>images/setting.png</file>
     </qresource>
 </RCC>

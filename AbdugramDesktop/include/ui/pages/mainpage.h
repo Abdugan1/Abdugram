@@ -8,7 +8,8 @@ class QSplitter;
 
 class QGraphicsBlurEffect;
 
-class SideMenu;
+class Drawer;
+class SettingsWindow;
 class ChatListSide;
 class ConversationSide;
 
@@ -34,8 +35,9 @@ private:
     QSplitter        *splitter_         = nullptr;
     ChatListSide     *chatListSide_     = nullptr;
     ConversationSide *conversationSide_ = nullptr;
-
-    SideMenu *sideMenu_ = nullptr;
+    
+    Drawer *drawer_ = nullptr;
+    SettingsWindow *settingsWindow_ = nullptr;
 
     QGraphicsBlurEffect *blur_ = nullptr;
 };

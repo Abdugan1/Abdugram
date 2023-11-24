@@ -14,6 +14,20 @@ SecondaryLabel::SecondaryLabel(const QString &text, QWidget *parent, Qt::WindowF
     init();
 }
 
+void SecondaryLabel::setPointSize(int pointSize)
+{
+    QFont f = font();
+    f.setPointSize(pointSize);
+    setFont(f);
+}
+
+void SecondaryLabel::setBold(bool bold)
+{
+    QFont f = font();
+    f.setBold(bold);
+    setFont(f);
+}
+
 void SecondaryLabel::init()
 {
     QPalette p = palette();

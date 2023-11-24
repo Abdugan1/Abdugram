@@ -10,6 +10,9 @@ public:
     explicit MainLabel(QWidget *parent=nullptr, Qt::WindowFlags f=Qt::WindowFlags());
     explicit MainLabel(const QString &text, QWidget *parent=nullptr, Qt::WindowFlags f=Qt::WindowFlags());
 
+    void setPointSize(int pointSize);
+    void setBold(int bold);
+
 private:
     void init();
 };

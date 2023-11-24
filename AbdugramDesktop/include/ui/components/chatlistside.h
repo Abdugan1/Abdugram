@@ -25,7 +25,7 @@ public:
     void clearChatSelection();
 
 signals:
-    void sideMenuRequested();
+    void drawerRequested();
 
     void selectionWasChanged(const ChatModelItemPtr &selectedChat);
 
@@ -38,7 +38,7 @@ private:
     void setupUi();
 
 private:
-    IconButton    *sideMenuButton_ = nullptr;
+    IconButton     *drawerButton_ = nullptr;
     SearchLineEdit *searchLineEdit_ = nullptr;
     ChatListView   *chatListView_   = nullptr;
 };

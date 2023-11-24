@@ -5,6 +5,9 @@
 
 #include "ui/components/colorrepository.h"
 
+#include <QLinearGradient>
+#include <QRandomGenerator>
+#include <QPainterPath>
 #include <QPainter>
 #include <QDebug>
 
@@ -146,11 +149,30 @@ void ChatListDelegate::drawChatPicture(QPainter *painter, const QStyleOptionView
 {
     painter->save();
 
+    const int chatId = index.data(ChatItem::ChatId).toInt();
+
     const int x = AvatarMargins.left();
     const int y = AvatarMargins.top();
 
-    const QPixmap avatar = QPixmap{":/images/bear_64.png"}.scaled(AvatarSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-    painter->drawPixmap(x, y, avatar);
+    const QUrl pictureUrl = index.data(ChatItem::PictureUrl).toUrl();
+    if (!pictureUrl.isEmpty()) {
+        if (!pixmapCache_.contains(chatId))
+            pixmapCache_.insert(chatId, new QPixmap(":/images/bear_64.png"));
+
+    } else {
+        if (!pixmapCache_.contains(chatId))
+            pixmapCache_.insert(chatId, generateChatPicture(index));
+    }
+
+    const QPixmap *avatar = pixmapCache_.object(chatId);
+
+    QPainterPath round;
+    round.addRoundedRect(QRect(QPoint(x, y), AvatarSize),
+                         AvatarSize.width() / 2, AvatarSize.width() / 2);
+
+    painter->setClipping(true);
+    painter->setClipPath(round);
+    painter->drawPixmap(x, y, *avatar);
 
     painter->restore();
 }
@@ -356,4 +378,51 @@ QString ChatListDelegate::dateTimeToString(const QDateTime &dateTime) const
     }
 
     return dateTime.toString("dd.MM.yy");
+}
+
+QPixmap *ChatListDelegate::generateChatPicture(const QModelIndex &index) const
+{
+    QPixmap *avatar = new QPixmap(AvatarSize);
+    const QString chatName = index.data(ChatItem::ChatName).toString();
+    QStringList words = chatName.split(" ", Qt::SkipEmptyParts);
+
+    QString initials;
+    initials += words[0][0].toUpper();
+    if (words.size() > 1)
+        initials += words[1][0].toUpper();
+
+    QFont f;
+    f.setPointSize(16);
+    QFontMetrics fm(f);
+
+    QPainter pixmapPainter(avatar);
+    pixmapPainter.setFont(f);
+
+    const int minRedColorValue = 70;
+    const int maxRedColorValue = 170;
+
+    const int minGreenColorValue = 80;
+    const int maxGreenColorValue = 255;
+
+    const int minBlueColorValue = 100;
+    const int maxBlueColorValue = 255;
+
+    const int r = QRandomGenerator::global()->bounded(minRedColorValue,   maxRedColorValue);
+    const int g = QRandomGenerator::global()->bounded(minGreenColorValue, maxGreenColorValue);
+    const int b = QRandomGenerator::global()->bounded(minBlueColorValue,  maxBlueColorValue);
+
+    QColor randomColor(r, g, b);
+
+    QLinearGradient gradient(0, 0, AvatarSize.width(), AvatarSize.height());
+    gradient.setColorAt(0, randomColor);
+    gradient.setColorAt(1, Qt::red);
+
+    avatar->fill(Qt::white);
+    pixmapPainter.fillRect(avatar->rect(), gradient);
+    pixmapPainter.setPen(Qt::white);
+    pixmapPainter.drawText((AvatarSize.width()  - fm.horizontalAdvance(initials)) / 2,
+                           (AvatarSize.height() + fm.ascent()) / 2,
+                           initials);
+
+    return avatar;
 }

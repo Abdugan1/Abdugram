@@ -46,8 +46,8 @@ void ChatListSide::setToMainModelAndSelectChat(int chatId)
 
 void ChatListSide::setupUi()
 {
-    sideMenuButton_ = new IconButton{QPixmap{":/images/drawer_button.png"}};
-    connect(sideMenuButton_, &IconButton::clicked, this, &ChatListSide::sideMenuRequested);
+    drawerButton_ = new IconButton{QPixmap{":/images/drawer_button.png"}};
+    connect(drawerButton_, &IconButton::clicked, this, &ChatListSide::drawerRequested);
 
     searchLineEdit_ = new SearchLineEdit;
     searchLineEdit_->setPlaceholderText(tr("Search"));
@@ -56,7 +56,7 @@ void ChatListSide::setupUi()
     const int m = 8;
     hLayout->setContentsMargins(m, m, m, m);
     hLayout->setSpacing(m);
-    hLayout->addWidget(sideMenuButton_);
+    hLayout->addWidget(drawerButton_);
     hLayout->addWidget(searchLineEdit_);
 
     Widget *head = new Widget;

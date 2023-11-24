@@ -39,7 +39,7 @@ set(HEADERS
     ${HEADERS_DIR}/ui/components/secondarylabel.h
     ${HEADERS_DIR}/ui/components/chatlistside.h
     ${HEADERS_DIR}/ui/components/stackedwidget.h
-    ${HEADERS_DIR}/ui/components/sidemenu.h
+    ${HEADERS_DIR}/ui/components/drawer.h
     ${HEADERS_DIR}/ui/components/button.h
     ${HEADERS_DIR}/ui/components/colorrepository.h
     ${HEADERS_DIR}/ui/components/scrollbar.h
@@ -48,6 +48,10 @@ set(HEADERS
     ${HEADERS_DIR}/ui/components/widget.h
     include/ui/components/contextmenu.h
     include/ui/components/contextmenuprivate.h
+    include/ui/components/settingswindow.h
+    include/ui/components/settingswindowprivate.h
+    include/ui/components/roundwidget.h
+    include/ui/components/overlaywidget.h
 
     ${HEADERS_DIR}/ui/styles/style.h
 
@@ -101,7 +105,7 @@ set(SOURCES
     ${SOURCES_DIR}/ui/components/secondarylabel.cpp
     ${SOURCES_DIR}/ui/components/chatlistside.cpp
     ${SOURCES_DIR}/ui/components/stackedwidget.cpp
-    ${SOURCES_DIR}/ui/components/sidemenu.cpp
+    ${SOURCES_DIR}/ui/components/drawer.cpp
     ${SOURCES_DIR}/ui/components/button.cpp
     ${SOURCES_DIR}/ui/components/colorrepository.cpp
     ${SOURCES_DIR}/ui/components/scrollbar.cpp
@@ -110,6 +114,11 @@ set(SOURCES
     ${SOURCES_DIR}/ui/components/widget.cpp
     src/ui/components/contextmenu.cpp
     src/ui/components/contextmenuprivate.cpp
+    src/ui/components/settingswindow.cpp
+    src/ui/components/settingswindowprivate.cpp
+    src/ui/components/roundwidget.cpp
+    src/ui/components/overlaywidget.cpp
+
 
     ${SOURCES_DIR}/ui/styles/style.cpp
 

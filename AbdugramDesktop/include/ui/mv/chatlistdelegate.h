@@ -2,6 +2,8 @@
 #define CHATLISTDELEGATE_H
 
 #include <QStyledItemDelegate>
+#include <QPixmapCache>
+#include <QCache>
 
 class ChatListDelegate : public QStyledItemDelegate
 {
@@ -35,6 +37,11 @@ private:
     QSize sectionSeparatorSizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
 
     QString dateTimeToString(const QDateTime &dateTime) const;
+
+    QPixmap *generateChatPicture(const QModelIndex &index) const;
+
+private:
+    mutable QCache<int, QPixmap> pixmapCache_;
 };
 
 #endif // CHATLISTDELEGATE_H

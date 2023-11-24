@@ -1,7 +1,7 @@
-#ifndef SIDEMENU_H
-#define SIDEMENU_H
+#ifndef DRAWER_H
+#define DRAWER_H
 
-#include <QWidget>
+#include "ui/components/overlaywidget.h"
 
 class QLabel;
 
@@ -12,13 +12,13 @@ class MainLabel;
 class SecondaryLabel;
 class Widget;
 
-class SideMenu : public QWidget
+class Drawer : public OverlayWidget
 {
     Q_OBJECT
     Q_PROPERTY(int offset READ offset WRITE setOffset NOTIFY offsetChanged)
     Q_PROPERTY(qreal overlayOpacity READ overlayOpacity WRITE setOverlayOpacity NOTIFY overlayOpacityChanged FINAL)
 public:
-    explicit SideMenu(QWidget *parent = nullptr);
+    explicit Drawer(QWidget *parent = nullptr);
 
     int offset() const;
     void setOffset(int newOffset);
@@ -27,6 +27,8 @@ public:
     void setOverlayOpacity(qreal newOverlayOpacity);
 
 signals:
+    void settingsRequested();
+
     void aboutToShow();
     void aboutToClose();
 
@@ -34,18 +36,14 @@ signals:
 
     void overlayOpacityChanged();
 
+public slots:
+    void openDrawer();
+    void closeDrawer();
+
 protected:
-    void showEvent(QShowEvent *event) override;
-    void closeEvent(QCloseEvent *event) override;
-
-    void mousePressEvent(QMouseEvent *event) override;
-
     void paintEvent(QPaintEvent *event) override;
 
 private slots:
-    void startShowAnimation();
-    void closeAnimation();
-
     void onSyncFinished();
 
 private:
@@ -57,12 +55,11 @@ private:
         DrawerWidth = 270
     };
 
-    Widget *background_ = nullptr;
-
     QLabel    *avatar_   = nullptr;
     MainLabel *username_ = nullptr;
     
-    Button *logoutButton_ = nullptr;
+    Button *logoutButton_   = nullptr;
+    Button *settingsButton_ = nullptr;
 
     SecondaryLabel *appName_    = nullptr;
     SecondaryLabel *appVersion_ = nullptr;
@@ -72,6 +69,8 @@ private:
 
     QState *closedState_ = nullptr;
     QState *showedState_ = nullptr;
+    QState *showingState_ = nullptr;
+    QState *closingState_ = nullptr;
 };
 
-#endif // SIDEMENU_H
+#endif // DRAWER_H

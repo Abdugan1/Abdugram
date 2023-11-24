@@ -1,6 +1,7 @@
 #include "ui/pages/mainpage.h"
 
-#include "ui/components/sidemenu.h"
+#include "ui/components/drawer.h"
+#include "ui/components/settingswindow.h"
 #include "ui/components/chatlistside.h"
 #include "ui/components/conversationside.h"
 
@@ -31,7 +32,6 @@ MainPage::MainPage(QWidget *parent)
 void MainPage::resizeEvent(QResizeEvent *event)
 {
     Widget::resizeEvent(event);
-//    sideMenu_->resize(sideMenu_->width(), this->geometry().height());
 }
 
 void MainPage::keyPressEvent(QKeyEvent *event)
@@ -44,13 +44,16 @@ void MainPage::keyPressEvent(QKeyEvent *event)
 
 void MainPage::setupUi()
 {
-    sideMenu_ = new SideMenu;
+    drawer_ = new Drawer;
+    settingsWindow_ = new SettingsWindow;
 
-    connect(sideMenu_, &SideMenu::aboutToShow, this, &MainPage::makeMainWidgetVisuallyInactive);
-    connect(sideMenu_, &SideMenu::aboutToClose, this, &MainPage::makeMainWidgetNormal);
+    connect(drawer_, &Drawer::settingsRequested, this, [this]() {settingsWindow_->openSettings();});
+    connect(drawer_, &Drawer::aboutToShow, this, &MainPage::makeMainWidgetVisuallyInactive);
+    connect(drawer_, &Drawer::aboutToClose, this, &MainPage::makeMainWidgetNormal);
+
 
     chatListSide_        = new ChatListSide;
-    connect(chatListSide_, &ChatListSide::sideMenuRequested, sideMenu_, &SideMenu::show);
+    connect(chatListSide_, &ChatListSide::drawerRequested, drawer_, &Drawer::openDrawer);
 
     conversationSide_ = new ConversationSide;
 
@@ -80,7 +83,8 @@ void MainPage::setupUi()
     mainLayout->setStackingMode(QStackedLayout::StackAll);
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->addWidget(mainWidget);
-    mainLayout->addWidget(sideMenu_);
+    mainLayout->addWidget(drawer_);
+    mainLayout->addWidget(settingsWindow_);
 
     setLayout(mainLayout);
 }
